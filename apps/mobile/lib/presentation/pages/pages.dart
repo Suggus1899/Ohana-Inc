@@ -1,0 +1,19 @@
+// Barrel file for all pages
+export 'landing_page.dart';
+export 'property_detail_page.dart';
+export 'login_page.dart';
+export 'register_page.dart';
+export 'forgot_password_page.dart';
+export 'verify_email_page.dart';
+export 'profile_page.dart';
+export 'public_profile_page.dart';
+export 'admin_dashboard_page.dart';
+export 'operator_dashboard_page.dart';
+export 'owner_dashboard_page.dart';
+export 'tenant_dashboard_page.dart';
+export 'navigation_page.dart';
+export 'auth_callback_page.dart';
+export 'google_setup_page.dart';
+export 'terms_page.dart';
+export 'privacy_page.dart';
+export 'not_found_page.dart';
