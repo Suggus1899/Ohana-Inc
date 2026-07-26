@@ -562,8 +562,8 @@ const RequestsSection = () => {
                       "{request.message}"
                     </p>
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                       <span>Enviada el {new Date(request.createdAt).toLocaleDateString("es-VE")}</span>
-                       {request.moveInDate && <span>Mudanza: {new Date(request.moveInDate).toLocaleDateString("es-VE")}</span>}
+                       <span>Enviada el {new Date(request.createdAt).toLocaleDateString("es-CO")}</span>
+                       {request.moveInDate && <span>Mudanza: {new Date(request.moveInDate).toLocaleDateString("es-CO")}</span>}
                     </div>
                     {/* Timeline visual de progreso */}
                     <div className="mt-3 pt-3 border-t">

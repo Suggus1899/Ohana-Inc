@@ -62,7 +62,7 @@ Debe mostrar la versión instalada (ej: `ffmpeg version 4.4.2`).
 
 ### 2. Modelos de Face-API.js
 
-**Ubicación requerida**: `backend-residencias/models/face-api/`
+**Ubicación requerida**: `apps/backend/models/face-api/`
 
 **Modelos necesarios**:
 - `ssd_mobilenetv1_model-*` - Detección de rostros
@@ -76,7 +76,7 @@ npm run download:models
 
 **Descarga manual**:
 ```bash
-cd backend-residencias/models
+cd apps/backend/models
 mkdir -p face-api
 cd face-api
 
@@ -95,7 +95,7 @@ wget https://raw.githubusercontent.com/vladmandic/face-api/master/model/face_rec
 
 **Verificación**:
 ```bash
-ls -la backend-residencias/models/face-api/
+ls -la apps/backend/models/face-api/
 ```
 
 Debe mostrar al menos 8 archivos (3 manifests + 5 shards).
@@ -218,7 +218,7 @@ KYC_STORAGE_PATH=./storage/kyc
 ### 1. Dependencias de Node.js
 
 ```bash
-cd backend-residencias
+cd apps/backend
 npm install
 ```
 
@@ -243,7 +243,7 @@ Si no está instalado, seguir las instrucciones en [Requisitos del Sistema](#req
 ### Script de Validación Automática
 
 ```bash
-cd backend-residencias
+cd apps/backend
 npm run validate:dependencies
 ```
 

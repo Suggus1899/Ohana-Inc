@@ -151,7 +151,7 @@ const FavoritesSection = () => {
                   </Button>
                 )}
                 <p className="text-xs text-muted-foreground mt-2">
-                  Agregado el {new Date(fav.createdAt).toLocaleDateString("es-VE")}
+                  Agregado el {new Date(fav.createdAt).toLocaleDateString("es-CO")}
                 </p>
               </CardContent>
             </Card>

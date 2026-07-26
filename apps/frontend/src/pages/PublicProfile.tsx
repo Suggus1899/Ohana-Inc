@@ -160,7 +160,7 @@ const PublicProfile = () => {
                   <Calendar className="h-5 w-5 text-muted-foreground shrink-0" />
                   <div>
                     <p className="text-sm text-muted-foreground">Miembro desde</p>
-                    <p className="font-medium">{new Date(userData.createdAt).toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" })}</p>
+                    <p className="font-medium">{new Date(userData.createdAt).toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" })}</p>
                   </div>
                 </div>
                 {userData.dateOfBirth && (

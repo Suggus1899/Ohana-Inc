@@ -248,7 +248,7 @@ describe('AuditLogger Service', () => {
     it('should log OCR call (Requisito 32.4)', async () => {
       const result = { 
         confidence: 92, 
-        documentNumber: 'V12345678',
+        documentNumber: 'CC12345678',
         rawText: 'should not be logged'
       };
       await auditLogger.logOCRCall(123, result, '192.168.1.1');

@@ -190,7 +190,7 @@ GET /api/kyc/level/progress
         "completed": true,
         "completedAt": "2026-04-09T11:00:00.000Z",
         "data": {
-          "nationality": "Venezolana",
+          "nationality": "Colombiana",
           "address": "Calle Principal #123"
         }
       },

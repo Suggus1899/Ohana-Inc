@@ -226,7 +226,7 @@ const OperatorsSection = () => {
                       <td className="py-3 px-4">
                         <span className="text-sm text-muted-foreground flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {new Date(op.createdAt).toLocaleDateString("es-VE")}
+                          {new Date(op.createdAt).toLocaleDateString("es-CO")}
                         </span>
                       </td>
                       <td className="py-3 px-4">

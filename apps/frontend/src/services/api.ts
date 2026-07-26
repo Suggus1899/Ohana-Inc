@@ -74,7 +74,7 @@ export interface Property {
   description: string;
   price: number;
   priceType: 'monthly' | 'daily';
-  priceRate?: 'oficial' | 'paralelo';
+  priceRate?: 'trm';
   bedrooms: number;
   bathrooms: number;
   roomsWithBathroom?: number;

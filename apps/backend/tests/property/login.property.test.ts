@@ -45,9 +45,9 @@ describe('Property 5: Valid login returns JWT with role', () => {
             name: 'Test User',
             email: uniqueEmail,
             password,
-            phonePrefix: '+58',
-            phone: '1234567890',
-            cedulaType: 'V',
+            phonePrefix: '+57',
+            phone: '3001234567',
+            cedulaType: 'CC',
             cedula: '12345678'
           });
         expect(registerResponse.status).toBe(201);
@@ -95,9 +95,9 @@ describe('Property 5: Valid login returns JWT with role', () => {
         name: `${role} User`,
         email: `${role}@test.com`,
         password: 'password123',
-        phonePrefix: '+58',
-        phone: '1234567890',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345678',
         role,
         isVerified: false
@@ -143,9 +143,9 @@ describe('Property 6: Invalid credentials rejection', () => {
       name: 'Known User',
       email: 'known@test.com',
       password: 'correctPassword123',
-      phonePrefix: '+58',
-      phone: '1234567890',
-      cedulaType: 'V',
+      phonePrefix: '+57',
+      phone: '3001234567',
+      cedulaType: 'CC',
       cedula: '12345678',
       role: 'cliente',
       isVerified: false

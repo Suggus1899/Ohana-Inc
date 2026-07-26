@@ -116,7 +116,7 @@ const AuditSection = () => {
                   logs.map((log) => (
                     <TableRow key={log.id} className="hover:bg-zinc-50/50 transition-colors">
                       <TableCell className="text-xs font-mono text-muted-foreground">
-                        {new Date(log.timestamp).toLocaleString('es-VE', { 
+                        {new Date(log.timestamp).toLocaleString('es-CO', { 
                           day: '2-digit', 
                           month: '2-digit', 
                           hour: '2-digit', 

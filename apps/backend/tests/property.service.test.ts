@@ -51,15 +51,15 @@ describe('PropertyService', () => {
 
       const result = await service.createProperty({
         authorId: 10,
-        title: 'Casa en Caracas',
+        title: 'Casa en Bogotá',
         description: 'Desc',
         type: 'Casa',
         listingType: 'Alquiler',
         price: 500,
         priceType: 'monthly',
-        lat: 10.5, lng: -66.9,
-        address: 'Dirección', location: 'Caracas',
-        city: 'Caracas', state: 'Miranda', zipCode: '1060',
+        lat: 4.71, lng: -74.07,
+        address: 'Dirección', location: 'Bogotá',
+        city: 'Bogotá', state: 'Cundinamarca', zipCode: '110111',
         bedrooms: 3, bathrooms: 2, area: 100,
         furnished: false, features: [],
       });

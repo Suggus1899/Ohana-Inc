@@ -1,6 +1,6 @@
-# 💬 Sistema de Chat - Habitas
+# 💬 Sistema de Chat - Ohana
 
-Este documento describe la arquitectura, flujo y funcionalidades del sistema de chat integrado en Habitas.
+Este documento describe la arquitectura, flujo y funcionalidades del sistema de chat integrado en Ohana.
 
 ## 🏗️ Arquitectura
 El sistema de chat es una implementación híbrida que utiliza **REST API** para la gestión de datos persistentes y **WebSockets (Socket.IO)** para la comunicación en tiempo real.
@@ -42,7 +42,7 @@ El sistema soporta:
 ## 🛡️ Moderación Automática
 Para proteger la integridad de la plataforma y evitar el "leakage" (transacciones fuera del sistema), el chat incluye un sistema de filtrado:
 - **Detección de Datos de Contacto:** Filtra números de teléfono (incluyendo formatos evasivos), correos electrónicos y nombres de redes sociales.
-- **Detección de Patrones Distribuidos:** Si un usuario intenta enviar un número de teléfono separado en varios mensajes (ej. "0412" y luego "1234567"), el sistema lo detecta y bloquea.
+- **Detección de Patrones Distribuidos:** Si un usuario intenta enviar un número de teléfono separado en varios mensajes (ej. "300" y luego "1234567"), el sistema lo detecta y bloquea.
 - **Acción:** Los mensajes sospechosos son bloqueados y reemplazados por un aviso de seguridad, notificando al remitente sobre la violación de las políticas.
 
 ---

@@ -114,7 +114,7 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
         nationality: {
           type: DataTypes.STRING(50),
           allowNull: true,
-          comment: 'Nacionalidad (Venezolana, Extranjera)'
+          comment: 'Nacionalidad (Colombiana, Extranjera)'
         },
         address: {
           type: DataTypes.TEXT,

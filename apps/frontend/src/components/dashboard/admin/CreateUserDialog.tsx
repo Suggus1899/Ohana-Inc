@@ -92,9 +92,9 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
         setFormData({
           name: "",
           email: "",
-          phonePrefix: "+58",
+          phonePrefix: "+57",
           phone: "",
-          cedulaType: "V",
+          cedulaType: "CC",
           cedula: "",
           dateOfBirth: "",
           city: "",
@@ -208,14 +208,13 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
                   <SelectItem value="+57">🇨🇴 +57</SelectItem>
                   <SelectItem value="+1">🇺🇸 +1</SelectItem>
                   <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                  <SelectItem value="+58">🇻🇪 +58</SelectItem>
                 </SelectContent>
               </Select>
               <Input
                 id="phone"
                 name="phone"
                 type="tel"
-                placeholder="412-1234567"
+                placeholder="300-1234567"
                 value={formData.phone}
                 onChange={handleChange}
                 required
@@ -276,7 +275,7 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
                 id="city"
                 name="city"
                 type="text"
-                placeholder="Caracas"
+                placeholder="Bogotá"
                 value={formData.city}
                 onChange={handleChange}
                 required

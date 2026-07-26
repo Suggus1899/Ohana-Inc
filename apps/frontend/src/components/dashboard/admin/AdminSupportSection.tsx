@@ -140,7 +140,7 @@ const AdminSupportSection = () => {
           )}
           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
             {ticket.user && <span>{ticket.user.name}</span>}
-            <span>{new Date(ticket.createdAt).toLocaleDateString("es-VE")}</span>
+            <span>{new Date(ticket.createdAt).toLocaleDateString("es-CO")}</span>
           </div>
         </div>
         {showActions && (

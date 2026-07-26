@@ -39,7 +39,7 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
   useEffect(() => {
     if (user && open) {
       const cedulaStr = String(user.cedula || "");
-      const cedulaParts = cedulaStr.includes("-") ? cedulaStr.split("-") : ["V", cedulaStr];
+      const cedulaParts = cedulaStr.includes("-") ? cedulaStr.split("-") : ["CC", cedulaStr];
       
       let formattedDate = "";
       if (user.dateOfBirth) {
@@ -115,9 +115,9 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
     setFormData({
       name: "",
       email: "",
-      phonePrefix: "+58",
+      phonePrefix: "+57",
       phone: "",
-      cedulaType: "V",
+      cedulaType: "CC",
       cedula: "",
       dateOfBirth: "",
       city: "",
@@ -229,7 +229,6 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
                   <SelectContent>
                     <SelectItem value="+57">+57 (Colombia)</SelectItem>
                     <SelectItem value="+1">+1 (USA/Canadá)</SelectItem>
-                    <SelectItem value="+58">+58 (Venezuela)</SelectItem>
                     <SelectItem value="+34">+34 (España)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -251,7 +250,7 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
                   id="city"
                   value={formData.city}
                   onChange={(e) => handleInputChange("city", e.target.value)}
-                  placeholder="Ej: Caracas"
+                  placeholder="Ej: Bogotá"
                 />
               </div>
             </div>

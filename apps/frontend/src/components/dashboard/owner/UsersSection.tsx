@@ -96,7 +96,7 @@ const UsersSection = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Registrado el {new Date(u.createdAt).toLocaleDateString("es-VE")}</span>
+                    <span>Registrado el {new Date(u.createdAt).toLocaleDateString("es-CO")}</span>
                   </div>
                 </div>
               </div>

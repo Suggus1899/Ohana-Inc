@@ -266,7 +266,7 @@ docker-compose -f docker-compose.dev.yml up --build
 ```bash
 # Verifica que estás en modo dev
 docker ps
-# Debe mostrar: residencias-backend-dev
+# Debe mostrar: ohana-backend-dev
 
 # Si no, reinicia en modo dev
 npm run docker:down

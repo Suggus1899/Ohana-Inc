@@ -18,11 +18,11 @@ Hemos creado un sistema de **entornos de desarrollo aislados y automatizados** b
 
 ## Archivos clave modificados / creados
 
-### 1. `docker-compose.yml` (dinámico)
-- Contenedores con nombres como `residencias-backend-${BRANCH_NAME:-dev}`.
+### 1. `docker-compose.prod.yml` (dinámico)
+- Contenedores con nombres como `ohana-backend-${BRANCH_NAME:-dev}`.
 - Mapeo de puerto del backend: `"${BACKEND_PORT:-3001}:5000"`.
 - Volúmenes bind mount para `pgdata_*`, `storage_*`, `logs_*`.
-- Red aislada por proyecto (`-p residencias-${BRANCH_NAME}`).
+- Red aislada por proyecto (`-p ohana-${BRANCH_NAME}`).
 
 ### 2. `.gitignore`
 - Se agregaron exclusiones: `pgdata_*/`, `storage_*/`, `logs_*/`, `.env`.
@@ -39,7 +39,7 @@ Hemos creado un sistema de **entornos de desarrollo aislados y automatizados** b
 - Se dispara con push a ramas `dev`, `feature/*`, `develop`, `hotfix/*`.
 - Calcula `BRANCH_NAME` (limpio) y `BACKEND_PORT` (único).
 - Copia archivos al VPS con `rsync`.
-- Levanta los contenedores con `docker-compose -p residencias-$BRANCH_NAME up -d --build`.
+- Levanta los contenedores con `docker-compose -p ohana-$BRANCH_NAME up -d --build`.
 - Ejecuta **manualmente** (próximamente automatizado) `sync` y `seed:complete` dentro del contenedor.
 - Comenta en el PR la URL de acceso.
 
@@ -82,7 +82,7 @@ Hemos creado un sistema de **entornos de desarrollo aislados y automatizados** b
 
 ## Estado actual comprobado
 
-- **El contenedor `residencias-backend-feature-probar-cicd` está corriendo** sin errores.
+- **El contenedor `ohana-backend-feature-probar-cicd` está corriendo** sin errores.
 - **Logs limpios**:
   ```
   Server running on port 5000

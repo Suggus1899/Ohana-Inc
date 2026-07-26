@@ -162,11 +162,11 @@ const Register = () => {
                   </SelectTrigger>
                   <SelectContent className={selectContentCls}>
                     <SelectItem value="+57">+57</SelectItem><SelectItem value="+1">+1</SelectItem>
-                    <SelectItem value="+34">+34</SelectItem><SelectItem value="+58">+58</SelectItem>
+                    <SelectItem value="+34">+34</SelectItem>
                     <SelectItem value="+52">+52</SelectItem><SelectItem value="+54">+54</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input id="phone" name="phone" type="tel" placeholder="4121234567" value={formData.phone} onChange={handleChange} required disabled={isLoading} className={`flex-1 ${inputCls}`} />
+                <Input id="phone" name="phone" type="tel" placeholder="3001234567" value={formData.phone} onChange={handleChange} required disabled={isLoading} className={`flex-1 ${inputCls}`} />
               </div>
               {fieldErrors.phone && <p className="text-xs text-red-500">{fieldErrors.phone}</p>}
             </div>

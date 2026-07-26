@@ -131,7 +131,7 @@ const Hero = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-sm sm:text-base md:text-lg mb-6 text-white/90 max-w-2xl mx-auto"
               >
-                Alquiler y venta de residencias, apartamentos, casas, cuartos, locales, terrenos y fincas cerca de tu universidad en San Juan de los Morros
+                Alquiler y venta de apartamentos, casas, cuartos, locales, terrenos y fincas cerca de tu universidad o trabajo en Bogotá
               </m.p>
 
               {/* Search Bar */}

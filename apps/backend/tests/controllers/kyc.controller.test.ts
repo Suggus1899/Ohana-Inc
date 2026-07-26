@@ -516,7 +516,7 @@ describe('KYC Controller', () => {
         success: true,
         status: 'pending_review',
         ocrData: {
-          documentNumber: 'V-12345678',
+          documentNumber: 'CC-12345678',
           fullName: 'Juan Pérez',
           dateOfBirth: new Date('1990-01-01')
         },
@@ -872,7 +872,7 @@ describe('KYC Controller', () => {
         status: 'pending_review',
         verificationLevel: 2,
         fullName: 'Juan Pérez',
-        documentNumber: 'V-12345678',
+        documentNumber: 'CC-12345678',
         faceMatchScore: 87.5,
         livenessScore: 92.0,
         documentValidityScore: 95.0,
@@ -884,9 +884,9 @@ describe('KYC Controller', () => {
           name: 'Juan Pérez',
           email: 'juan@example.com',
           phone: '1234567890',
-          phonePrefix: '+58',
+          phonePrefix: '+57',
           cedula: '12345678',
-          cedulaType: 'V'
+          cedulaType: 'CC'
         }
       };
 
@@ -1505,7 +1505,7 @@ describe('KYC Controller', () => {
           status: 'approved',
           verificationLevel: 5,
           fullName: 'Juan Pérez',
-          documentNumber: 'V-12345678',
+          documentNumber: 'CC-12345678',
           createdAt: new Date('2024-01-01'),
           updatedAt: new Date('2024-01-15')
         };
@@ -1692,7 +1692,7 @@ describe('KYC Controller', () => {
           status: 'approved',
           verificationLevel: 5,
           fullName: 'Juan Pérez',
-          documentNumber: 'V-12345678',
+          documentNumber: 'CC-12345678',
           createdAt: new Date('2024-01-01'),
           updatedAt: new Date('2024-01-15')
         };

@@ -202,7 +202,7 @@ const ContentReviewSection = () => {
           p.owner,
           p.location,
           `$${p.price}`,
-          `$ ${Math.round(copPrice).toLocaleString('es-VE')}`,
+          `$ ${Math.round(copPrice).toLocaleString('es-CO')}`,
           p.status.toUpperCase(),
           p.submittedDate
         ];
@@ -591,7 +591,7 @@ const ContentReviewSection = () => {
                     )}
                     <div className="flex items-center gap-2 text-sm">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>Publicado: {new Date(selectedPropertyDetails.createdAt).toLocaleDateString("es-VE")}</span>
+                      <span>Publicado: {new Date(selectedPropertyDetails.createdAt).toLocaleDateString("es-CO")}</span>
                     </div>
                   </CardContent>
                 </Card>

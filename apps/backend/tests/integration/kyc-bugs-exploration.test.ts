@@ -106,9 +106,9 @@ jest.mock('../../src/services/ocr.service', () => {
       return {
         extractData: jest.fn().mockResolvedValue({
           fullName: 'Test User',
-          documentNumber: 'V12345678',
+          documentNumber: 'CC12345678',
           dateOfBirth: new Date('1990-01-01'),
-          nationality: 'Venezolana',
+          nationality: 'Colombiana',
           expirationDate: new Date('2030-01-01'),
           confidence: 90
         })
@@ -157,9 +157,9 @@ describe('KYC Processing Bugs - Exploration Tests', () => {
       name: 'Test User',
       email: 'test@example.com',
       password: 'hashedpassword',
-      phonePrefix: '+58',
-      phone: '4241234567',
-      cedulaType: 'V',
+      phonePrefix: '+57',
+      phone: '3001234567',
+      cedulaType: 'CC',
       cedula: '12345678',
       role: 'cliente',
       isVerified: false,

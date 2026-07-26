@@ -522,7 +522,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
                           <div>
                             <p className="text-xs text-muted-foreground">Registro</p>
                             <p className="font-medium">
-                              {new Date(selectedUser.createdAt).toLocaleDateString("es-VE")}
+                              {new Date(selectedUser.createdAt).toLocaleDateString("es-CO")}
                             </p>
                           </div>
                         </div>
@@ -554,7 +554,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
                       <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                         <span className="text-sm">Última Actividad</span>
                         <span className="font-medium">
-                          {new Date(selectedUser.updatedAt).toLocaleDateString("es-VE")}
+                          {new Date(selectedUser.updatedAt).toLocaleDateString("es-CO")}
                         </span>
                       </div>
                     </CardContent>
@@ -649,7 +649,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
                           <div className="flex-1">
                             <p className="font-medium">Cuenta Creada</p>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(selectedUser.createdAt).toLocaleString("es-VE")}
+                              {new Date(selectedUser.createdAt).toLocaleString("es-CO")}
                             </p>
                           </div>
                         </div>
@@ -658,7 +658,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
                           <div className="flex-1">
                             <p className="font-medium">Última Actualización</p>
                             <p className="text-sm text-muted-foreground">
-                              {new Date(selectedUser.updatedAt).toLocaleString("es-VE")}
+                              {new Date(selectedUser.updatedAt).toLocaleString("es-CO")}
                             </p>
                           </div>
                         </div>

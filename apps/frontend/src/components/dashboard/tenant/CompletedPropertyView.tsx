@@ -237,7 +237,7 @@ const CompletedPropertyView = ({ request, onBack }: CompletedPropertyViewProps) 
               <Calendar className="h-5 w-5 text-muted-foreground" />
               <div>
                 <p className="text-sm text-muted-foreground">Mudanza</p>
-                <p className="font-medium">{request.moveInDate ? new Date(request.moveInDate).toLocaleDateString("es-VE") : "Por definir"}</p>
+                <p className="font-medium">{request.moveInDate ? new Date(request.moveInDate).toLocaleDateString("es-CO") : "Por definir"}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

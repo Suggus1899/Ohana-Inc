@@ -198,7 +198,7 @@ export class GeocodingService {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Habitas/1.0 (plataforma de residencias estudiantiles)'
+          'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
       });
 
@@ -235,7 +235,7 @@ export class GeocodingService {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Habitas/1.0 (plataforma de residencias estudiantiles)'
+          'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
       });
 
@@ -273,7 +273,7 @@ export class GeocodingService {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Habitas/1.0 (plataforma de residencias estudiantiles)'
+          'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
       });
 
@@ -309,7 +309,7 @@ export class GeocodingService {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Habitas/1.0 (plataforma de residencias estudiantiles)'
+          'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
       });
 

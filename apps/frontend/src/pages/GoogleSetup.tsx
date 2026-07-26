@@ -176,7 +176,7 @@ const GoogleSetup = () => {
               </div>
               <div className="space-y-2">
                 <Label>Teléfono *</Label>
-                <Input value={phone} onChange={(e) => { setPhone(e.target.value); setFieldErrors((prev) => { const next = { ...prev }; delete next.phone; return next; }); }} placeholder="04121234567" required />
+                <Input value={phone} onChange={(e) => { setPhone(e.target.value); setFieldErrors((prev) => { const next = { ...prev }; delete next.phone; return next; }); }} placeholder="3001234567" required />
                 {fieldErrors.phone && <p className="text-sm text-red-500">{fieldErrors.phone}</p>}
               </div>
             </div>
@@ -187,10 +187,8 @@ const GoogleSetup = () => {
                 <Select value={cedulaType} onValueChange={setCedulaType}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="V">V</SelectItem>
-                    <SelectItem value="E">E</SelectItem>
-                    <SelectItem value="J">J</SelectItem>
-                    <SelectItem value="P">P</SelectItem>
+                    <SelectItem value="CC">CC</SelectItem>
+                    <SelectItem value="CE">CE</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

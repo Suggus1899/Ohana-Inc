@@ -20,9 +20,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345678',
         isVerified: false
       });
@@ -76,9 +76,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345679',
         isVerified: false
       });
@@ -110,9 +110,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345680',
         isVerified: false
       });
@@ -140,9 +140,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345681',
         isVerified: false
       });
@@ -170,9 +170,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345682',
         isVerified: false
       });
@@ -207,9 +207,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345683',
         isVerified: false
       });
@@ -244,9 +244,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345684',
         isVerified: false
       });
@@ -294,9 +294,9 @@ describe('KYCAttempt Model', () => {
         password: 'hashedpassword',
         name: 'Test User',
         role: 'cliente',
-        phonePrefix: '+58',
-        phone: '4241234567',
-        cedulaType: 'V',
+        phonePrefix: '+57',
+        phone: '3001234567',
+        cedulaType: 'CC',
         cedula: '12345685',
         isVerified: false
       });

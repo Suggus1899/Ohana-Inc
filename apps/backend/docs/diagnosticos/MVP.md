@@ -1,4 +1,4 @@
-# 🏆 Definición del MVP - Habitas v1.0.0
+# 🏆 Definición del MVP - Ohana v1.0.0
 
 Este documento define el **Producto Mínimo Viable (MVP)** y la hoja de ruta crítica para el lanzamiento de la **Beta 1.0.0**. El objetivo es consolidar un sistema robusto, seguro y escalable.
 
@@ -15,7 +15,7 @@ Este documento define el **Producto Mínimo Viable (MVP)** y la hoja de ruta cr�
 
 A continuación se detallan los 10 pilares fundamentales para el cierre de la versión 1.0.0:
 
-1.  **Creación de Residencias (Flujo Completo)**: Finalizar la implementación del flujo de publicación. Estudiantes y clientes deben poder solicitar propiedades de manera intuitiva.
+1.  **Creación de Propiedades (Flujo Completo)**: Finalizar la implementación del flujo de publicación. Arrendatarios y clientes deben poder solicitar propiedades de manera intuitiva.
 2.  **Flujo P2P Transaccional**: Integrar el ciclo de (Solicitud -> Pago por Inquilino -> Aceptación por Propietario). El dinero entra en la sección P2P/Escrow.
 3.  **KYC Mandatorio**: El sistema debe verificar que el usuario es una persona real antes de permitirle acceder a las funciones P2P.
 4.  **Chat Omnicanal**: Comunicación en tiempo real para todos los roles (Inquilino, Propietario, Operador, Admin).
@@ -44,7 +44,7 @@ A continuación se detallan los 10 pilares fundamentales para el cierre de la ve
 
 | Requerimiento | Razón de ser |
 | :--- | :--- |
-| **Escrow (Garantía)** | Elimina el miedo a las estafas. Es el principal valor diferencial de Habitas. |
+| **Escrow (Garantía)** | Elimina el miedo a las estafas. Es el principal valor diferencial de Ohana. |
 | **KYC Biométrico** | Aporta una capa de seguridad legal y profesionalismo. |
 | **Paneles (Admin/Op)** | Permiten que el negocio sea gestionable y escalable humanamente. |
 | **Optimización** | Una app lenta o que se cuelga mata la retención del usuario en los primeros 30 segundos. |
@@ -55,4 +55,4 @@ A continuación se detallan los 10 pilares fundamentales para el cierre de la ve
 Al completar estos 10 puntos, el sistema estará listo para su primer despliegue oficial bajo la versión **1.0.0**, marcando el inicio de la fase de validación en mercado real.
 
 ---
-_Documento de visión técnica y de producto — Equipo Habitas 2026_
+_Documento de visión técnica y de producto — Equipo Ohana 2026_

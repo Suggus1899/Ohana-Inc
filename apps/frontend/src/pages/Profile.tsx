@@ -157,7 +157,7 @@ const Profile = () => {
       type: "Apartamento",
       bedrooms: "1",
       furnished: "true",
-      phonePrefix: user?.phonePrefix || "+58",
+      phonePrefix: user?.phonePrefix || "+57",
       phone: user?.phone || "",
       agreements: "",
       location: "",
@@ -347,7 +347,7 @@ const Profile = () => {
 
                       <div className="space-y-2">
                         <Label htmlFor="location">Ubicación</Label>
-                        <Input id="location" name="location" placeholder="Ej: Calle principal, San Juan de los Morros" value={propertyForm.location} onChange={handlePropertyChange} required />
+                        <Input id="location" name="location" placeholder="Ej: Calle principal, Bogotá" value={propertyForm.location} onChange={handlePropertyChange} required />
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-4">
@@ -443,14 +443,13 @@ const Profile = () => {
                               <SelectItem value="+57">🇨🇴 +57</SelectItem>
                               <SelectItem value="+1">🇺🇸 +1</SelectItem>
                               <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                              <SelectItem value="+58">🇻🇪 +58</SelectItem>
                               <SelectItem value="+52">🇲🇽 +52</SelectItem>
                               <SelectItem value="+54">🇦🇷 +54</SelectItem>
                               <SelectItem value="+56">🇨🇱 +56</SelectItem>
                               <SelectItem value="+51">🇵🇪 +51</SelectItem>
                             </SelectContent>
                           </Select>
-                          <Input id="phone" name="phone" type="tel" placeholder="412-1234567" value={propertyForm.phone} onChange={handlePropertyChange} required className="flex-1" />
+                          <Input id="phone" name="phone" type="tel" placeholder="300-1234567" value={propertyForm.phone} onChange={handlePropertyChange} required className="flex-1" />
                         </div>
                       </div>
 
@@ -637,7 +636,7 @@ const Profile = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="location">Ubicación</Label>
-                    <Input id="location" name="location" placeholder="Ej: Calle principal, San Juan de los Morros" value={propertyForm.location} onChange={handlePropertyChange} required />
+                    <Input id="location" name="location" placeholder="Ej: Calle principal, Bogotá" value={propertyForm.location} onChange={handlePropertyChange} required />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
@@ -730,17 +729,16 @@ const Profile = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-popover z-50">
-                          <SelectItem value="+58">🇻🇪 +58</SelectItem>
+                          <SelectItem value="+57">🇨🇴 +57</SelectItem>
                           <SelectItem value="+1">🇺🇸 +1</SelectItem>
                           <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                          <SelectItem value="+57">🇨🇴 +57</SelectItem>
                           <SelectItem value="+52">🇲🇽 +52</SelectItem>
                           <SelectItem value="+54">🇦🇷 +54</SelectItem>
                           <SelectItem value="+56">🇨🇱 +56</SelectItem>
                           <SelectItem value="+51">🇵🇪 +51</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Input id="phone" name="phone" type="tel" placeholder="412-1234567" value={propertyForm.phone} onChange={handlePropertyChange} required className="flex-1" />
+                      <Input id="phone" name="phone" type="tel" placeholder="300-1234567" value={propertyForm.phone} onChange={handlePropertyChange} required className="flex-1" />
                     </div>
                   </div>
 

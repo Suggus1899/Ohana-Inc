@@ -344,7 +344,7 @@ const UsersSection = () => {
                       <td className="py-3 px-4">
                         <span className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Calendar className="h-3 w-3" />
-                          {new Date(u.createdAt).toLocaleDateString("es-VE")}
+                          {new Date(u.createdAt).toLocaleDateString("es-CO")}
                         </span>
                       </td>
                       <td className="py-3 px-4">

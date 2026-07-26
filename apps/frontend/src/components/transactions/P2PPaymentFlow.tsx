@@ -294,7 +294,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           <div className="flex justify-between items-center">
             <span className="text-xs text-blue-600">Fecha de mudanza</span>
             <span className="text-xs text-blue-800 font-medium">
-              {new Date(request.moveInDate).toLocaleDateString('es-VE')}
+              {new Date(request.moveInDate).toLocaleDateString('es-CO')}
             </span>
           </div>
         )}
@@ -711,7 +711,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-green-700">Fecha:</span>
-            <span className="font-medium text-green-900">{new Date().toLocaleDateString('es-VE')}</span>
+            <span className="font-medium text-green-900">{new Date().toLocaleDateString('es-CO')}</span>
           </div>
         </CardContent>
       </Card>

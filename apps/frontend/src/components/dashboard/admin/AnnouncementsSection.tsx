@@ -259,11 +259,11 @@ const AnnouncementsSection = () => {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                         <span className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          Creado: {new Date(a.createdAt).toLocaleDateString("es-VE")}
+                          Creado: {new Date(a.createdAt).toLocaleDateString("es-CO")}
                         </span>
                         {a.expiresAt && (
                           <span className="flex items-center gap-1">
-                            Expira: {new Date(a.expiresAt).toLocaleDateString("es-VE")}
+                            Expira: {new Date(a.expiresAt).toLocaleDateString("es-CO")}
                           </span>
                         )}
                         {a.createdBy && (

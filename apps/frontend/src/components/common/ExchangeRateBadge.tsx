@@ -9,7 +9,7 @@ function formatLastUpdated(dateStr?: string): string {
   if (!dateStr) return "No disponible";
   try {
     const d = new Date(dateStr);
-    return d.toLocaleString("es-VE", {
+    return d.toLocaleString("es-CO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -37,7 +37,7 @@ function RatePopoverContent({
   return (
     <div className="w-72 space-y-3">
       <div className="flex items-center gap-2 border-b pb-2">
-        <span className="text-lg">🇻🇪</span>
+        <span className="text-lg">🇨🇴</span>
         <span className="font-semibold text-sm">Tasas de cambio</span>
       </div>
 
@@ -56,7 +56,7 @@ function RatePopoverContent({
                   </span>
                 </div>
                 <span className="text-sm font-bold">
-                  {rateEntry.usdToCop.toLocaleString("es-VE", {
+                  {rateEntry.usdToCop.toLocaleString("es-CO", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}{" "}
@@ -75,7 +75,7 @@ function RatePopoverContent({
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">1 USD</span>
             <span className="text-base font-bold">
-              {rate.usdToCop.toLocaleString("es-VE", {
+              {rate.usdToCop.toLocaleString("es-CO", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}{" "}
@@ -126,9 +126,9 @@ export function ExchangeRateBadge() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-xs font-medium text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-950/50 transition-colors cursor-pointer whitespace-nowrap">
-          <span className="text-[10px]">🇻🇪</span>
+          <span className="text-[10px]">🇨🇴</span>
           <span className="font-semibold">
-            {rate.usdToCop.toLocaleString("es-VE", {
+            {rate.usdToCop.toLocaleString("es-CO", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 2,
             })}{" "}
@@ -155,9 +155,9 @@ export function ExchangeRateBadgeMobile() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button className="flex md:hidden items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-xs font-medium text-green-700 dark:text-green-400 cursor-pointer">
-          <span>🇻🇪</span>
+          <span>🇨🇴</span>
           <span className="font-semibold">
-            {rate.usdToCop.toLocaleString("es-VE", {
+            {rate.usdToCop.toLocaleString("es-CO", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 2,
             })}{" "}

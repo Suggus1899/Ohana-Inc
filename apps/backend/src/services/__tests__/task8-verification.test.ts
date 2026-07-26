@@ -18,9 +18,9 @@ describe('Task 8: OCR and Face Match Error Handling', () => {
       
       // Mock the parseDateOfBirth to return underage date
       jest.spyOn(ocrService as any, 'parseDateOfBirth').mockReturnValue(underageDate);
-      jest.spyOn(ocrService as any, 'parseDocumentNumber').mockReturnValue('V12345678');
+      jest.spyOn(ocrService as any, 'parseDocumentNumber').mockReturnValue('CC12345678');
       jest.spyOn(ocrService as any, 'parseFullName').mockReturnValue('Test User');
-      jest.spyOn(ocrService as any, 'parseNationality').mockReturnValue('Venezolana');
+      jest.spyOn(ocrService as any, 'parseNationality').mockReturnValue('Colombiana');
       jest.spyOn(ocrService as any, 'parseExpirationDate').mockReturnValue(new Date(2030, 0, 1));
       jest.spyOn(ocrService as any, 'preprocessImage').mockResolvedValue(Buffer.from('test'));
       
@@ -28,7 +28,7 @@ describe('Task 8: OCR and Face Match Error Handling', () => {
       const mockTesseract = {
         recognize: jest.fn().mockResolvedValue({
           data: {
-            text: 'V-12345678\nNOMBRES: TEST USER\n01/01/2007',
+            text: 'CC-12345678\nNOMBRES: TEST USER\n01/01/2007',
             confidence: 85
           }
         })

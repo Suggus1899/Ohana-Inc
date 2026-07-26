@@ -1,4 +1,4 @@
-# 🗃️ Problemas Pendientes de Base de Datos — Habitas
+# 🗃️ Problemas Pendientes de Base de Datos — Ohana
 
 > **Documento de referencia para el equipo de desarrollo.**  
 > Este archivo describe las inconsistencias detectadas en el esquema actual de la base de datos,
@@ -202,9 +202,9 @@ Este sistema bilateral crea un **Círculo de Confianza** real. Los estudiantes c
 
 Para ver cómo quedará la base de datos tras aplicar todas estas correcciones (incluyendo las nuevas tablas propuestas como `reviews` y `notifications`), consulta el esquema oficial depurado en DB Diagram:
 
-**👉 [Ver Diagrama de Base de Datos de Habitas](https://dbdiagram.io/d/Habitas_DB-69f3ceeaddb9320fdca4df6c)**
+**👉 [Ver Diagrama de Base de Datos de Ohana](https://dbdiagram.io/d/Habitas_DB-69f3ceeaddb9320fdca4df6c)**
 
 ---
 
-_Analisis realizado por Julian Amer — Equipo Habitas_ <br> <br>
-_Para que San Juan de los morros tenga un marcado antes y despues luego de nuestra estancia aqui_
+_Analisis realizado por Julian Amer — Equipo Ohana_ <br> <br>
+_Para que Bogotá tenga un marcado antes y despues luego de nuestra estancia aqui_

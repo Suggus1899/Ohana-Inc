@@ -1,6 +1,6 @@
-# 🏠 Backend Residencias - API
+# 🏠 Backend Ohana - API
 
-Backend API para sistema de gestión de residencias con autenticación, KYC biométrico, y transacciones P2P.
+Backend API para sistema de alquileres y arrendamientos con autenticación, KYC biométrico, y transacciones P2P.
 
 ## 🚀 Inicio Rápido
 
@@ -163,7 +163,7 @@ npm run validate:dependencies # Validar dependencias del sistema (ffmpeg, modelo
 ## 🏗️ Estructura del Proyecto
 
 ```
-backend-residencias/
+backend-ohana/
 ├── src/
 │   ├── config/           # Configuración (DB, Redis)
 │   ├── controllers/      # Controladores de rutas
@@ -500,7 +500,7 @@ Privado - Todos los derechos reservados
 
 ## 👥 Equipo
 
-Backend desarrollado para sistema de gestión de residencias.
+Backend desarrollado para sistema de alquileres y arrendamientos.
 
 ---
 

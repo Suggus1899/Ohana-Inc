@@ -201,7 +201,7 @@ describe('KYCService', () => {
         id: 1,
         userId: 1,
         fullName: 'Juan Pérez',
-        documentNumber: 'V-12345678',
+        documentNumber: 'CC-12345678',
         update: jest.fn().mockResolvedValue(undefined)
       };
 

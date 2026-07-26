@@ -3,7 +3,7 @@ import { getExchangeRate, getAllRates } from '../controllers/exchange-rate.contr
 
 const router = Router();
 
-// GET /api/exchange-rate - Get current USD → VES rate (default)
+// GET /api/exchange-rate - Get current USD → COP rate (default)
 router.get('/', getExchangeRate);
 
 // GET /api/exchange-rate/all - Get all exchange rates

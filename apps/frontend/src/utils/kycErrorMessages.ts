@@ -42,7 +42,7 @@ export const KYC_ERROR_MESSAGES: Record<string, ErrorMessage> = {
     title: 'Formato de documento inválido',
     message: 'El documento proporcionado no es válido o no se puede leer.',
     instructions: [
-      'Verifica que sea una cédula de identidad venezolana',
+      'Verifica que sea una cédula de identidad colombiana',
       'Asegúrate de que el documento esté completo en la imagen',
       'Evita reflejos o sombras sobre el documento',
       'Captura una nueva imagen del documento',
@@ -52,7 +52,7 @@ export const KYC_ERROR_MESSAGES: Record<string, ErrorMessage> = {
     title: 'Número de cédula inválido',
     message: 'El número de cédula no tiene el formato correcto.',
     instructions: [
-      'Verifica que tu cédula sea venezolana (V-) o de extranjero (E-)',
+      'Verifica que tu cédula sea colombiana (CC) o de extranjería (CE)',
       'Asegúrate de que todos los números sean visibles',
       'Captura una imagen más clara del documento',
     ],

@@ -106,23 +106,23 @@ GET /api/kyc/admin/metrics
 
 ### Files Modified
 
-1. **backend-residencias/src/controllers/kyc.controller.ts**
+1. **apps/backend/src/controllers/kyc.controller.ts**
    - Added `getMetrics` function
    - Imports `MetricsService`
    - Validates authentication and operator role
    - Calls `metricsService.getAllMetrics()`
 
-2. **backend-residencias/src/routes/kyc.routes.ts**
+2. **apps/backend/src/routes/kyc.routes.ts**
    - Added route: `router.get('/admin/metrics', authenticate, requireRole(['operator']), getMetrics)`
    - Imported `getMetrics` function
 
-3. **backend-residencias/tests/controllers/kyc.controller.test.ts**
+3. **apps/backend/tests/controllers/kyc.controller.test.ts**
    - Added test suite for `getMetrics`
    - Tests authentication validation
    - Tests operator role validation
    - Tests successful metrics retrieval
 
-4. **backend-residencias/tests/integration/metrics-endpoint.test.ts**
+4. **apps/backend/tests/integration/metrics-endpoint.test.ts**
    - Created integration test file
    - Tests endpoint without authentication
 

@@ -3,11 +3,10 @@
 ## 🎯 Vista General
 
 ```
-backend-residencias/
+apps/backend/
 │
 ├── 🔧 CONFIGURACIÓN DOCKER
-│   ├── docker-compose.yml          # Producción
-│   ├── docker-compose.dev.yml      # Desarrollo (HOT-RELOAD)
+│   ├── docker-compose.prod.yml     # Producción
 │   ├── Dockerfile                  # Build producción
 │   ├── Dockerfile.dev              # Build desarrollo
 │   ├── docker-entrypoint.sh        # Script de inicio
@@ -241,8 +240,7 @@ src/app.ts    NO          dist/app.js
 ## 📋 Checklist de Archivos
 
 ### Configuración Docker
-- [x] docker-compose.yml (existente)
-- [x] docker-compose.dev.yml (nuevo)
+- [x] docker-compose.prod.yml (existente)
 - [x] Dockerfile (existente)
 - [x] Dockerfile.dev (nuevo)
 - [x] .dockerignore (nuevo)

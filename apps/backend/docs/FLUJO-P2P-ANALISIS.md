@@ -22,12 +22,12 @@ El sistema de transacciones P2P (peer-to-peer) para alquiler de propiedades est�
 ### Backend Implementado
 
 #### 1. Modelo RentRequest
-**Archivo**: `backend-residencias/src/models/RentRequest.ts`
+**Archivo**: `apps/backend/src/models/RentRequest.ts`
 
 ```typescript
 // Campos disponibles:
 - id: number
-- tenantId: number (estudiante que solicita)
+- tenantId: number (arrendatario que solicita)
 - propertyId: number (propiedad solicitada)
 - status: 'pending' | 'approved' | 'rejected' | 'cancelled'
 - message: string
@@ -41,21 +41,21 @@ El sistema de transacciones P2P (peer-to-peer) para alquiler de propiedades est�
 - ✅ Índices en tenantId, propertyId, status
 
 #### 2. Endpoints de RentRequest
-**Archivo**: `backend-residencias/src/controllers/rent.controller.ts`
+**Archivo**: `apps/backend/src/controllers/rent.controller.ts`
 
 | Método | Endpoint | Función | Estado |
 |--------|----------|---------|--------|
 | POST | `/api/rent-requests` | Crear solicitud | ✅ Funcional |
-| GET | `/api/rent-requests` | Obtener solicitudes del estudiante | ✅ Funcional |
+| GET | `/api/rent-requests` | Obtener solicitudes del arrendatario | ✅ Funcional |
 | PATCH | `/api/rent-requests/:id/status` | Actualizar estado | ✅ Funcional |
 
 #### 3. Modelo Transaction (Sistema P2P)
-**Archivo**: `backend-residencias/src/models/Transaction.ts`
+**Archivo**: `apps/backend/src/models/Transaction.ts`
 
 ```typescript
 // Estados del flujo P2P:
 - PENDING_OWNER_APPROVAL (48h límite)
-- PENDING_PAYMENT (24h límite) ← Aquí estudiante debe pagar
+- PENDING_PAYMENT (24h límite) ← Aquí arrendatario debe pagar
 - PAYMENT_SUBMITTED (72h límite)
 - PAYMENT_CONFIRMED
 - COMPLETED
@@ -70,36 +70,36 @@ El sistema de transacciones P2P (peer-to-peer) para alquiler de propiedades est�
 - ✅ Manejo de disputas
 
 #### 4. Servicio de Transacciones
-**Archivo**: `backend-residencias/src/services/transaction.service.ts`
+**Archivo**: `apps/backend/src/services/transaction.service.ts`
 
 Métodos disponibles:
 - ✅ `createTransaction()` - Crear transacción
 - ✅ `approveTransaction()` - Propietario aprueba
-- ✅ `submitPayment()` - Estudiante sube comprobante
+- ✅ `submitPayment()` - Arrendatario sube comprobante
 - ✅ `confirmPayment()` - Propietario confirma pago
 - ✅ `cancelTransaction()` - Cancelar transacción
 
 #### 5. Sistema de Expiración
-**Archivo**: `backend-residencias/src/services/transaction-expiry.service.ts`
+**Archivo**: `apps/backend/src/services/transaction-expiry.service.ts`
 
 Tiempos límite configurados:
 - ✅ 48 horas para aprobación del propietario
-- ✅ 24 horas para pago del estudiante
+- ✅ 24 horas para pago del arrendatario
 - ✅ 72 horas para confirmación del propietario
 
 ---
 
 ### Frontend Implementado
 
-#### 1. Componente de Solicitud (Estudiante)
-**Archivo**: `frontend-residencias/src/components/dashboard/tenant/DiscoverSection.tsx`
+#### 1. Componente de Solicitud (Arrendatario)
+**Archivo**: `apps/frontend/src/components/dashboard/tenant/DiscoverSection.tsx`
 
 - ✅ Modal `RentRequestModal` con formulario
 - ✅ Campos: mensaje, fecha de mudanza, teléfono
 - ✅ Integración con API `createRentRequest()`
 
-#### 2. Componente Mis Solicitudes (Estudiante)
-**Archivo**: `frontend-residencias/src/components/dashboard/tenant/RequestsSection.tsx`
+#### 2. Componente Mis Solicitudes (Arrendatario)
+**Archivo**: `apps/frontend/src/components/dashboard/tenant/RequestsSection.tsx`
 
 - ✅ Lista de solicitudes enviadas
 - ✅ Badges de estado (pendiente, aprobada, rechazada)
@@ -108,7 +108,7 @@ Tiempos límite configurados:
 - ✅ Cancelar solicitudes pendientes
 
 #### 3. Componente de Pago P2P
-**Archivo**: `frontend-residencias/src/components/transactions/P2PPaymentFlow.tsx`
+**Archivo**: `apps/frontend/src/components/transactions/P2PPaymentFlow.tsx`
 
 - ✅ Flujo completo de pago
 - ✅ Subir comprobante de pago
@@ -116,7 +116,7 @@ Tiempos límite configurados:
 - ✅ Integración con Transaction API
 
 #### 4. API Service
-**Archivo**: `frontend-residencias/src/services/api.ts`
+**Archivo**: `apps/frontend/src/services/api.ts`
 
 Métodos disponibles:
 - ✅ `createRentRequest()`
@@ -130,7 +130,7 @@ Métodos disponibles:
 ### 🔴 Prioridad Alta - Backend
 
 #### Tarea 1: Endpoint para Solicitudes Recibidas del Propietario
-**Archivo a modificar**: `backend-residencias/src/controllers/rent.controller.ts`
+**Archivo a modificar**: `apps/backend/src/controllers/rent.controller.ts`
 
 **Descripción**: Crear endpoint para que el propietario vea todas las solicitudes de sus propiedades.
 
@@ -179,7 +179,7 @@ export const getOwnerRequests = async (req: AuthRequest, res: Response) => {
 };
 ```
 
-**Archivo a modificar**: `backend-residencias/src/routes/rent.routes.ts`
+**Archivo a modificar**: `apps/backend/src/routes/rent.routes.ts`
 
 ```typescript
 // Agregar esta línea:
@@ -191,7 +191,7 @@ router.get('/received', getUserRequests); // Para propietarios
 ---
 
 #### Tarea 2: Validación de Permisos en Aprobar/Rechazar
-**Archivo a modificar**: `backend-residencias/src/controllers/rent.controller.ts`
+**Archivo a modificar**: `apps/backend/src/controllers/rent.controller.ts`
 
 **Descripción**: Validar que solo el propietario de la propiedad puede aprobar/rechazar solicitudes.
 
@@ -250,7 +250,7 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
 ---
 
 #### Tarea 3: Integración RentRequest → Transaction
-**Archivo a modificar**: `backend-residencias/src/controllers/rent.controller.ts`
+**Archivo a modificar**: `apps/backend/src/controllers/rent.controller.ts`
 
 **Descripción**: Al aprobar una solicitud, crear automáticamente una Transaction en estado PENDING_PAYMENT.
 
@@ -277,7 +277,7 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
             request.tenantId,
             {
               amount: property.price,
-              currency: 'USD',
+              currency: 'COP',
               notes: `Transacción generada desde solicitud #${request.id}`
             }
           );
@@ -307,7 +307,7 @@ export const updateRequestStatus = async (req: AuthRequest, res: Response) => {
 ### 🔴 Prioridad Alta - Frontend
 
 #### Tarea 4: Conectar ReceivedRequestsSection con API Real
-**Archivo a modificar**: `frontend-residencias/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
+**Archivo a modificar**: `apps/frontend/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
 
 **Descripción**: Reemplazar datos mock con llamadas a la API real.
 
@@ -408,7 +408,7 @@ const ReceivedRequestsSection = () => {
 ---
 
 #### Tarea 5: Implementar Botones Aprobar/Rechazar Funcionales
-**Archivo a modificar**: `frontend-residencias/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
+**Archivo a modificar**: `apps/frontend/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
 
 **Descripción**: Hacer que los botones de aprobar/rechazar funcionen y actualicen el estado.
 
@@ -425,7 +425,7 @@ const handleApprove = async (requestId: number) => {
       
       toast({
         title: "Solicitud aprobada",
-        description: "Se ha notificado al estudiante para proceder con el pago",
+        description: "Se ha notificado al arrendatario para proceder con el pago",
       });
     }
   } catch (error) {
@@ -448,7 +448,7 @@ const handleReject = async (requestId: number) => {
       
       toast({
         title: "Solicitud rechazada",
-        description: "Se ha notificado al estudiante",
+        description: "Se ha notificado al arrendatario",
       });
     }
   } catch (error) {
@@ -489,7 +489,7 @@ const handleReject = async (requestId: number) => {
 ### 🟡 Prioridad Media - Frontend
 
 #### Tarea 6: Eliminar Formulario y Hacer Solicitud con 1 Click
-**Archivo a modificar**: `frontend-residencias/src/components/dashboard/tenant/DiscoverSection.tsx`
+**Archivo a modificar**: `apps/frontend/src/components/dashboard/tenant/DiscoverSection.tsx`
 
 **Descripción**: Simplificar UX eliminando el modal con formulario. Al hacer click en "Solicitar Alquiler", enviar solicitud automáticamente.
 
@@ -549,10 +549,10 @@ const [rentingProperty, setRentingProperty] = useState<PropertyUI | null>(null);
 
 ---
 
-#### Tarea 7: Botón "Ver Perfil" del Estudiante
-**Archivo a modificar**: `frontend-residencias/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
+#### Tarea 7: Botón "Ver Perfil" del Arrendatario
+**Archivo a modificar**: `apps/frontend/src/components/dashboard/owner/ReceivedRequestsSection.tsx`
 
-**Descripción**: Implementar navegación al perfil público del estudiante.
+**Descripción**: Implementar navegación al perfil público del arrendatario.
 
 **Código a agregar**:
 ```typescript
@@ -590,11 +590,11 @@ const ReceivedRequestsSection = () => {
 **Componentes a crear**:
 
 1. **Backend**: Servicio de notificaciones
-   - Archivo: `backend-residencias/src/services/notification.service.ts`
+   - Archivo: `apps/backend/src/services/notification.service.ts`
    - Métodos: `notifyNewRequest()`, `notifyApproval()`, `notifyRejection()`
 
 2. **Frontend**: Badge de notificaciones
-   - Archivo: `frontend-residencias/src/components/NotificationBadge.tsx`
+   - Archivo: `apps/frontend/src/components/NotificationBadge.tsx`
    - Mostrar contador en menú lateral
 
 3. **Polling o WebSockets**: Actualización en tiempo real
@@ -608,7 +608,7 @@ const ReceivedRequestsSection = () => {
 ### Diagrama de Secuencia
 
 ```
-ESTUDIANTE                    SISTEMA                    PROPIETARIO
+ARRENDATARIO                   SISTEMA                    PROPIETARIO
     |                            |                            |
     |--[1. Click "Solicitar"]-->|                            |
     |                            |--[Crear RentRequest]------>|
@@ -660,7 +660,7 @@ Transaction (cuando RentRequest es approved):
 
 ### Backend
 ```
-backend-residencias/
+apps/backend/
 ├── src/
 │   ├── models/
 │   │   ├── RentRequest.ts ✅
@@ -680,7 +680,7 @@ backend-residencias/
 
 ### Frontend
 ```
-frontend-residencias/
+apps/frontend/
 ├── src/
 │   ├── components/
 │   │   ├── dashboard/
@@ -707,18 +707,18 @@ frontend-residencias/
 ### Casos de Prueba Críticos
 
 1. **Flujo completo feliz**:
-   - Estudiante solicita → Propietario aprueba → Estudiante paga → Propietario confirma
+   - Arrendatario solicita → Propietario aprueba → Arrendatario paga → Propietario confirma
 
 2. **Validación de permisos**:
    - Propietario A no puede aprobar solicitud de propiedad de Propietario B
-   - Estudiante A no puede cancelar solicitud de Estudiante B
+   - Arrendatario A no puede cancelar solicitud de Arrendatario B
 
 3. **Expiración de transacciones**:
-   - Estudiante no paga en 24h → Transaction EXPIRED
+   - Arrendatario no paga en 24h → Transaction EXPIRED
    - Propietario no confirma en 72h → Transaction DISPUTED
 
 4. **Manejo de errores**:
-   - Solicitud duplicada (misma propiedad, mismo estudiante)
+   - Solicitud duplicada (misma propiedad, mismo arrendatario)
    - Aprobar solicitud ya aprobada/rechazada
 
 ---
@@ -741,7 +741,7 @@ router.post('/', createRequest); // Temporal: sin validación KYC
 ```
 
 ### Datos de Prueba
-El archivo `backend-residencias/src/scripts/seed-complete.ts` ya crea solicitudes de prueba:
+El archivo `apps/backend/src/scripts/seed-complete.ts` ya crea solicitudes de prueba:
 
 ```typescript
 await RentRequest.create({
@@ -789,7 +789,7 @@ await RentRequest.create({
 - [ ] ReceivedRequestsSection conectado a API real
 - [ ] Botones aprobar/rechazar funcionales
 - [ ] Solicitud con 1 click (sin formulario)
-- [ ] Botón ver perfil del estudiante
+- [ ] Botón ver perfil del arrendatario
 - [ ] Manejo de errores y loading states
 - [ ] Tests de componentes modificados
 
@@ -805,7 +805,7 @@ await RentRequest.create({
 
 Si tienes dudas sobre la implementación:
 1. Revisa los archivos existentes mencionados en este documento
-2. Consulta la documentación de Transaction en `backend-residencias/docs/`
-3. Revisa el flujo P2P en `backend-residencias/src/services/transaction.service.ts`
+2. Consulta la documentación de Transaction en `apps/backend/docs/`
+3. Revisa el flujo P2P en `apps/backend/src/services/transaction.service.ts`
 
 **Última actualización**: 13 de abril de 2026

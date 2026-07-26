@@ -188,7 +188,7 @@ const ChatWindow = ({
     .slice(0, 2) || "??";
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString("es-VE", {
+    return new Date(dateStr).toLocaleTimeString("es-CO", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -202,7 +202,7 @@ const ChatWindow = ({
 
     if (date.toDateString() === today.toDateString()) return "Hoy";
     if (date.toDateString() === yesterday.toDateString()) return "Ayer";
-    return date.toLocaleDateString("es-VE", { day: "numeric", month: "long", year: "numeric" });
+    return date.toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
   };
 
   // Group messages by date

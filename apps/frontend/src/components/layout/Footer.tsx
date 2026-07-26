@@ -15,7 +15,7 @@ const Footer = () => {
               <span className="text-xl font-bold text-primary">Habitas</span>
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Tu mejor opción para encontrar el hogar perfecto en San Juan de los Morros y más allá.
+              Tu mejor opción para encontrar el hogar perfecto en Bogotá y más allá.
             </p>
           </div>
 
@@ -84,7 +84,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Ubicación</p>
-                  <p className="text-foreground font-medium">San Juan de los Morros, Guárico</p>
+                  <p className="text-foreground font-medium">Bogotá, Cundinamarca</p>
                 </div>
               </li>
             </ul>

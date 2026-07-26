@@ -32,7 +32,7 @@ describe('Property 3: Invalid registration data rejection', () => {
 
   // Generator for invalid cedula types
   const invalidCedulaTypeArbitrary = fc.string({ minLength: 1, maxLength: 5 })
-    .filter(s => !['V', 'E', 'J'].includes(s));
+    .filter(s => !['CC', 'CE'].includes(s));
 
   describe('Email validation', () => {
     it('should reject empty emails', async () => {
@@ -131,9 +131,9 @@ describe('Property 3: Invalid registration data rejection', () => {
             name: 'Valid Name',
             email,
             password: 'validPassword123',
-            phonePrefix: '+58',
+            phonePrefix: '+57',
             phone: '1234567890',
-            cedulaType: 'V',
+            cedulaType: 'CC',
             cedula: '12345678'
           });
           expect(result.isValid).toBe(false);
@@ -150,7 +150,7 @@ describe('Property 3: Invalid registration data rejection', () => {
             name: 'Valid Name',
             email: 'valid@email.com',
             password: 'validPassword123',
-            phonePrefix: '+58',
+            phonePrefix: '+57',
             phone: '1234567890',
             cedulaType,
             cedula: '12345678'
@@ -167,9 +167,9 @@ describe('Property 3: Invalid registration data rejection', () => {
         name: fc.string({ minLength: 2, maxLength: 50 }).filter(s => s.trim().length >= 2),
         email: fc.emailAddress(),
         password: fc.string({ minLength: 6, maxLength: 50 }).filter(s => s.trim().length >= 6),
-        phonePrefix: fc.constantFrom('+58', '+1', '+34', '+57', '+52', '+54', '+56', '+51'),
+        phonePrefix: fc.constantFrom('+57', '+1', '+34', '+52', '+54', '+56', '+51'),
         phone: fc.string({ minLength: 7, maxLength: 15 }).filter(s => /^\d+$/.test(s)),
-        cedulaType: fc.constantFrom('V', 'E', 'J'),
+        cedulaType: fc.constantFrom('CC', 'CE'),
         cedula: fc.string({ minLength: 6, maxLength: 10 }).filter(s => /^\d+$/.test(s))
       });
 

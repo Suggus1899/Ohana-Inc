@@ -89,7 +89,7 @@ Los cambios en tu código se reflejan automáticamente sin necesidad de reconstr
 Verifica que estás en modo desarrollo:
 ```bash
 docker ps
-# Debe mostrar: residencias-backend-dev
+# Debe mostrar: ohana-backend-dev
 ```
 
 ### ¿Cambié package.json?

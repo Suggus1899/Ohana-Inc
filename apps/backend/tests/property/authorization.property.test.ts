@@ -77,9 +77,9 @@ describe('Property 9: Protected route enforcement', () => {
       name: 'Test User',
       email: 'protected@test.com',
       password: 'password123',
-      phonePrefix: '+58',
-      phone: '1234567890',
-      cedulaType: 'V',
+      phonePrefix: '+57',
+      phone: '3001234567',
+      cedulaType: 'CC',
       cedula: '12345678',
       role: 'cliente',
       isVerified: false

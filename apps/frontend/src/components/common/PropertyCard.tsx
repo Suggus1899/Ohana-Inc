@@ -290,7 +290,7 @@ const PropertyCard = ({
           {/* Location & Type */}
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
             <MapPin className="h-3 w-3 shrink-0" />
-            <span className="truncate">{location || "San Juan de los Morros"}</span>
+            <span className="truncate">{location || "Bogotá"}</span>
             <span className="text-border">•</span>
             <span className="shrink-0">{type}</span>
           </div>

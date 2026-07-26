@@ -57,7 +57,7 @@ async function seedTasks() {
       },
       {
         title: 'Aprobación de publicación #123',
-        description: 'Habitación cerca de la ULA.',
+        description: 'Habitación cerca de la Universidad Nacional de Colombia.',
         priority: 'low',
         status: 'completed',
         type: 'property_review',

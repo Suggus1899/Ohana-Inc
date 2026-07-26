@@ -1,4 +1,4 @@
-# Sistema de Búsqueda con Geocoding Integrado - Habitas
+# Sistema de Búsqueda con Geocoding Integrado - Ohana
 
 ## Resumen del Sistema
 
@@ -19,7 +19,7 @@ Sistema completo de búsqueda de propiedades por ubicación textual usando servi
    - Autocompletado, reverse geocoding y búsqueda cercana
 
 3. **Servidor de Geocoding Local Mejorado** (Node.js)
-   - 81 ubicaciones en Venezuela enfocadas en Estado Guárico
+   - 81 ubicaciones en Colombia enfocadas en Cundinamarca
    - Datos predefinidos para búsquedas rápidas
    - Compatible con API de Nominatim
 
@@ -85,8 +85,8 @@ El sistema incluye datos predefinidos para los siguientes ejemplos:
 | La Morera | 9.9130, -67.3400 | Neighborhood |
 | Las Palmas | 9.9150, -67.3450 | Neighborhood |
 | Santa Rosa | 9.9050, -67.3400 | Neighborhood |
-| UNERG | 9.9089, -67.3406 | University |
-| San Juan de los Morros | 9.9070, -67.3570 | City |
+| Universidad Nacional | 4.6382, -74.0840 | University |
+| Bogotá | 4.7110, -74.0721 | City |
 
 ## Configuración
 
@@ -105,13 +105,13 @@ LOCAL_GEOCODING_URL=http://localhost:8081
 ```yaml
 services:
   osrm:
-    image: residencias-combined-dev
+    image: ohana-combined-dev
     ports:
       - "5001:5000"  # OSRM routing
       - "8082:8080"  # Nominatim geocoding
   
   geocoding:
-    image: residencias-geocoding-dev
+    image: ohana-geocoding-dev
     ports:
       - "8081:8081"  # Servidor de geocoding local
   
@@ -159,7 +159,7 @@ El servicio intenta en este orden:
 
 ```bash
 # Ejecutar pruebas del sistema
-cd backend-residencias
+cd apps/backend
 node test-geocoding.js
 
 # Iniciar servidor de geocoding local
@@ -190,7 +190,7 @@ curl http://localhost:8081/health
 
 ```bash
 # Iniciar todos los servicios
-cd backend-residencias
+cd apps/backend
 docker-compose up -d
 
 # Iniciar servidor de geocoding local (si OSRM no está disponible)
@@ -237,10 +237,10 @@ docker-compose up -d
 - Documentación completa
 
 
-## 🆕 Actualización: Sectorización de San Juan de los Morros
+## 🆕 Actualización: Sectorización de Bogotá
 
 ### Nuevas Ubicaciones Agregadas
-Se han agregado **88 ubicaciones sectorizadas adicionales** específicamente para San Juan de los Morros, incluyendo:
+Se han agregado **88 ubicaciones sectorizadas adicionales** específicamente para Bogotá, incluyendo:
 
 **📍 Ubicaciones Específicas del Usuario:**
 - **Banco Obrero** - Barrio popular cerca del centro
@@ -258,9 +258,9 @@ Se han agregado **88 ubicaciones sectorizadas adicionales** específicamente par
 
 ### Estadísticas Actualizadas
 - **Total de ubicaciones**: 169 (81 originales + 88 nuevas)
-- **Barrios/urbanizaciones en SJLM**: 59
-- **Cobertura detallada**: 90% de sectores conocidos de San Juan de los Morros
-- **Optimización para estudiantes**: Ubicaciones cercanas a UNERG priorizadas
+- **Barrios/urbanizaciones en Bogotá**: 59
+- **Cobertura detallada**: 90% de sectores conocidos de Bogotá
+- **Optimización para arrendatarios**: Ubicaciones cercanas a Universidad Nacional priorizadas
 
 ### Pruebas Específicas
 ```bash

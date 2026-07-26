@@ -51,12 +51,12 @@ jobs:
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && \
             export JWT_SECRET=${{ secrets.JWT_SECRET }} && \
             export ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }} && \
-            docker-compose -p residencias-$BRANCH_NAME down || true && \
-            docker-compose -p residencias-$BRANCH_NAME up -d --build"
+            docker-compose -p ohana-$BRANCH_NAME down || true && \
+            docker-compose -p ohana-$BRANCH_NAME up -d --build"
           
       - name: Ejecutar migraciones y seed en el backend
         run: |
-          ssh root@31.97.171.120 "docker exec residencias-backend-${BRANCH_NAME} sh -c 'pnpm run sync && pnpm run seed:complete'"
+          ssh root@31.97.171.120 "docker exec ohana-backend-${BRANCH_NAME} sh -c 'pnpm run sync && pnpm run seed:complete'"
         env:
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
 

@@ -15,28 +15,28 @@ describe('OCRService', () => {
   });
 
   describe('parseDocumentNumber', () => {
-    it('should extract Venezuelan document number with hyphen', () => {
-      const text = 'REPÚBLICA BOLIVARIANA DE VENEZUELA\nCÉDULA V-12345678\nNOMBRES: JUAN PÉREZ';
+    it('should extract Colombian document number with hyphen', () => {
+      const text = 'REPÚBLICA DE COLOMBIA\nCÉDULA CC-12345678\nNOMBRES: JUAN PÉREZ';
       const result = ocrService.parseDocumentNumber(text);
-      expect(result).toBe('V12345678');
+      expect(result).toBe('CC12345678');
     });
 
-    it('should extract Venezuelan document number without hyphen', () => {
-      const text = 'CÉDULA V12345678';
+    it('should extract Colombian document number without hyphen', () => {
+      const text = 'CÉDULA CC12345678';
       const result = ocrService.parseDocumentNumber(text);
-      expect(result).toBe('V12345678');
+      expect(result).toBe('CC12345678');
     });
 
     it('should extract foreign document number', () => {
-      const text = 'CÉDULA E-87654321';
+      const text = 'CÉDULA CE-87654321';
       const result = ocrService.parseDocumentNumber(text);
-      expect(result).toBe('E87654321');
+      expect(result).toBe('CE87654321');
     });
 
     it('should handle 7-digit document numbers', () => {
-      const text = 'CÉDULA V-1234567';
+      const text = 'CÉDULA CC-1234567';
       const result = ocrService.parseDocumentNumber(text);
-      expect(result).toBe('V1234567');
+      expect(result).toBe('CC1234567');
     });
 
     it('should return null when no document number is found', () => {
@@ -46,9 +46,9 @@ describe('OCRService', () => {
     });
 
     it('should be case insensitive', () => {
-      const text = 'cédula v-12345678';
+      const text = 'cédula cc-12345678';
       const result = ocrService.parseDocumentNumber(text);
-      expect(result).toBe('V12345678');
+      expect(result).toBe('CC12345678');
     });
   });
 
@@ -123,38 +123,38 @@ describe('OCRService', () => {
   });
 
   describe('parseNationality', () => {
-    it('should detect Venezuelan nationality from V- prefix', () => {
-      const text = 'CÉDULA V-12345678';
+    it('should detect Colombian nationality from CC- prefix', () => {
+      const text = 'CÉDULA CC-12345678';
       const result = ocrService.parseNationality(text);
-      expect(result).toBe('Venezolana');
+      expect(result).toBe('Colombiana');
     });
 
-    it('should detect Venezuelan nationality from V prefix with space', () => {
-      const text = 'CÉDULA V 12345678';
+    it('should detect Colombian nationality from CC prefix with space', () => {
+      const text = 'CÉDULA CC 12345678';
       const result = ocrService.parseNationality(text);
-      expect(result).toBe('Venezolana');
+      expect(result).toBe('Colombiana');
     });
 
-    it('should detect Venezuelan nationality from V followed by digit', () => {
-      const text = 'CÉDULA V12345678';
+    it('should detect Colombian nationality from CC followed by digit', () => {
+      const text = 'CÉDULA CC12345678';
       const result = ocrService.parseNationality(text);
-      expect(result).toBe('Venezolana');
+      expect(result).toBe('Colombiana');
     });
 
-    it('should detect foreign nationality from E- prefix', () => {
-      const text = 'CÉDULA E-87654321';
-      const result = ocrService.parseNationality(text);
-      expect(result).toBe('Extranjera');
-    });
-
-    it('should detect foreign nationality from E prefix with space', () => {
-      const text = 'CÉDULA E 87654321';
+    it('should detect foreign nationality from CE- prefix', () => {
+      const text = 'CÉDULA CE-87654321';
       const result = ocrService.parseNationality(text);
       expect(result).toBe('Extranjera');
     });
 
-    it('should detect foreign nationality from E followed by digit', () => {
-      const text = 'CÉDULA E87654321';
+    it('should detect foreign nationality from CE prefix with space', () => {
+      const text = 'CÉDULA CE 87654321';
+      const result = ocrService.parseNationality(text);
+      expect(result).toBe('Extranjera');
+    });
+
+    it('should detect foreign nationality from CE followed by digit', () => {
+      const text = 'CÉDULA CE87654321';
       const result = ocrService.parseNationality(text);
       expect(result).toBe('Extranjera');
     });

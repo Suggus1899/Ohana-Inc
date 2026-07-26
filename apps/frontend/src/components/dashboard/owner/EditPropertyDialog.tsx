@@ -474,7 +474,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
                         </SelectContent>
                       </Select>
                       {propertyType === 'Residencia' && (
-                        <p className="text-[10px] text-muted-foreground mt-1">Solo disponible en alquiler para residencias.</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Solo disponible en alquiler para esta categoría.</p>
                       )}
                     </div>
                   </div>
@@ -505,7 +505,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
                         </SelectContent>
                       </Select>
                       {propertyType === 'Residencia' && (
-                        <p className="text-[10px] text-muted-foreground mt-1">Precio mensual para residencias.</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Precio mensual para esta categoría.</p>
                       )}
                     </div>
                     <div>

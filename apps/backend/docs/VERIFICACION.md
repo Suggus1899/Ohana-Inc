@@ -152,8 +152,8 @@ Si completaste todos los pasos:
 # Verifica que estás usando docker-compose.dev.yml
 docker ps
 
-# Debe mostrar: residencias-backend-dev
-# Si muestra: residencias-backend (sin -dev)
+# Debe mostrar: ohana-backend-dev
+# Si muestra: ohana-backend (sin -dev)
 # Estás en modo producción
 
 # Detén y reinicia en modo dev
@@ -170,7 +170,7 @@ npm run docker:dev
 **Verificación:**
 ```bash
 # Entra al contenedor
-docker exec -it residencias-backend-dev bash
+docker exec -it ohana-backend-dev bash
 
 # Verifica que src/ existe
 ls -la /app/src
@@ -233,7 +233,7 @@ npm run docker:down
 npm run docker:dev:logs
 
 # O
-docker logs residencias-backend-dev
+docker logs ohana-backend-dev
 ```
 
 **Busca errores como:**
@@ -248,7 +248,7 @@ docker logs residencias-backend-dev
 ### Verificar Volúmenes Montados
 
 ```bash
-docker inspect residencias-backend-dev | grep -A 10 Mounts
+docker inspect ohana-backend-dev | grep -A 10 Mounts
 ```
 
 **Debe mostrar:**
@@ -268,7 +268,7 @@ docker inspect residencias-backend-dev | grep -A 10 Mounts
 ### Verificar Comando de Inicio
 
 ```bash
-docker inspect residencias-backend-dev | grep -A 5 Cmd
+docker inspect ohana-backend-dev | grep -A 5 Cmd
 ```
 
 **Debe mostrar:**
@@ -285,7 +285,7 @@ docker inspect residencias-backend-dev | grep -A 5 Cmd
 ### Verificar Variables de Entorno
 
 ```bash
-docker exec residencias-backend-dev env | grep NODE_ENV
+docker exec ohana-backend-dev env | grep NODE_ENV
 ```
 
 **Debe mostrar:**

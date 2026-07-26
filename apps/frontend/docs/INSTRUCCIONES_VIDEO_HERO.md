@@ -18,11 +18,11 @@ Se ha actualizado el componente Hero con las siguientes mejoras:
 
 #### Paso 1: Crear carpeta de videos
 ```bash
-mkdir frontend-residencias/public/videos
+mkdir apps/frontend/public/videos
 ```
 
 #### Paso 2: Agregar tu video
-Coloca tu video en: `frontend-residencias/public/videos/hero-background.mp4`
+Coloca tu video en: `apps/frontend/public/videos/hero-background.mp4`
 
 **Recomendaciones del video:**
 - Formato: MP4 (H.264)

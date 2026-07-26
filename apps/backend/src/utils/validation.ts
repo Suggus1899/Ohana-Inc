@@ -38,7 +38,7 @@ const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const VALID_CEDULA_TYPES = ['CC', 'CE'];
 
 // Valid phone prefixes (Colombia first)
-const VALID_PHONE_PREFIXES = ['+57', '+1', '+34', '+58', '+52', '+54', '+56', '+51'];
+const VALID_PHONE_PREFIXES = ['+57', '+1', '+34', '+52', '+54', '+56', '+51'];
 
 export function validateEmail(email: string | undefined): ValidationError | null {
   if (!email || email.trim() === '') {

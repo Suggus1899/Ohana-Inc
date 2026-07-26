@@ -466,7 +466,7 @@ const VerificationsSection = () => {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Enviado el {kyc.createdAt ? new Date(kyc.createdAt).toLocaleDateString("es-VE", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                          Enviado el {kyc.createdAt ? new Date(kyc.createdAt).toLocaleDateString("es-CO", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
                         </p>
                       </div>
                     </div>
@@ -703,7 +703,7 @@ const VerificationsSection = () => {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium">{docTypeLabel(doc.documentType)}</CardTitle>
                       <CardDescription className="text-xs">
-                        {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleString('es-VE') : ''}
+                        {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleString('es-CO') : ''}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

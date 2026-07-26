@@ -22,7 +22,7 @@ docker-compose -f docker-compose.dev.yml exec backend npm run migrate
 
 O más corto:
 ```bash
-docker exec -it residencias-backend-dev npm run migrate
+docker exec -it ohana-backend-dev npm run migrate
 ```
 
 **Deberías ver:**
@@ -47,7 +47,7 @@ docker-compose -f docker-compose.dev.yml exec backend npm run seed:complete
 
 O:
 ```bash
-docker exec -it residencias-backend-dev npm run seed:complete
+docker exec -it ohana-backend-dev npm run seed:complete
 ```
 
 **Esto crea:**
@@ -139,7 +139,7 @@ Verifica que PostgreSQL esté corriendo:
 docker ps
 ```
 
-Debes ver `residencias-postgres-dev` en la lista.
+Debes ver `ohana-postgres-dev` en la lista.
 
 ### Error: "Port 3001 already in use"
 Detén el contenedor anterior:

@@ -376,7 +376,7 @@ const PropertyDetailInline = ({ property, onBack, onRentRequest, onChatWithOwner
         </div>
         <div>
           <p className="font-semibold">{property.author?.name || "Propietario"}{property.author?.isVerified && <BadgeCheck className="h-4 w-4 text-blue-500 inline ml-1" />}</p>
-          <p className="text-sm text-muted-foreground">Publicado el {new Date(property.createdAt).toLocaleDateString("es-VE")}</p>
+          <p className="text-sm text-muted-foreground">Publicado el {new Date(property.createdAt).toLocaleDateString("es-CO")}</p>
         </div>
       </div></CardContent></Card>
 

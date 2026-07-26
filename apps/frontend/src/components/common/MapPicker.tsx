@@ -26,7 +26,7 @@ interface MapPickerProps {
   height?: number;
 }
 
-const DEFAULT_CENTER: [number, number] = [9.9111, -67.3583]; // San Juan de los Morros
+const DEFAULT_CENTER: [number, number] = [4.7110, -74.0721]; // Bogotá
 const DEFAULT_ZOOM = 12;
 
 export function MapPicker({ value, onChange, className, height = 320 }: MapPickerProps) {

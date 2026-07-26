@@ -1,3 +1,5 @@
+> ⚠️ **DEPRECATED**: Docker dev mode is deprecated. Development now uses local PostgreSQL (postgres/1234/ohana_db) with `tsx watch src/index.ts`. The Docker-based dev workflow described below is no longer the recommended approach. Use `pnpm --filter @ohana/backend dev` instead. This document is kept for historical reference only.
+
 # 🔥 Desarrollo con Hot-Reload en Docker
 
 Este proyecto ahora incluye configuración para desarrollo con hot-reload, lo que significa que los cambios en tu código se reflejan automáticamente sin necesidad de reconstruir la imagen.
@@ -22,7 +24,7 @@ npm run docker:dev
 
 ## 📋 Diferencias entre Producción y Desarrollo
 
-### Modo Producción (`docker-compose.yml`)
+### Modo Producción (`docker-compose.prod.yml`)
 - ✅ Código compilado a JavaScript
 - ✅ Optimizado para performance
 - ✅ Imagen más pequeña
@@ -122,7 +124,7 @@ En modo desarrollo, estos directorios están sincronizados:
 ### Los cambios no se reflejan
 ```bash
 # Verifica que el volumen esté montado correctamente
-docker exec -it residencias-backend-dev ls -la /app/src
+docker exec -it ohana-backend-dev ls -la /app/src
 
 # Reinicia el contenedor
 docker-compose -f docker-compose.dev.yml restart backend
@@ -144,6 +146,6 @@ npm run docker:down
 
 ## 🎯 Recomendaciones
 
-- **Desarrollo diario**: Usa `docker-compose.dev.yml`
-- **Testing de producción**: Usa `docker-compose.yml`
-- **Deploy**: Usa `docker-compose.yml` con variables de entorno apropiadas
+- **Desarrollo diario**: Usa `docker-compose.dev.yml` (deprecated — use local PostgreSQL instead)
+- **Testing de producción**: Usa `docker-compose.prod.yml`
+- **Deploy**: Usa `docker-compose.prod.yml` con variables de entorno apropiadas

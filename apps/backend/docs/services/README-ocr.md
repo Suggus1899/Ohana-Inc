@@ -2,7 +2,7 @@
 
 ## Descripción
 
-El `OCRService` es un servicio de extracción de texto usando Tesseract OCR para documentos de identidad venezolanos. Implementa preprocesamiento de imágenes con sharp y parsing de campos específicos con regex.
+El `OCRService` es un servicio de extracción de texto usando Tesseract OCR para documentos de identidad colombianos. Implementa preprocesamiento de imágenes con sharp y parsing de campos específicos con regex.
 
 ## Requisitos Implementados
 
@@ -21,19 +21,19 @@ El servicio preprocesa imágenes antes de aplicar OCR para mejorar la calidad de
 
 ### Extracción de Campos
 
-El servicio extrae los siguientes campos de documentos de identidad venezolanos:
+El servicio extrae los siguientes campos de documentos de identidad colombianos:
 
-1. **Número de Cédula**: Formato V-XXXXXXXX o E-XXXXXXXX (7-8 dígitos)
+1. **Número de Cédula**: Formato CC-XXXXXXXX o CE-XXXXXXXX (6-10 dígitos)
 2. **Nombre Completo**: Extrae el nombre del titular
 3. **Fecha de Nacimiento**: Formato DD/MM/YYYY
-4. **Nacionalidad**: Venezolana (V) o Extranjera (E)
+4. **Nacionalidad**: Colombiana (CC) o Extranjera (CE)
 5. **Fecha de Vencimiento**: Del reverso del documento
 
 ### Validaciones
 
 El servicio realiza las siguientes validaciones:
 
-- ✅ Formato de número de cédula: `^[VE]\d{7,8}$`
+- ✅ Formato de número de cédula: `^[CE]\d{6,10}$`
 - ✅ Edad mínima de 18 años
 - ✅ Detección de campos faltantes
 - ✅ Validación de fechas
@@ -53,10 +53,10 @@ const ocrData = await ocrService.extractData(frontImageBuffer, backImageBuffer);
 
 console.log(ocrData);
 // {
-//   documentNumber: 'V12345678',
+//   documentNumber: 'CC12345678',
 //   fullName: 'JUAN CARLOS PÉREZ',
 //   dateOfBirth: Date(1990-03-15),
-//   nationality: 'Venezolana',
+//   nationality: 'Colombiana',
 //   expirationDate: Date(2025-03-15),
 //   rawText: '...',
 //   confidence: 87.5,
@@ -89,7 +89,7 @@ Extrae datos de documentos de identidad (frente y reverso).
 
 Parsea número de cédula del texto extraído.
 
-**Formato:** V-XXXXXXXX o E-XXXXXXXX (con o sin guión)
+**Formato:** CC-XXXXXXXX o CE-XXXXXXXX (con o sin guión)
 
 ### `parseFullName(text: string): string | null`
 
@@ -103,11 +103,11 @@ Parsea fecha de nacimiento del texto extraído.
 
 **Formato:** DD/MM/YYYY
 
-### `parseNationality(text: string): 'Venezolana' | 'Extranjera' | null`
+### `parseNationality(text: string): 'Colombiana' | 'Extranjera' | null`
 
 Parsea nacionalidad del texto extraído.
 
-**Detecta:** Prefijo V (Venezolana) o E (Extranjera)
+**Detecta:** Prefijo CC (Colombiana) o CE (Extranjera)
 
 ### `parseExpirationDate(text: string): Date | null`
 
@@ -122,7 +122,7 @@ interface OCRData {
   documentNumber: string;           // Número de cédula normalizado (sin guión)
   fullName: string;                 // Nombre completo del titular
   dateOfBirth: Date | null;         // Fecha de nacimiento
-  nationality: 'Venezolana' | 'Extranjera' | null;  // Nacionalidad
+  nationality: 'Colombiana' | 'Extranjera' | null;  // Nacionalidad
   expirationDate: Date | null;      // Fecha de vencimiento
   rawText: string;                  // Texto completo extraído
   confidence: number;               // Confianza promedio (0-100)
@@ -135,7 +135,7 @@ interface OCRData {
 El campo `validationIssues` puede contener los siguientes mensajes:
 
 - `no_detectado: número de cédula` - No se pudo extraer el número de cédula
-- `formato_invalido: número de cédula no cumple patrón ^[VE]\\d{7,8}$` - Formato inválido
+- `formato_invalido: número de cédula no cumple patrón ^[CE]\\d{6,10}$` - Formato inválido
 - `no_detectado: nombre completo` - No se pudo extraer el nombre
 - `no_detectado: fecha de nacimiento` - No se pudo extraer la fecha de nacimiento
 - `edad_minima: usuario menor de 18 años` - El usuario es menor de edad
@@ -168,7 +168,7 @@ try {
 
 Los tests unitarios se encuentran en `tests/services/ocr.service.test.ts` y cubren:
 
-- ✅ Extracción de números de cédula (V y E, con/sin guión, 7-8 dígitos)
+- ✅ Extracción de números de cédula (CC y CE, con/sin guión, 6-10 dígitos)
 - ✅ Extracción de nombres completos
 - ✅ Parsing de fechas (nacimiento y vencimiento)
 - ✅ Detección de nacionalidad

@@ -1,3 +1,5 @@
+> ⚠️ **DEPRECATED**: This document is deprecated. It covers sectorization for San Juan de los Morros (Guárico, Venezuela), which is no longer relevant. The project has been refactored to Colombia (Bogotá, Cundinamarca). This document should be rewritten for Bogotá's sectorization. The content below is kept for historical reference only.
+
 # 📍 Sectorización de San Juan de los Morros - Habitas Geocoding System
 
 ## 📊 RESUMEN COMPLETO DE UBICACIONES

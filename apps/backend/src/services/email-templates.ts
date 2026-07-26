@@ -139,7 +139,7 @@ export function welcomeTemplate(userName: string): string {
     <div style="margin:16px 0 0;padding:16px;background-color:#f0fdf4;border-radius:8px;">
       <p style="margin:0 0 6px;color:#1e293b;font-size:13px;font-weight:600;">¿Qué puedes hacer ahora?</p>
       <table role="presentation" cellpadding="0" cellspacing="0">
-        <tr><td style="padding:2px 0;color:#475569;font-size:13px;">&bull; Buscar residencias disponibles</td></tr>
+        <tr><td style="padding:2px 0;color:#475569;font-size:13px;">&bull; Buscar propiedades disponibles</td></tr>
         <tr><td style="padding:2px 0;color:#475569;font-size:13px;">&bull; Publicar tu propiedad</td></tr>
         <tr><td style="padding:2px 0;color:#475569;font-size:13px;">&bull; Contactar directamente con propietarios</td></tr>
         <tr><td style="padding:2px 0;color:#475569;font-size:13px;">&bull; Gestionar tus favoritos</td></tr>

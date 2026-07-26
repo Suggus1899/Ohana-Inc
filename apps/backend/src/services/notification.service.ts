@@ -538,7 +538,7 @@ export class NotificationService {
       <div style="margin: 30px 0 0 0; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
         <p style="margin: 0; color: #6c757d; font-size: 12px; text-align: center;">
           Esta alerta se envía automáticamente cuando la cola de revisión excede 100 verificaciones pendientes.<br>
-          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Caracas' })}
+          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
         </p>
       </div>
     `;
@@ -621,7 +621,7 @@ export class NotificationService {
       <div style="margin: 30px 0 0 0; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
         <p style="margin: 0; color: #6c757d; font-size: 12px; text-align: center;">
           Esta alerta se envía automáticamente cuando la tasa de rechazo diaria excede 30%.<br>
-          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Caracas' })}
+          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
         </p>
       </div>
     `;
@@ -694,7 +694,7 @@ export class NotificationService {
       
       <div style="margin: 30px 0 0 0; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
         <p style="margin: 0; color: #6c757d; font-size: 12px; text-align: center;">
-          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Caracas' })}
+          Fecha y hora: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota' })}
         </p>
       </div>
     `;

@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-Este documento explica la implementación de scripts de optimización de videos e imágenes en el proyecto Habitas. Los scripts están diseñados para reducir el tamaño de archivos multimedia manteniendo calidad aceptable para uso web.
+Este documento explica la implementación de scripts de optimización de videos e imágenes en el proyecto Ohana. Los scripts están diseñados para reducir el tamaño de archivos multimedia manteniendo calidad aceptable para uso web.
 
 ---
 
@@ -10,8 +10,8 @@ Este documento explica la implementación de scripts de optimización de videos 
 
 ### Ubicación de Scripts
 
-- **Windows**: `frontend-residencias/optimize-video.bat`
-- **Linux/macOS**: `frontend-residencias/optimize-video.sh`
+- **Windows**: `apps/frontend/optimize-video.bat`
+- **Linux/macOS**: `apps/frontend/optimize-video.sh`
 
 ### Requisitos
 
@@ -181,7 +181,7 @@ El script muestra:
 #   Reducción:  82%
 
 # Copiar a proyecto
-cp optimized/hero-video-optimized-max.mp4 frontend-residencias/public/videos/hero-background.mp4
+cp optimized/hero-video-optimized-max.mp4 apps/frontend/public/videos/hero-background.mp4
 ```
 
 ---
@@ -204,7 +204,7 @@ npm install sharp
 
 #### 1. Preprocesamiento para OCR
 
-**Ubicación**: `backend-residencias/src/services/ocr.service.ts`
+**Ubicación**: `apps/backend/src/services/ocr.service.ts`
 
 **Propósito**: Mejorar la precisión del OCR en documentos de identidad
 
@@ -227,7 +227,7 @@ private async preprocessImage(imagePath: string): Promise<Buffer> {
 
 #### 2. Análisis de Calidad de Frames (Liveness Detection)
 
-**Ubicación**: `backend-residencias/src/services/liveness/quality-analyzer.ts`
+**Ubicación**: `apps/backend/src/services/liveness/quality-analyzer.ts`
 
 **Propósito**: Calcular nitidez de frames de video para validar calidad
 
@@ -251,7 +251,7 @@ async calculateSharpness(frameBuffer: Buffer): Promise<number> {
 
 #### 3. Optimización de Imágenes de Propiedades
 
-**Ubicación**: `backend-residencias/src/services/media-processing.service.ts`
+**Ubicación**: `apps/backend/src/services/media-processing.service.ts`
 
 **Propósito**: Crear versiones optimizadas de fotos de propiedades
 
@@ -584,4 +584,4 @@ npm install sharp
 
 **Documento creado**: 2026-04-13  
 **Versión**: 1.0  
-**Autor**: Sistema de Documentación Habitas
+**Autor**: Sistema de Documentación Ohana

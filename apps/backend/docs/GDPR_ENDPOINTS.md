@@ -23,9 +23,9 @@ This document describes the implementation of GDPR compliance endpoints for the 
       "status": "approved",
       "verificationLevel": 5,
       "fullName": "Juan Pérez",
-      "documentNumber": "V-12345678",
+      "documentNumber": "CC-12345678",
       "dateOfBirth": "1990-01-01",
-      "nationality": "Venezolana",
+      "nationality": "Colombiana",
       "address": "Calle Principal 123",
       "faceMatchScore": 87.5,
       "livenessScore": 92.0,
@@ -162,9 +162,9 @@ This document describes the implementation of GDPR compliance endpoints for the 
       "status": "approved",
       "verificationLevel": 5,
       "fullName": "Juan Pérez",
-      "documentNumber": "V-12345678",
+      "documentNumber": "CC-12345678",
       "dateOfBirth": "1990-01-01",
-      "nationality": "Venezolana",
+      "nationality": "Colombiana",
       "address": "Calle Principal 123",
       "faceMatchScore": 87.5,
       "livenessScore": 92.0,
@@ -233,19 +233,19 @@ Run tests: `npm test -- kyc.gdpr.test.ts`
 
 ## Files Modified
 
-1. **backend-residencias/src/controllers/kyc.controller.ts**
+1. **apps/backend/src/controllers/kyc.controller.ts**
    - Added 4 new controller functions
    - Integrated audit logging
    - Added proper error handling
 
-2. **backend-residencias/src/routes/kyc.routes.ts**
+2. **apps/backend/src/routes/kyc.routes.ts**
    - Registered 4 new GDPR routes
    - Applied authentication middleware
 
-3. **backend-residencias/tests/controllers/kyc.gdpr.test.ts** (NEW)
+3. **apps/backend/tests/controllers/kyc.gdpr.test.ts** (NEW)
    - Comprehensive test suite for GDPR endpoints
 
-4. **backend-residencias/docs/GDPR_ENDPOINTS.md** (NEW)
+4. **apps/backend/docs/GDPR_ENDPOINTS.md** (NEW)
    - This documentation file
 
 ## Compliance

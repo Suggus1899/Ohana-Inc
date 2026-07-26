@@ -194,7 +194,7 @@ export const geocodingService = {
       'bogotá',
       'medellín',
       'uniandes',
-      'residencias estudiantiles'
+      'apartamentos amoblados'
     ];
   }
 };

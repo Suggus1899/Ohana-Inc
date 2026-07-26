@@ -114,7 +114,7 @@ npm test -- --testPathPattern=face-match
 
 ## Modelos Pre-entrenados
 
-Los modelos están ubicados en `backend-residencias/models/face-api/`:
+Los modelos están ubicados en `apps/backend/models/face-api/`:
 - `ssd_mobilenetv1_model-*` (detección)
 - `face_landmark_68_model-*` (landmarks)
 - `face_recognition_model-*` (descriptores)

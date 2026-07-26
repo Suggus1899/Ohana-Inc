@@ -140,7 +140,7 @@ const HumanBehaviorSection = () => {
   const trendingList = trending?.trending ?? [];
 
   const freqData = (frequency?.frequency ?? []).map((f) => ({
-    date: new Date(f.date).toLocaleDateString("es-VE", { month: "short", day: "numeric" }),
+    date: new Date(f.date).toLocaleDateString("es-CO", { month: "short", day: "numeric" }),
     sesiones: f.sessions,
   }));
 

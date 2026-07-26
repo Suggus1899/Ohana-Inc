@@ -29,9 +29,9 @@ describe('Property 1: Registration creates user with default role', () => {
     name: fc.string({ minLength: 2, maxLength: 50 }).filter(s => s.trim().length >= 2),
     email: fc.emailAddress(),
     password: fc.string({ minLength: 6, maxLength: 50 }).filter(s => s.trim().length >= 6),
-    phonePrefix: fc.constantFrom('+58', '+1', '+34', '+57', '+52', '+54', '+56', '+51'),
+    phonePrefix: fc.constantFrom('+57', '+1', '+34', '+52', '+54', '+56', '+51'),
     phone: fc.string({ minLength: 7, maxLength: 15 }).filter(s => /^\d+$/.test(s)),
-    cedulaType: fc.constantFrom('V', 'E', 'J'),
+    cedulaType: fc.constantFrom('CC', 'CE'),
     cedula: fc.string({ minLength: 6, maxLength: 10 }).filter(s => /^\d+$/.test(s)),
     dateOfBirth: fc.option(fc.date({ min: new Date('1950-01-01'), max: new Date('2005-01-01') })
       .map(d => d.toISOString().split('T')[0]), { nil: undefined }),
@@ -107,9 +107,9 @@ describe('Property 2: Duplicate email rejection', () => {
       name: 'Existing User',
       email: 'existing@test.com',
       password: 'password123',
-      phonePrefix: '+58',
-      phone: '1234567890',
-      cedulaType: 'V',
+      phonePrefix: '+57',
+      phone: '3001234567',
+      cedulaType: 'CC',
       cedula: '12345678'
     };
 
@@ -124,9 +124,9 @@ describe('Property 2: Duplicate email rejection', () => {
       name: fc.string({ minLength: 2, maxLength: 50 }).filter(s => s.trim().length >= 2),
       email: fc.constant(existingUser.email), // Same email
       password: fc.string({ minLength: 6, maxLength: 50 }).filter(s => s.trim().length >= 6),
-      phonePrefix: fc.constantFrom('+58', '+1', '+34'),
+      phonePrefix: fc.constantFrom('+57', '+1', '+34'),
       phone: fc.string({ minLength: 7, maxLength: 15 }).filter(s => /^\d+$/.test(s)),
-      cedulaType: fc.constantFrom('V', 'E', 'J'),
+      cedulaType: fc.constantFrom('CC', 'CE'),
       cedula: fc.string({ minLength: 6, maxLength: 10 }).filter(s => /^\d+$/.test(s))
     });
 

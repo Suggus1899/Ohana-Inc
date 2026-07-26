@@ -15,7 +15,7 @@ function formatCopShort(amount: number): string {
   } else if (amount >= 1_000) {
     return `${(amount / 1_000).toFixed(0)}K`;
   }
-  return Math.round(amount).toLocaleString("es-VE");
+  return Math.round(amount).toLocaleString("es-CO");
 }
 
 /**
@@ -45,7 +45,7 @@ export function DualPrice({
         <span className="text-muted-foreground">/</span>
         <span className="text-sm text-muted-foreground">
           ${" "}
-          {cop.toLocaleString("es-VE", {
+          {cop.toLocaleString("es-CO", {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
           })}

@@ -162,12 +162,12 @@ export interface PropertyAttributes {
   state: string;
   zipCode: string;
   neighborhood?: string;
-  availableRooms?: number;  // Para residencias: cuartos disponibles para alquilar
-  occupiedRooms?: number;   // Para residencias: cuartos ya ocupados
+  availableRooms?: number;  // Para propiedades tipo Residencia: cuartos disponibles para alquilar
+  occupiedRooms?: number;   // Para propiedades tipo Residencia: cuartos ya ocupados
   bedrooms: number;
   bathrooms: number;
-  roomsWithBathroom?: number; // Específico para residencias
-  outsideBathrooms?: number;  // Específico para residencias
+  roomsWithBathroom?: number; // Específico para propiedades tipo Residencia
+  outsideBathrooms?: number;  // Específico para propiedades tipo Residencia
   area: number;
   floor?: number;
   totalFloors?: number;

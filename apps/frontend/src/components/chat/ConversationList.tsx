@@ -46,13 +46,13 @@ const ConversationList = ({
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
-      return date.toLocaleTimeString("es-VE", { hour: "2-digit", minute: "2-digit" });
+      return date.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
     }
     if (days === 1) return "Ayer";
     if (days < 7) {
-      return date.toLocaleDateString("es-VE", { weekday: "short" });
+      return date.toLocaleDateString("es-CO", { weekday: "short" });
     }
-    return date.toLocaleDateString("es-VE", { day: "numeric", month: "short" });
+    return date.toLocaleDateString("es-CO", { day: "numeric", month: "short" });
   };
 
   if (conversations.length === 0) {

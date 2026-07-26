@@ -56,7 +56,7 @@ export const geocode = async (req: Request, res: Response) => {
 
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Habitas/1.0 (plataforma de residencias estudiantiles)'
+        'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
       }
     });
 

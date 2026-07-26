@@ -3,13 +3,13 @@
 ## 🚀 Inicio Rápido
 
 ### Opción 1: Doble clic (Más fácil)
-1. Abre la carpeta `backend-residencias`
+1. Abre la carpeta `apps/backend`
 2. Doble clic en `docker-start-dev.bat`
 3. ¡Listo! El servidor inicia con hot-reload
 
 ### Opción 2: PowerShell/CMD
 ```bash
-cd backend-residencias
+cd apps/backend
 npm run docker:dev
 ```
 
@@ -61,7 +61,7 @@ docker-compose --version
 
 ### 3. Clonar/Abrir proyecto
 ```powershell
-cd C:\tu\ruta\backend-residencias
+cd C:\tu\ruta\apps\backend
 ```
 
 ### 4. Instalar dependencias (opcional, para npm scripts)
@@ -156,7 +156,7 @@ wsl --install
 ## 📁 Estructura de Archivos Windows
 
 ```
-C:\tu\ruta\backend-residencias\
+C:\tu\ruta\apps\backend\
 │
 ├── src\                        # Tu código (edita aquí)
 ├── storage\                    # Archivos KYC
@@ -239,7 +239,7 @@ npm run docker:dev
 docker ps -a
 
 # Ver logs de error
-docker logs residencias-backend-dev
+docker logs ohana-backend-dev
 
 # Reiniciar Docker Desktop
 # Cierra Docker Desktop y ábrelo de nuevo

@@ -157,9 +157,9 @@ describe('PropertyController', () => {
           listingType: 'Alquiler',
           price: '800',
           priceType: 'monthly',
-          lat: '10.48', lng: '-66.90',
-          address: 'Av Principal', location: 'Caracas',
-          city: 'Caracas', state: 'Distrito Capital', zipCode: '1010',
+          lat: '4.71', lng: '-74.07',
+          address: 'Av Principal', location: 'Bogotá',
+          city: 'Bogotá', state: 'Cundinamarca', zipCode: '110111',
           bedrooms: '2', bathrooms: '1', area: '65',
           furnished: 'false', features: '[]',
         });

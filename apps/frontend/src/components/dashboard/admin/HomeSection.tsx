@@ -182,7 +182,7 @@ const HomeSection = () => {
                             {roleLabel[u.role] || u.role}
                           </Badge>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(u.createdAt).toLocaleDateString("es-VE")}
+                            {new Date(u.createdAt).toLocaleDateString("es-CO")}
                           </p>
                         </div>
                       </div>

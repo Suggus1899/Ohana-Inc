@@ -825,7 +825,7 @@ const PropertyDetail = () => {
                     <p className="text-sm text-muted-foreground">Publicado por</p>
                     <p className="font-semibold text-lg">{property.author?.name || 'Propietario'}{property.author?.isVerified && <BadgeCheck className="h-4 w-4 text-blue-500 inline ml-1" />}</p>
                     <p className="text-xs text-muted-foreground">
-                      Publicado el {new Date(property.createdAt).toLocaleDateString("es-VE")}
+                      Publicado el {new Date(property.createdAt).toLocaleDateString("es-CO")}
                     </p>
                   </div>
                 </div>

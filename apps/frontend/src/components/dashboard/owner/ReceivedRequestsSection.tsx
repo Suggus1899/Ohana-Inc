@@ -494,7 +494,7 @@ const ReceivedRequestsSection = () => {
                             </span>
                           )}
                           <span>
-                            {new Date(request.createdAt).toLocaleDateString("es-VE")}
+                            {new Date(request.createdAt).toLocaleDateString("es-CO")}
                           </span>
                         </div>
                       </div>

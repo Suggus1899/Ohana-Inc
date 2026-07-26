@@ -260,7 +260,7 @@ const LocationSearchBar = ({
       {/* Información del servicio */}
       <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
         <Navigation className="h-3 w-3" />
-        <span>Usa nuestro servicio local de geocoding para búsquedas precisas en Venezuela</span>
+        <span>Usa nuestro servicio local de geocoding para búsquedas precisas en Colombia</span>
       </div>
     </div>
   );
