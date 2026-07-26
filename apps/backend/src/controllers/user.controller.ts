@@ -157,12 +157,17 @@ export const getStudents = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const user = await User.findByPk(id, {
-      attributes: { exclude: ['password'] }
-    });
+    const requestedId = Number(id);
+    const isSelf = req.user?.userId === requestedId;
+    const isPrivileged = req.user?.role === 'admin' || req.user?.role === 'operator';
+
+    // Public profile fields visible to anyone; full profile only to self or admin/operator
+    const attributes: { exclude: string[] } = { exclude: ['password'] };
+
+    const user = await User.findByPk(id, { attributes });
 
     if (!user) {
       return res.status(404).json({
@@ -171,12 +176,27 @@ export const getUserById = async (req: Request, res: Response) => {
       });
     }
 
+    // Non-privileged users requesting another user's profile get limited fields
+    if (!isSelf && !isPrivileged) {
+      const publicFields = user.toJSON();
+      const limited = {
+        id: publicFields.id,
+        name: publicFields.name,
+        role: publicFields.role,
+        isVerified: publicFields.isVerified,
+        avatar: publicFields.avatar,
+        phonePrefix: publicFields.phonePrefix,
+        phone: publicFields.phone,
+      };
+      return res.json({ success: true, data: { user: limited } });
+    }
+
     res.json({
       success: true,
       data: { user: user.toJSON() }
     });
   } catch (error: any) {
-    console.error('changePassword error:', error);
+    console.error('getUserById error:', error);
     res.status(500).json({
       success: false,
       error: { code: 'UPDATE_ERROR', message: error.message }
@@ -811,9 +831,16 @@ const PAYMENT_FIELDS = [
   'bankPhone', 'bankPhoneId', 'bankPhoneName',
 ] as const;
 
-export const getPaymentInfo = async (req: Request, res: Response) => {
+export const getPaymentInfo = async (req: AuthRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    // /me/payment-info has no :id param; /:id/payment-info is admin-only (enforced by route)
+    const id = req.params.id || String(req.user?.userId);
+    if (!id) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Not authenticated' },
+      });
+    }
     const user = await User.findByPk(id, {
       attributes: ['name', ...PAYMENT_FIELDS],
     });

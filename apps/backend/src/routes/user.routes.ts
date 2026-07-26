@@ -35,7 +35,8 @@ router.put('/me/password', changePassword);
 router.put('/me/preferences', updatePreferences);
 router.put('/me/tutorial-completed', markTutorialCompleted);
 router.patch('/me/payment-info', updatePaymentInfo);
-router.get('/:id/payment-info', getPaymentInfo);
+router.get('/me/payment-info', getPaymentInfo);
+router.get('/:id/payment-info', requireRole(['admin']), getPaymentInfo);
 
 // Owner - view students/clients
 router.get('/students', getStudents);
