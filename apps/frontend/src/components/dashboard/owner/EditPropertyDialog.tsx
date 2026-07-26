@@ -58,7 +58,7 @@ interface FormData {
   listingType: string;
   price: number;
   priceType: string;
-  priceRate: 'oficial' | 'paralelo';
+  priceRate: 'trm';
   bedrooms: number;
   bathrooms: number;
   roomsWithBathroom?: number;
@@ -163,7 +163,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
       listingType: property.listingType,
       price: Number(property.price),
       priceType: property.priceType || 'monthly',
-      priceRate: (property as any).priceRate || 'paralelo',
+      priceRate: (property as any).priceRate || 'trm',
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
       roomsWithBathroom: (property as any).roomsWithBathroom ?? 0,
@@ -487,7 +487,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
                         {...register('price', { required: 'Requerido', min: 1 })}
                         className="mt-1"
                       />
-                      <PricePreviewField value={watch('price')} rateType={watch('priceRate') || 'paralelo'} />
+                      <PricePreviewField value={watch('price')} rateType={watch('priceRate') || 'trm'} />
                     </div>
                     <div>
                       <Label>Tipo de precio</Label>
@@ -510,13 +510,12 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
                     </div>
                     <div>
                       <Label>Tasa de cambio</Label>
-                      <Select onValueChange={(v: 'oficial' | 'paralelo') => setValue('priceRate', v)} defaultValue={((property as any)?.priceRate || 'paralelo') as 'oficial' | 'paralelo'}>
+                      <Select onValueChange={(v: 'trm') => setValue('priceRate', v)} defaultValue={((property as any)?.priceRate || 'trm') as 'trm'}>
                         <SelectTrigger className="mt-1">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="paralelo">Paralelo</SelectItem>
-                          <SelectItem value="oficial">BCV / Oficial</SelectItem>
+                          <SelectItem value="trm">TRM</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

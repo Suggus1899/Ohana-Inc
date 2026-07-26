@@ -8,7 +8,7 @@ import { useState, useCallback, useEffect, memo } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useRouteCalculation } from "@/hooks/useRouteCalculation";
 import { useExchangeRate } from "../../contexts/ExchangeRateContext";
-import { usdToVes } from "../../utils/formatPrice";
+import { usdToCop } from "../../utils/formatPrice";
 import { DualPrice } from "./DualPrice";
 
 interface PropertyCardProps {
@@ -118,7 +118,7 @@ const PropertyCard = ({
 
   const usdAmount = parseUsdPrice(price);
   const period = getPeriod(price);
-  const vesAmount = rate?.usdToVes ? usdToVes(usdAmount, rate.usdToVes) : 0;
+  const copAmount = rate?.usdToCop ? usdToCop(usdAmount, rate.usdToCop) : 0;
 
   return (
     <m.div
@@ -267,10 +267,10 @@ const PropertyCard = ({
 
           {/* Price on Image */}
           <div className="absolute bottom-2 left-2">
-            {rate?.usdToVes ? (
+            {rate?.usdToCop ? (
               <DualPrice
                 usd={usdAmount}
-                vesAmount={vesAmount}
+                copAmount={copAmount}
                 period={period}
                 variant="card"
               />

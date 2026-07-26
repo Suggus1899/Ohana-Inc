@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { exportToPDF } from "@/lib/pdf-export";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToVes } from "../../../utils/formatPrice";
+import { usdToCop } from "../../../utils/formatPrice";
 
 const DIST_COLORS = [
   "bg-blue-500", "bg-green-500", "bg-yellow-500",
@@ -81,10 +81,10 @@ export const ReportsSection = () => {
     const res = await api.getProperties({ limit: 1000 });
     if (!res.success || !res.data) return;
     const rows = res.data.properties.map(p => {
-      const vesPrice = rate ? usdToVes(p.price, rate.usdToVes) : 0;
-      return [p.id, p.title, p.type, p.status, p.price, vesPrice, p.location, new Date(p.createdAt).toLocaleDateString()].join(',');
+      const copPrice = rate ? usdToCop(p.price, rate.usdToCop) : 0;
+      return [p.id, p.title, p.type, p.status, p.price, copPrice, p.location, new Date(p.createdAt).toLocaleDateString()].join(',');
     });
-    const csv = ['ID,Título,Tipo,Estado,Precio (USD),Precio (VES),Ubicación,Fecha'].concat(rows).join('\n');
+    const csv = ['ID,Título,Tipo,Estado,Precio (USD),Precio (COP),Ubicación,Fecha'].concat(rows).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a'); a.href = url; a.download = 'propiedades.csv'; a.click();

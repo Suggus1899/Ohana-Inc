@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { ReviewForm } from "@/components/reviews";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPrice, usdToVes } from "../../../utils/formatPrice";
+import { formatDualPrice, usdToCop } from "../../../utils/formatPrice";
 
 const getStatusBadge = (status: RentalRequest['status']) => {
   switch (status) {
@@ -480,7 +480,7 @@ const ReceivedRequestsSection = () => {
                         </p>
                         {request.property?.price && rate && !rateLoading && (
                           <p className="text-xs text-muted-foreground mb-1">
-                            {formatDualPrice(Number(request.property.price), usdToVes(Number(request.property.price), rate.usdToVes))}
+                            {formatDualPrice(Number(request.property.price), usdToCop(Number(request.property.price), rate.usdToCop))}
                           </p>
                         )}
                         <p className="text-sm text-muted-foreground mb-2">

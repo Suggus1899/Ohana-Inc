@@ -28,7 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { GeocodeResult, geocodingService } from "@/services/geocoding.service";
 import LocationSearchBar from "@/components/search/LocationSearchBar";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToVes } from "../../../utils/formatPrice";
+import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 // Leaflet fix
@@ -74,8 +74,8 @@ const DiscoverPropertyCard = memo(({ property, viewMode, isFavorite, onToggleFav
         <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3"><span className="flex items-center gap-1"><Bed className="h-4 w-4" />{property.bedrooms}</span><span className="flex items-center gap-1"><Bath className="h-4 w-4" />{property.bathrooms}</span><span className="flex items-center gap-1"><Square className="h-4 w-4" />{property.area}m²</span></div>
         <div className="flex items-center justify-between">
           <div>
-            {rate?.usdToVes ? (
-              <DualPrice usd={property.price} vesRate={rate.usdToVes} period="mes" variant="inline" />
+            {rate?.usdToCop ? (
+              <DualPrice usd={property.price} copRate={rate.usdToCop} period="mes" variant="inline" />
             ) : (
               <span className="text-xl font-bold text-primary">${property.price}/mes</span>
             )}
@@ -322,8 +322,8 @@ const PropertyDetailInline = ({ property, onBack, onRentRequest, onChatWithOwner
           </Carousel>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              {rate?.usdToVes ? (
-                <DualPrice usd={property.price} vesRate={rate.usdToVes} period="mes" variant="detail" />
+              {rate?.usdToCop ? (
+                <DualPrice usd={property.price} copRate={rate.usdToCop} period="mes" variant="detail" />
               ) : (
                 <span className="text-3xl font-bold text-primary">${property.price}</span>
               )}

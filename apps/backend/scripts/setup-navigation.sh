@@ -20,8 +20,8 @@ NC='\033[0m' # No Color (Reset)
 
 # Variables de configuración
 DATA_DIR="./data"
-MAP_URL="https://download.geofabrik.de/south-america/venezuela-latest.osm.pbf"
-MAP_FILE="$DATA_DIR/venezuela-latest.osm.pbf"
+MAP_URL="https://download.geofabrik.de/south-america/colombia-latest.osm.pbf"
+MAP_FILE="$DATA_DIR/colombia-latest.osm.pbf"
 
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 echo -e "${BLUE}>>> INICIANDO CONFIGURACIÓN DE NAVEGACIÓN LOCAL${NC}"
@@ -39,7 +39,7 @@ fi
 # Descargamos el archivo .osm.pbf (OpenStreetMap) que contiene la red vial.
 # Si el archivo ya existe, saltamos este paso para ahorrar tiempo y ancho de banda.
 if [ ! -f "$MAP_FILE" ]; then
-    echo -e "${YELLOW}[INF] Descargando mapa de Venezuela (Geofabrik)...${NC}"
+    echo -e "${YELLOW}[INF] Descargando mapa de Colombia (Geofabrik)...${NC}"
     wget -O "$MAP_FILE" "$MAP_URL"
     if [ $? -ne 0 ]; then
         echo -e "${RED}[ERR] Falló la descarga del mapa. Verificá tu conexión.${NC}"
@@ -63,17 +63,17 @@ echo -e "${BLUE}>>> INICIANDO PROCESAMIENTO DE DATOS OSRM...${NC}"
 # Toma el archivo .pbf y extrae la red vial usando el perfil de 'auto' (car.lua).
 # Esto define qué calles son transitables, velocidades máximas, giros, etc.
 echo -e "${YELLOW}[1/3] Extrayendo red vial (osrm-extract)...${NC}"
-docker compose run --rm --entrypoint osrm-extract osrm -p /opt/car.lua /data/venezuela-latest.osm.pbf
+docker compose run --rm --entrypoint osrm-extract osrm -p /opt/car.lua /data/colombia-latest.osm.pbf
 
 # FASE B: osrm-partition
 # Divide el grafo de calles en celdas pequeñas para acelerar los cálculos de rutas largas.
 echo -e "${YELLOW}[2/3] Particionando grafo (osrm-partition)...${NC}"
-docker compose run --rm --entrypoint osrm-partition osrm /data/venezuela-latest.osrm
+docker compose run --rm --entrypoint osrm-partition osrm /data/colombia-latest.osrm
 
 # FASE C: osrm-customize
 # Calcula los pesos finales (tiempos de viaje) basados en los datos extraídos y particionados.
 echo -e "${YELLOW}[3/3] Personalizando motor de rutas (osrm-customize)...${NC}"
-docker compose run --rm --entrypoint osrm-customize osrm /data/venezuela-latest.osrm
+docker compose run --rm --entrypoint osrm-customize osrm /data/colombia-latest.osrm
 
 # FINALIZACIÓN
 echo -e "${BLUE}------------------------------------------------------------${NC}"

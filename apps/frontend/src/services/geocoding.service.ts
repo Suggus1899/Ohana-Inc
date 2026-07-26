@@ -190,10 +190,10 @@ export const geocodingService = {
       'la morera',
       'las palmas',
       'santa rosa',
-      'unerg',
-      'san juan de los morros',
-      'urbanización la floresta',
-      'av bolívar san juan',
+      'unal',
+      'bogotá',
+      'medellín',
+      'uniandes',
       'residencias estudiantiles'
     ];
   }

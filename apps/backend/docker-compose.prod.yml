@@ -1,27 +1,27 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: residencias-postgres-prod
+    container_name: ohana-postgres-prod
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-residencias_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-residencias_password_2026}
-      POSTGRES_DB: ${DB_NAME:-residencias_db}
+      POSTGRES_USER: ${DB_USER:-ohana_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ohana_password_2026}
+      POSTGRES_DB: ${DB_NAME:-ohana_db}
     volumes:
       - pgdata_prod:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-residencias_user} -d ${DB_NAME:-residencias_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ohana_user} -d ${DB_NAME:-ohana_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
       - "${DB_PORT:-5433}:5432"
     networks:
-      - residencias-network
+      - ohana-network
 
   redis:
     image: redis:7-alpine
-    container_name: residencias-redis-prod
+    container_name: ohana-redis-prod
     restart: always
     ports:
       - "${REDIS_PORT:-6381}:6379"
@@ -31,14 +31,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - residencias-network
+      - ohana-network
 
   backend:
     build:
       context: ../..
       dockerfile: apps/backend/docker/Dockerfile.prod
-    image: residencias-backend-prod:latest
-    container_name: residencias-backend-prod
+    image: ohana-backend-prod:latest
+    container_name: ohana-backend-prod
     restart: always
     ports:
       - "${BACKEND_PORT:-3026}:5000"
@@ -61,14 +61,14 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - residencias-network
+      - ohana-network
 
   osrm:
     build:
       context: ../..
       dockerfile: apps/backend/docker/Dockerfile.combined
-    image: residencias-combined-prod:latest
-    container_name: residencias-osrm-prod
+    image: ohana-combined-prod:latest
+    container_name: ohana-osrm-prod
     restart: always
     ports:
       - "${OSRM_PORT:-5001}:5000"
@@ -76,10 +76,10 @@ services:
     volumes:
       - ./data:/data
     networks:
-      - residencias-network
+      - ohana-network
 
 networks:
-  residencias-network:
+  ohana-network:
     driver: bridge
 
 volumes:

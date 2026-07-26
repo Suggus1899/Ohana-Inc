@@ -27,7 +27,7 @@ interface FormData {
   listingType: string;
   price: number;
   priceType: string;
-  priceRate: 'oficial' | 'paralelo';
+  priceRate: 'trm';
   bedrooms: number;
   bathrooms: number;
   roomsWithBathroom?: number;
@@ -96,7 +96,7 @@ export function CreatePropertyForm({ onSuccess, onCancel }: CreatePropertyFormPr
 
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormData>({
     defaultValues: {
-      priceRate: 'paralelo',
+      priceRate: 'trm',
       priceType: 'monthly',
       listingType: 'Alquiler',
       type: 'Residencia',
@@ -359,7 +359,7 @@ export function CreatePropertyForm({ onSuccess, onCancel }: CreatePropertyFormPr
                     placeholder="0.00"
                     className="mt-1"
                   />
-                  <PricePreviewField value={watch('price')} rateType={watch('priceRate') || 'paralelo'} />
+                  <PricePreviewField value={watch('price')} rateType={watch('priceRate') || 'trm'} />
                 </div>
                 <div>
                   <Label>Tipo de precio</Label>
@@ -382,13 +382,12 @@ export function CreatePropertyForm({ onSuccess, onCancel }: CreatePropertyFormPr
                 </div>
                 <div>
                   <Label>Tasa de cambio</Label>
-                  <Select onValueChange={(v: 'oficial' | 'paralelo') => setValue('priceRate', v)} defaultValue="paralelo">
+                  <Select onValueChange={(v: 'trm') => setValue('priceRate', v)} defaultValue="trm">
                     <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="paralelo">Paralelo</SelectItem>
-                      <SelectItem value="oficial">BCV / Oficial</SelectItem>
+                      <SelectItem value="trm">TRM</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

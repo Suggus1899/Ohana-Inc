@@ -102,7 +102,7 @@ const RequestTransactionModal: React.FC<RequestTransactionModalProps> = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="VES">VES</SelectItem>
+                  <SelectItem value="COP">COP</SelectItem>
                   <SelectItem value="EUR">EUR</SelectItem>
                 </SelectContent>
               </Select>

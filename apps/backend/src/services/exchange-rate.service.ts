@@ -1,10 +1,10 @@
-// Exchange rate service using ve.dolarapi.com
-// Caches all rates in memory with configurable TTL
+// Exchange rate service using open.er-api.com (USD -> COP)
+// Caches the TRM (Tasa Representativa del Mercado) in memory with configurable TTL
 
-export type RateType = 'oficial' | 'paralelo';
+export type RateType = 'trm';
 
 export interface SingleRate {
-  usdToVes: number;
+  usdToCop: number;
   lastUpdated: Date;
   source: string;
 }
@@ -14,15 +14,11 @@ export interface AllRates {
   defaultRate: RateType;
 }
 
-interface DolarApiEntry {
-  moneda: string;
-  codigo?: string;
-  nombre: string;
-  fuente: string;
-  promedio?: number;
-  precio?: number;
-  actualizado?: string;
-  fechaActualizacion?: string;
+interface ErApiResult {
+  result: string;
+  base_code: string;
+  time_last_update_utc: string;
+  rates: Record<string, number>;
 }
 
 class ExchangeRateService {
@@ -37,7 +33,7 @@ class ExchangeRateService {
 
   /**
    * Get all exchange rates.
-   * Returns cached rates if still fresh, otherwise fetches from ve.dolarapi.com.
+   * Returns cached rates if still fresh, otherwise fetches from open.er-api.com.
    */
   async getAllRates(forceRefresh = false): Promise<AllRates> {
     const now = Date.now();
@@ -65,26 +61,26 @@ class ExchangeRateService {
   /**
    * Get a single rate by type.
    */
-  async getRate(rateType: RateType = 'paralelo', forceRefresh = false): Promise<SingleRate> {
+  async getRate(rateType: RateType = 'trm', forceRefresh = false): Promise<SingleRate> {
     const all = await this.getAllRates(forceRefresh);
     return all.rates[rateType];
   }
 
   /**
-   * Convert USD to VES at a specific rate type.
+   * Convert USD to COP at the TRM rate.
    */
-  async convertUsdToVes(usdAmount: number, rateType: RateType = 'paralelo'): Promise<number> {
+  async convertUsdToCop(usdAmount: number, rateType: RateType = 'trm'): Promise<number> {
     const rate = await this.getRate(rateType);
-    return Math.round(usdAmount * rate.usdToVes * 100) / 100;
+    return Math.round(usdAmount * rate.usdToCop * 100) / 100;
   }
 
   /**
-   * Format USD amount with VES equivalent for display.
+   * Format USD amount with COP equivalent for display.
    */
-  async formatDualPrice(usdAmount: number, rateType: RateType = 'paralelo'): Promise<{ usd: number; ves: number; rate: number }> {
+  async formatDualPrice(usdAmount: number, rateType: RateType = 'trm'): Promise<{ usd: number; cop: number; rate: number }> {
     const rate = await this.getRate(rateType);
-    const ves = Math.round(usdAmount * rate.usdToVes * 100) / 100;
-    return { usd: usdAmount, ves, rate: rate.usdToVes };
+    const cop = Math.round(usdAmount * rate.usdToCop * 100) / 100;
+    return { usd: usdAmount, cop, rate: rate.usdToCop };
   }
 
   /**
@@ -102,78 +98,35 @@ class ExchangeRateService {
     this.lastFetchTime = 0;
   }
 
-  private getDate(d: DolarApiEntry): Date {
-    return d.fechaActualizacion
-      ? new Date(d.fechaActualizacion)
-      : d.actualizado
-        ? new Date(d.actualizado)
-        : new Date();
-  }
-
   private async fetchAllRates(): Promise<AllRates> {
-    // Primary: fetch all rates from /v1/dolares
     try {
-      const response = await fetch('https://ve.dolarapi.com/v1/dolares');
-      const data = await response.json() as DolarApiEntry[];
-
-      const findRate = (fuente: string) => data.find(d => d.fuente === fuente);
-      const oficial = findRate('oficial');
-      const paralelo = findRate('paralelo');
-
-      const rates: Record<string, SingleRate> = {};
-
-      if (oficial?.promedio) {
-        rates.oficial = {
-          usdToVes: oficial.promedio,
-          lastUpdated: this.getDate(oficial),
-          source: 've.dolarapi.com (oficial/BCV)',
-        };
+      const response = await fetch('https://open.er-api.com/v6/latest/USD');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
-      if (paralelo?.promedio) {
-        rates.paralelo = {
-          usdToVes: paralelo.promedio,
-          lastUpdated: this.getDate(paralelo),
-          source: 've.dolarapi.com (paralelo)',
-        };
+      const data = await response.json() as ErApiResult;
+
+      const copRate = data.rates?.COP;
+      if (!copRate || copRate <= 0) {
+        throw new Error('COP rate not found in response');
       }
 
-      if (Object.keys(rates).length === 0) {
-        throw new Error('No rates found in /v1/dolares');
-      }
+      const lastUpdated = data.time_last_update_utc
+        ? new Date(data.time_last_update_utc)
+        : new Date();
+
+      const trmRate: SingleRate = {
+        usdToCop: copRate,
+        lastUpdated,
+        source: 'open.er-api.com (TRM)',
+      };
 
       return {
-        rates: rates as Record<RateType, SingleRate>,
-        defaultRate: 'oficial',
+        rates: { trm: trmRate },
+        defaultRate: 'trm',
       };
-    } catch (primaryErr) {
-      // Fallback: try individual endpoints
-      const rates: Record<string, SingleRate> = {};
-
-      for (const codigo of ['paralelo', 'bcv']) {
-        try {
-          const resp = await fetch(`https://ve.dolarapi.com/v1/dolares/${codigo}`);
-          if (!resp.ok) continue;
-          const d = await resp.json() as DolarApiEntry;
-          const rate = d.promedio || d.precio || 0;
-          if (rate) {
-            const key = codigo === 'bcv' ? 'oficial' : 'paralelo';
-            rates[key] = {
-              usdToVes: rate,
-              lastUpdated: this.getDate(d),
-              source: `ve.dolarapi.com/v1/dolares/${codigo}`,
-            };
-          }
-        } catch { /* skip failed fallback */ }
-      }
-
-      if (Object.keys(rates).length === 0) {
-        throw new Error(`Error obteniendo tasa de cambio: ${(primaryErr as Error).message}`);
-      }
-
-      return {
-        rates: rates as Record<RateType, SingleRate>,
-        defaultRate: rates.oficial ? 'oficial' : 'paralelo',
-      };
+    } catch (err) {
+      throw new Error(`Error obteniendo TRM USD/COP: ${(err as Error).message}`);
     }
   }
 }

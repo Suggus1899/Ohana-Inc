@@ -285,7 +285,7 @@ export async function createUser(req: AuthRequest, res: Response): Promise<void>
     const newUser = await User.create({
       name,
       email,
-      phonePrefix: phonePrefix || '+58',
+      phonePrefix: phonePrefix || '+57',
       phone,
       cedula: fullCedula,
       cedulaType,
@@ -671,7 +671,7 @@ export async function updateUser(req: AuthRequest, res: Response): Promise<void>
     // Actualizar campos
     user.name = name;
     user.email = email;
-    user.phonePrefix = phonePrefix || '+58';
+    user.phonePrefix = phonePrefix || '+57';
     user.phone = phone;
     user.cedula = fullCedula;
     user.cedulaType = cedulaType;

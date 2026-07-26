@@ -2,7 +2,7 @@
   "name": "ohana",
   "version": "1.0.0",
   "private": true,
-  "description": "Ohana — senior care homes (residencias) platform",
+  "description": "Ohana — plataforma de alquileres, arrendamientos y residencias en Colombia",
   "scripts": {
     "dev": "pnpm --parallel --filter @ohana/backend --filter @ohana/frontend run dev",
     "dev:backend": "pnpm --filter @ohana/backend dev",

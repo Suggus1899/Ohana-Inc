@@ -40,7 +40,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { exportToPDF } from "@/lib/pdf-export";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPrice, usdToVes } from "../../../utils/formatPrice";
+import { formatDualPrice, usdToCop } from "../../../utils/formatPrice";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 
 interface PendingProperty {
@@ -193,16 +193,16 @@ const ContentReviewSection = () => {
         approved: dataToExport.filter(p => p.status === 'approved').length,
         rejected: dataToExport.filter(p => p.status === 'rejected').length
       },
-      headers: ["ID", "Título", "Propietario", "Ubicación", "Precio USD", "Precio VES", "Estado", "Fecha"],
+      headers: ["ID", "Título", "Propietario", "Ubicación", "Precio USD", "Precio COP", "Estado", "Fecha"],
       rows: dataToExport.map(p => {
-        const vesPrice = rate ? usdToVes(p.price, rate.usdToVes) : 0;
+        const copPrice = rate ? usdToCop(p.price, rate.usdToCop) : 0;
         return [
           p.id,
           p.title,
           p.owner,
           p.location,
           `$${p.price}`,
-          `Bs. ${Math.round(vesPrice).toLocaleString('es-VE')}`,
+          `$ ${Math.round(copPrice).toLocaleString('es-VE')}`,
           p.status.toUpperCase(),
           p.submittedDate
         ];
@@ -259,7 +259,7 @@ const ContentReviewSection = () => {
             </span>
             <span className="flex items-center gap-1">
               <DollarSign className="h-4 w-4" />
-              {rate ? formatDualPrice(property.price, usdToVes(property.price, rate.usdToVes), 'mes') : `$${property.price}/mes`}
+              {rate ? formatDualPrice(property.price, usdToCop(property.price, rate.usdToCop), 'mes') : `$${property.price}/mes`}
             </span>
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
@@ -526,7 +526,7 @@ const ContentReviewSection = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Precio</span>
                       <span className="text-2xl font-bold text-primary">
-                        {rate ? formatDualPrice(selectedPropertyDetails.price, usdToVes(selectedPropertyDetails.price, rate.usdToVes), 'mes') : `$${selectedPropertyDetails.price}/mes`}
+                        {rate ? formatDualPrice(selectedPropertyDetails.price, usdToCop(selectedPropertyDetails.price, rate.usdToCop), 'mes') : `$${selectedPropertyDetails.price}/mes`}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">

@@ -311,8 +311,8 @@ export default function HelpSection() {
           <a href="mailto:soporte@habitasweb.me" className="flex items-center gap-2 text-sm text-primary hover:underline">
             <Mail className="h-4 w-4" /> soporte@habitasweb.me
           </a>
-          <a href="tel:+584167325766" className="flex items-center gap-2 text-sm text-primary hover:underline">
-            <Phone className="h-4 w-4" /> +58 416-7325766
+          <a href="tel:+573001234567" className="flex items-center gap-2 text-sm text-primary hover:underline">
+            <Phone className="h-4 w-4" /> +57 300-123-4567
           </a>
         </div>
       </div>

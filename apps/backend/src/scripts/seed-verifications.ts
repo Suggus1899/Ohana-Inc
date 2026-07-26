@@ -32,9 +32,9 @@ async function seedPendingVerifications() {
         defaults: {
           ...userData,
           password: 'password123',
-          phonePrefix: '+58',
-          phone: '4120000000',
-          cedulaType: 'V'
+          phonePrefix: '+57',
+          phone: '3001234581',
+          cedulaType: 'CC'
         } as any
       });
 

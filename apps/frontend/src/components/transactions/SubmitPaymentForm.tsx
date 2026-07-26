@@ -18,11 +18,11 @@ interface SubmitPaymentFormProps {
 }
 
 const PAYMENT_METHODS = [
-  'Transferencia Bancaria',
-  'Pago Móvil',
-  'Zelle',
+  'PSE',
+  'Nequi',
+  'Daviplata',
+  'Efecty',
   'Efectivo',
-  'Binance Pay',
   'PayPal',
   'Otro',
 ];

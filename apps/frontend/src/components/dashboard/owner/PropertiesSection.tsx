@@ -30,7 +30,7 @@ import { EditPropertyDialog } from "./EditPropertyDialog";
 import api, { Property } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToVes, formatDualPrice } from "../../../utils/formatPrice";
+import { usdToCop, formatDualPrice } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 
@@ -114,7 +114,7 @@ const OwnerPropertyCard = memo(({ property, publishingId, onViewDetails, onEdit,
       </div>
       <div className="flex items-center gap-4">
         {rate && !rateLoading
-          ? <DualPrice usd={Number(property.price)} vesRate={rate.usdToVes} period={(property as any).priceType === 'daily' ? 'día' : 'mes'} variant="inline" />
+          ? <DualPrice usd={Number(property.price)} copRate={rate.usdToCop} period={(property as any).priceType === 'daily' ? 'día' : 'mes'} variant="inline" />
           : <span className="text-lg font-bold text-primary">${Number(property.price).toLocaleString()}/{ (property as any).priceType === 'daily' ? 'día' : 'mes'}</span>}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -438,7 +438,7 @@ const PropertiesSection = () => {
             {/* Info Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-gray-50 rounded-lg p-3 text-center">
-                <p className="text-2xl font-bold text-primary">{rate && !rateLoading ? formatDualPrice(Number(detailProperty.price), usdToVes(Number(detailProperty.price), rate.usdToVes)) : `$${Number(detailProperty.price).toLocaleString()}`}</p>
+                <p className="text-2xl font-bold text-primary">{rate && !rateLoading ? formatDualPrice(Number(detailProperty.price), usdToCop(Number(detailProperty.price), rate.usdToCop)) : `$${Number(detailProperty.price).toLocaleString()}`}</p>
                 <p className="text-xs text-muted-foreground">{detailProperty.priceType === 'daily' ? '/día' : '/mes'}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3 text-center">

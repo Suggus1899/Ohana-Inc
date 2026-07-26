@@ -36,7 +36,7 @@ import Navbar from "@/components/layout/Navbar";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExchangeRate } from "@/contexts/ExchangeRateContext";
-import { formatDualPrice, formatCurrency, usdToVes } from "@/utils/formatPrice";
+import { formatDualPrice, formatCurrency, usdToCop } from "@/utils/formatPrice";
 import RequestTransactionModal from "@/components/transactions/RequestTransactionModal";
 import { useChat } from "@/hooks/useChat";
 import { toast } from "sonner";
@@ -608,10 +608,10 @@ const PropertyDetail = () => {
         <div className="flex items-center gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-lg font-bold text-primary truncate">
-              {rate && rate.usdToVes > 0
+              {rate && rate.usdToCop > 0
                 ? formatDualPrice(
                     typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0,
-                    usdToVes(typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0, rate.usdToVes),
+                    usdToCop(typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0, rate.usdToCop),
                     property.listingType !== "Venta" ? "mes" : undefined
                   )
                 : `${formatCurrency(typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0, 'USD')}${property.listingType !== "Venta" ? '/mes' : ''}`
@@ -939,13 +939,13 @@ const PropertyDetail = () => {
               <Card className="border-primary">
                 <CardContent className="p-6">
                   <div className="mb-4">
-                    {rate && rate.usdToVes > 0 ? (
+                    {rate && rate.usdToCop > 0 ? (
                       <span className="text-3xl font-bold text-primary">
                         {formatDualPrice(
                           typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0,
-                          usdToVes(
+                          usdToCop(
                             typeof property.price === 'number' ? property.price : parseFloat(property.price) || 0,
-                            rate.usdToVes
+                            rate.usdToCop
                           ),
                           property.listingType !== "Venta" ? "mes" : undefined
                         )}

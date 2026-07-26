@@ -1,15 +1,15 @@
-import { usdToVes, formatCurrency } from "../../utils/formatPrice";
+import { usdToCop, formatCurrency } from "../../utils/formatPrice";
 
 interface DualPriceProps {
   usd: number;
-  vesRate?: number;
-  vesAmount?: number;
+  copRate?: number;
+  copAmount?: number;
   period?: string;
   variant?: "card" | "detail" | "inline";
   className?: string;
 }
 
-function formatVesShort(amount: number): string {
+function formatCopShort(amount: number): string {
   if (amount >= 1_000_000) {
     return `${(amount / 1_000_000).toFixed(1)}M`;
   } else if (amount >= 1_000) {
@@ -20,19 +20,19 @@ function formatVesShort(amount: number): string {
 
 /**
  * Dual price display component.
- * - "card": stacked layout (USD prominent, VES subtle) — for image overlays and compact cards
+ * - "card": stacked layout (USD prominent, COP subtle) — for image overlays and compact cards
  * - "detail": side-by-side with separator — for detail views
  * - "inline": single line with spacing — for tables and lists
  */
 export function DualPrice({
   usd,
-  vesRate,
-  vesAmount,
+  copRate,
+  copAmount,
   period,
   variant = "card",
   className = "",
 }: DualPriceProps) {
-  const ves = vesAmount ?? (vesRate ? usdToVes(usd, vesRate) : 0);
+  const cop = copAmount ?? (copRate ? usdToCop(usd, copRate) : 0);
   const periodStr = period ? `/${period}` : "";
 
   if (variant === "detail") {
@@ -44,8 +44,8 @@ export function DualPrice({
         </span>
         <span className="text-muted-foreground">/</span>
         <span className="text-sm text-muted-foreground">
-          Bs.{" "}
-          {ves.toLocaleString("es-VE", {
+          ${" "}
+          {cop.toLocaleString("es-VE", {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
           })}
@@ -63,7 +63,7 @@ export function DualPrice({
         </span>
         <span className="text-xs text-muted-foreground/70">•</span>
         <span className="text-xs text-muted-foreground">
-          Bs. {formatVesShort(ves)}
+          $ {formatCopShort(cop)}
         </span>
       </span>
     );
@@ -77,7 +77,7 @@ export function DualPrice({
         {periodStr}
       </span>
       <span className="text-[11px] sm:text-xs font-medium text-white/80 drop-shadow">
-        Bs. {formatVesShort(ves)}
+        $ {formatCopShort(cop)}
       </span>
     </div>
   );

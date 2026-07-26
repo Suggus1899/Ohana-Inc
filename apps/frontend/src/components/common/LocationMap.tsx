@@ -6,7 +6,7 @@ import { Bed, Bath, Square, MapPin } from 'lucide-react';
 import api, { Property } from '@/services/api';
 import { retryWithBackoff } from '@/utils/retryWithBackoff';
 import { useExchangeRate } from '../../contexts/ExchangeRateContext';
-import { formatDualPriceShort, usdToVes } from '../../utils/formatPrice';
+import { formatDualPriceShort, usdToCop } from '../../utils/formatPrice';
 
 const iconMap: Record<string, string> = {
   Residencia: '/images/icon-maps/residencia.png',
@@ -92,7 +92,7 @@ const LocationMap = () => {
                         {p.type}
                       </span>
                       <span className="text-sm font-bold text-primary">
-                        {rate?.usdToVes ? formatDualPriceShort(p.price, usdToVes(p.price, rate.usdToVes), p.listingType === 'Alquiler' ? 'mes' : '') : `$${p.price} ${p.listingType === 'Alquiler' ? '/mes' : ''}`}
+                        {rate?.usdToCop ? formatDualPriceShort(p.price, usdToCop(p.price, rate.usdToCop), p.listingType === 'Alquiler' ? 'mes' : '') : `$${p.price} ${p.listingType === 'Alquiler' ? '/mes' : ''}`}
                       </span>
                     </div>
                     <h3 className="font-semibold text-sm leading-tight">{p.title}</h3>

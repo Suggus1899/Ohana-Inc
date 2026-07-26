@@ -9,7 +9,7 @@ export const getExchangeRate = async (_req: Request, res: Response) => {
     res.json({
       success: true,
       data: {
-        usdToVes: defaultRate.usdToVes,
+        usdToCop: defaultRate.usdToCop,
         lastUpdated: defaultRate.lastUpdated,
         source: defaultRate.source,
         defaultRate: allRates.defaultRate,

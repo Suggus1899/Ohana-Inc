@@ -153,7 +153,7 @@ export interface PropertyAttributes {
   listingType: ListingType;
   price: number;
   priceType: "monthly" | "daily";
-  priceRate?: "oficial" | "paralelo";
+  priceRate?: "trm";
   lat: number;
   lng: number;
   address: string;

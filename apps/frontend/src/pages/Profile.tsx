@@ -16,7 +16,7 @@ import { KYCDialog } from "@/components/kyc/KYCDialog";
 import { VerificationBadge } from "@/components/kyc/VerificationBadge";
 import { UserReviewsModal } from "@/components/reviews";
 import { useExchangeRate } from "@/contexts/ExchangeRateContext";
-import { formatDualPriceShort, usdToVes } from "@/utils/formatPrice";
+import { formatDualPriceShort, usdToCop } from "@/utils/formatPrice";
 interface Property {
   id: string;
   title: string;
@@ -55,7 +55,7 @@ const Profile = () => {
     type: "Apartamento",
     bedrooms: "1",
     furnished: "true",
-    phonePrefix: user?.phonePrefix || "+58",
+    phonePrefix: user?.phonePrefix || "+57",
     phone: user?.phone || "",
     agreements: "",
     location: "",
@@ -440,10 +440,10 @@ const Profile = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-popover z-50">
-                              <SelectItem value="+58">🇻🇪 +58</SelectItem>
+                              <SelectItem value="+57">🇨🇴 +57</SelectItem>
                               <SelectItem value="+1">🇺🇸 +1</SelectItem>
                               <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                              <SelectItem value="+57">🇨🇴 +57</SelectItem>
+                              <SelectItem value="+58">🇻🇪 +58</SelectItem>
                               <SelectItem value="+52">🇲🇽 +52</SelectItem>
                               <SelectItem value="+54">🇦🇷 +54</SelectItem>
                               <SelectItem value="+56">🇨🇱 +56</SelectItem>
@@ -784,7 +784,7 @@ const Profile = () => {
                       <h3 className="font-semibold text-lg mb-1">{property.title}</h3>
                       <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{property.description}</p>
                       <div className="flex flex-wrap gap-2 text-sm">
-                        <span className="bg-primary/10 text-primary px-2 py-1 rounded">{rate?.usdToVes ? formatDualPriceShort(parseFloat(property.price.replace(/[^0-9.]/g, '')) || 0, usdToVes(parseFloat(property.price.replace(/[^0-9.]/g, '')) || 0, rate.usdToVes)) : property.price}</span>
+                        <span className="bg-primary/10 text-primary px-2 py-1 rounded">{rate?.usdToCop ? formatDualPriceShort(parseFloat(property.price.replace(/[^0-9.]/g, '')) || 0, usdToCop(parseFloat(property.price.replace(/[^0-9.]/g, '')) || 0, rate.usdToCop)) : property.price}</span>
                         <span className="bg-secondary/50 text-secondary-foreground px-2 py-1 rounded">{property.type}</span>
                         <span className="bg-muted px-2 py-1 rounded">{property.bedrooms} hab.</span>
                         <span className="bg-muted px-2 py-1 rounded">{property.furnished ? 'Amueblado' : 'Sin amueblar'}</span>

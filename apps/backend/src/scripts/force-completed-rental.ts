@@ -11,8 +11,8 @@ async function forceLease() {
     await initDatabase();
 
     // 1. Obtener usuarios y propiedad principales
-    const tenant = await User.findOne({ where: { email: 'cliente@residencias.com' } });
-    const owner = await User.findOne({ where: { email: 'propietario@residencias.com' } });
+    const tenant = await User.findOne({ where: { email: 'cliente@ohana.com' } });
+    const owner = await User.findOne({ where: { email: 'propietario@ohana.com' } });
     const property = await Property.findOne({ where: { title: 'Apartamento Moderno Centro' } });
 
     if (!tenant || !owner || !property) {
@@ -45,7 +45,7 @@ async function forceLease() {
         status: 'completed',
         message: 'Estoy interesado en alquilar este apartamento.',
         moveInDate: new Date(),
-        phoneNumber: '+58 424-1234570',
+        phoneNumber: '+57 300-1234570',
       } as any
     });
 

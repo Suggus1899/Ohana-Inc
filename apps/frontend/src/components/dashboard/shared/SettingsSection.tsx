@@ -493,21 +493,21 @@ const SettingsSection = () => {
                 ) : (
                   <>
                     <div>
-                      <h4 className="font-medium text-sm mb-3">Transferencia Bancaria</h4>
+                      <h4 className="font-medium text-sm mb-3">PSE (Datos bancarios)</h4>
                       <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2"><Label htmlFor="bankName">Banco</Label><Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="Banco de Venezuela" /></div>
-                        <div className="space-y-2"><Label htmlFor="bankAccountNumber">Número de cuenta</Label><Input id="bankAccountNumber" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="0102-0000-0000-0000" /></div>
+                        <div className="space-y-2"><Label htmlFor="bankName">Banco</Label><Input id="bankName" value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="Bancolombia" /></div>
+                        <div className="space-y-2"><Label htmlFor="bankAccountNumber">Número de cuenta</Label><Input id="bankAccountNumber" value={bankAccountNumber} onChange={(e) => setBankAccountNumber(e.target.value)} placeholder="000-000000-00" /></div>
                         <div className="space-y-2"><Label htmlFor="bankAccountHolder">Titular de la cuenta</Label><Input id="bankAccountHolder" value={bankAccountHolder} onChange={(e) => setBankAccountHolder(e.target.value)} placeholder="Nombre del titular" /></div>
                         <div className="space-y-2"><Label htmlFor="bankAccountType">Tipo de cuenta</Label><Select value={bankAccountType} onValueChange={setBankAccountType}><SelectTrigger><SelectValue placeholder="Selecciona tipo" /></SelectTrigger><SelectContent><SelectItem value="corriente">Corriente</SelectItem><SelectItem value="ahorro">Ahorro</SelectItem></SelectContent></Select></div>
                       </div>
                     </div>
                     <Separator />
                     <div>
-                      <h4 className="font-medium text-sm mb-3">Pago Móvil</h4>
+                      <h4 className="font-medium text-sm mb-3">Nequi / Daviplata</h4>
                       <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2"><Label htmlFor="bankPhone">Teléfono</Label><Input id="bankPhone" value={bankPhone} onChange={(e) => setBankPhone(e.target.value)} placeholder="0412-1234567" /></div>
-                        <div className="space-y-2"><Label htmlFor="bankPhoneId">Cédula asociada</Label><Input id="bankPhoneId" value={bankPhoneId} onChange={(e) => setBankPhoneId(e.target.value)} placeholder="V-12345678" /></div>
-                        <div className="space-y-2"><Label htmlFor="bankPhoneName">Banco destino</Label><Input id="bankPhoneName" value={bankPhoneName} onChange={(e) => setBankPhoneName(e.target.value)} placeholder="Banco de Venezuela" /></div>
+                        <div className="space-y-2"><Label htmlFor="bankPhone">Teléfono</Label><Input id="bankPhone" value={bankPhone} onChange={(e) => setBankPhone(e.target.value)} placeholder="300-1234567" /></div>
+                        <div className="space-y-2"><Label htmlFor="bankPhoneId">Cédula asociada</Label><Input id="bankPhoneId" value={bankPhoneId} onChange={(e) => setBankPhoneId(e.target.value)} placeholder="CC-12345678" /></div>
+                        <div className="space-y-2"><Label htmlFor="bankPhoneName">Nombre</Label><Input id="bankPhoneName" value={bankPhoneName} onChange={(e) => setBankPhoneName(e.target.value)} placeholder="Nombre del titular" /></div>
                       </div>
                     </div>
                     <Button onClick={handleSavePaymentInfo} disabled={savingPayment}>

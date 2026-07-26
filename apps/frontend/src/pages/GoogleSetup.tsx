@@ -32,9 +32,9 @@ const GoogleSetup = () => {
   }, [tempToken, navigate, showError]);
 
   const [role, setRole] = useState("");
-  const [phonePrefix, setPhonePrefix] = useState("+58");
+  const [phonePrefix, setPhonePrefix] = useState("+57");
   const [phone, setPhone] = useState("");
-  const [cedulaType, setCedulaType] = useState("V");
+  const [cedulaType, setCedulaType] = useState("CC");
   const [cedula, setCedula] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState("");
@@ -170,7 +170,7 @@ const GoogleSetup = () => {
                 <Select value={phonePrefix} onValueChange={setPhonePrefix}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="+58">+58</SelectItem>
+                    <SelectItem value="+57">+57</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

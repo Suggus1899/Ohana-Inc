@@ -30,16 +30,16 @@ import {
 import { api } from '@/services/api';
 import { submitPayment, getTransactionDetails } from '@/services/transaction.service';
 import { useExchangeRate } from '@/contexts/ExchangeRateContext';
-import { formatDualPrice, formatCurrency, usdToVes } from '@/utils/formatPrice';
+import { formatDualPrice, formatCurrency, usdToCop } from '@/utils/formatPrice';
 
 const PRIMARY_PAYMENT_METHODS = [
-  { value: 'transferencia', label: 'Transferencia Bancaria', icon: '🏦' },
-  { value: 'pago_movil', label: 'Pago Móvil', icon: '📱' },
+  { value: 'pse', label: 'PSE', icon: '🏦' },
+  { value: 'nequi', label: 'Nequi', icon: '📱' },
 ];
 
 const SECONDARY_PAYMENT_METHODS = [
-  { value: 'zelle', label: 'Zelle', icon: '💵' },
-  { value: 'binance', label: 'Binance Pay', icon: '🪙' },
+  { value: 'daviplata', label: 'Daviplata', icon: '💸' },
+  { value: 'efecty', label: 'Efecty', icon: '🏪' },
   { value: 'efectivo', label: 'Efectivo', icon: '💰' },
 ];
 
@@ -104,7 +104,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
 
   const property = request.property;
   const amount = property?.price || 0;
-  const vesAmount = rate?.usdToVes ? usdToVes(amount, rate.usdToVes) : 0;
+  const copAmount = rate?.usdToCop ? usdToCop(amount, rate.usdToCop) : 0;
   const ownerId = property?.authorId;
 
   useEffect(() => {
@@ -287,7 +287,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm text-blue-700">Monto a Pagar</span>
           <Badge className="bg-blue-100 text-blue-800 text-lg px-3">
-            {formatDualPrice(amount, vesAmount)}
+            {formatDualPrice(amount, copAmount)}
           </Badge>
         </div>
         {request.moveInDate && (
@@ -370,13 +370,13 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
       );
     }
 
-    const hasTransferencia = ownerPaymentInfo?.bankName || ownerPaymentInfo?.bankAccountNumber;
-    const hasPagoMovil = ownerPaymentInfo?.bankPhone;
+    const hasPSE = ownerPaymentInfo?.bankName || ownerPaymentInfo?.bankAccountNumber;
+    const hasNequi = ownerPaymentInfo?.bankPhone;
 
     const renderMethodContent = () => {
       if (!paymentMethod) return null;
 
-      if (['zelle', 'binance', 'efectivo'].includes(paymentMethod)) {
+      if (['daviplata', 'efecty', 'efectivo'].includes(paymentMethod)) {
         return (
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
             <div className="flex items-start gap-3">
@@ -393,12 +393,12 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
         );
       }
 
-      if (paymentMethod === 'transferencia') {
-        if (!hasTransferencia) {
+      if (paymentMethod === 'pse') {
+        if (!hasPSE) {
           return (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <p className="text-sm text-gray-600 text-center">
-                El propietario aún no ha configurado sus datos de transferencia bancaria.
+                El propietario aún no ha configurado sus datos bancarios para PSE.
                 Selecciona otro método o contáctalo directamente.
               </p>
             </div>
@@ -409,7 +409,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
             <CardContent className="p-4 space-y-3">
               <h4 className="font-semibold text-sm flex items-center gap-2">
                 <Banknote className="h-4 w-4 text-blue-600" />
-                Transferencia Bancaria
+                PSE
               </h4>
               <Separator />
               {renderCopyRow('Banco', ownerPaymentInfo?.bankName ?? null)}
@@ -421,12 +421,12 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
         );
       }
 
-      if (paymentMethod === 'pago_movil') {
-        if (!hasPagoMovil) {
+      if (paymentMethod === 'nequi') {
+        if (!hasNequi) {
           return (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <p className="text-sm text-gray-600 text-center">
-                El propietario aún no ha configurado sus datos de Pago Móvil.
+                El propietario aún no ha configurado su número de Nequi.
                 Selecciona otro método o contáctalo directamente.
               </p>
             </div>
@@ -437,12 +437,12 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
             <CardContent className="p-4 space-y-3">
               <h4 className="font-semibold text-sm flex items-center gap-2">
                 <Phone className="h-4 w-4 text-green-600" />
-                Pago Móvil
+                Nequi
               </h4>
               <Separator />
               {renderCopyRow('Teléfono', ownerPaymentInfo?.bankPhone ?? null)}
               {renderCopyRow('Cédula asociada', ownerPaymentInfo?.bankPhoneId ?? null)}
-              {renderCopyRow('Banco destino', ownerPaymentInfo?.bankPhoneName ?? null)}
+              {renderCopyRow('Nombre', ownerPaymentInfo?.bankPhoneName ?? null)}
             </CardContent>
           </Card>
         );
@@ -467,7 +467,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           <div className="space-y-2">
             <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Métodos Principales</p>
             {PRIMARY_PAYMENT_METHODS.map((m) => {
-              const available = m.value === 'transferencia' ? !!hasTransferencia : m.value === 'pago_movil' ? !!hasPagoMovil : true;
+              const available = m.value === 'pse' ? !!hasPSE : m.value === 'nequi' ? !!hasNequi : true;
               return (
                 <button
                   key={m.value}
@@ -531,7 +531,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
     <div className="space-y-4">
       <div className="bg-gray-50 p-3 rounded-lg">
         <p className="text-sm text-gray-600">Monto pagado:</p>
-        <p className="text-xl font-bold text-blue-600">{formatDualPrice(amount, vesAmount)}</p>
+        <p className="text-xl font-bold text-blue-600">{formatDualPrice(amount, copAmount)}</p>
       </div>
 
       <div className="space-y-2">
@@ -556,7 +556,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           id="reference"
           value={paymentReference}
           onChange={(e) => setPaymentReference(e.target.value)}
-          placeholder="Ej: 12345678, confirmación de Zelle, etc."
+          placeholder="Ej: 12345678, confirmación de Nequi/PSE, etc."
           required
         />
       </div>
@@ -656,7 +656,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">Monto:</span>
-            <span className="font-bold text-blue-600">{formatDualPrice(amount, vesAmount)}</span>
+            <span className="font-bold text-blue-600">{formatDualPrice(amount, copAmount)}</span>
           </div>
           {files.length > 0 && (
             <div className="flex justify-between text-sm">
@@ -703,7 +703,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-green-700">Monto Pagado:</span>
-            <span className="font-bold text-green-900">{formatDualPrice(amount, vesAmount)}</span>
+            <span className="font-bold text-green-900">{formatDualPrice(amount, copAmount)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-green-700">Estado:</span>

@@ -12,7 +12,7 @@ async function seedReports() {
     
     const count = users.length;
     for (let i = count; i < 3; i++) {
-        const email = `cliente${i}@residencias.com`;
+        const email = `cliente${i}@ohana.com`;
         const exists = await User.findOne({ where: { email } });
         if (!exists) {
             const newUser = await User.create({
@@ -20,9 +20,9 @@ async function seedReports() {
                 email,
                 password: 'Password123!',
                 role: 'cliente',
-                phonePrefix: '+58',
-                phone: `424000000${i}`,
-                cedulaType: 'V',
+                phonePrefix: '+57',
+                phone: `300123459${i}`,
+                cedulaType: 'CC',
                 cedula: `9900000${i}`,
                 isVerified: true
             });

@@ -2,9 +2,9 @@
 
 # 🏠 Ohana
 
-### Plataforma de Residencias para Adultos Mayores — Cuidado con confianza
+### Plataforma de Alquileres, Arrendamientos y Residencias — Encuentra tu lugar en Colombia
 
-Plataforma integral de **residencias y cuidado de adultos mayores** en Venezuela. Conecta familias con residencias verificadas, con verificación biométrica de identidad (KYC), transacciones P2P seguras, chat en tiempo real y navegación GPS hacia las residencias.
+Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y encontrá departamentos, casas, cuartos, residencias estudiantiles y más, con verificación biométrica de identidad (KYC), transacciones P2P seguras, chat en tiempo real y navegación GPS hacia las propiedades.
 
 </div>
 
@@ -264,9 +264,23 @@ pnpm run docker:down    # detener
 |-----|-------------|--------|
 | `admin` | Administrador del sistema | Gestión completa: usuarios, propiedades, métricas, KYC |
 | `operator` | Operador de plataforma | Moderación de propiedades, aprobación KYC, soporte |
-| `propietario` | Dueño de residencia | CRUD propiedades, gestión reservas, chat, reviews |
-| `cliente` | Cliente/familiar | Búsqueda, reservas, chat, pagos, reviews |
+| `propietario` | Dueño de propiedad | CRUD propiedades, gestión reservas, chat, reviews |
+| `cliente` | Cliente/inquilino | Búsqueda, reservas, chat, pagos, reviews |
 | `estudiante` | Estudiante (sub-rol de cliente) | Búsqueda, reservas, KYC biométrico, chat |
+
+### Tipos de Propiedad
+
+La plataforma soporta alquileres y ventas de:
+
+| Tipo | Descripción |
+|------|-------------|
+| **Apartamento** | Departamentos en edificios |
+| **Casa** | Casas independientes |
+| **Cuarto** | Habitaciones individuales en alquiler |
+| **Residencia** | Residencias estudiantiles o compartidas (con campos especiales: cuartos disponibles, baños compartidos) |
+| **Finca** | Fincas y propiedades rurales |
+| **Local** | Locales comerciales |
+| **Terreno** | Terrenos y lotes |
 
 ### Sistema KYC — 3 Niveles Progresivos
 
@@ -275,6 +289,10 @@ pnpm run docker:down    # detener
 | **1** | Información básica (nombre, documento, fecha nacimiento) | No — auto-completado | `level_1_completed` |
 | **2** | Información adicional (nacionalidad, dirección, contacto) | No — auto-completado | `level_2_completed` |
 | **3** | Documentos + biometría (foto cédula, selfie, selfie+doc, liveness video, comprobante domicilio) | Sí — revisión del operador | `pending_review` → `approved` / `rejected` |
+
+**Documentos aceptados (Colombia):**
+- **CC** — Cédula de Ciudadanía
+- **CE** — Cédula de Extranjería
 
 **Flujo:**
 
@@ -291,13 +309,13 @@ under_review → approved / rejected
 ```
 
 **Biometría (Nivel 3):**
-- **OCR** con Tesseract.js para extraer datos de la cédula
+- **OCR** con Tesseract.js para extraer datos de la cédula colombiana
 - **Face match** con @vladmandic/face-api (comparar selfie vs foto del documento)
 - **Liveness detection** con face-api + TensorFlow.js (prueba de vida por video)
 
 ### Transacciones P2P
 
-Flujo de alquiler de residencias peer-to-peer:
+Flujo de alquiler peer-to-peer:
 
 ```
 1. Cliente solicita alquiler  →  RentRequest (pending)
@@ -307,6 +325,12 @@ Flujo de alquiler de residencias peer-to-peer:
 5. Disputa (opcional)         →  Dispute (open → under_review → resolved)
 ```
 
+**Métodos de pago (Colombia):**
+- Nequi
+- Daviplata
+- PSE (Pagos Seguros en Línea)
+- Efecty
+
 ## 📲 Features del Frontend
 
 | Feature | Descripción |
@@ -314,11 +338,11 @@ Flujo de alquiler de residencias peer-to-peer:
 | **Auth** | Login + registro con JWT + Google OAuth (Passport) |
 | **Dashboards por rol** | 4 dashboards: admin, operator, owner (propietario), tenant (cliente/estudiante) |
 | **KYC biométrico** | 3 niveles progresivos — webcam capture, OCR de cédula, face match, liveness detection |
-| **Búsqueda de propiedades** | Filtros, geolocalización, mapa interactivo (Leaflet) |
+| **Búsqueda de propiedades** | Filtros, geolocalización, mapa interactivo (Leaflet) — Bogotá, Medellín, Cali, Barranquilla |
 | **Detalle de propiedad** | Galería, amenidades, reviews, ubicación, contacto |
 | **Transacciones P2P** | Solicitud de alquiler, pago, confirmación, disputas |
 | **Chat en tiempo real** | Socket.IO — conversaciones, bloqueo de usuarios, estado online |
-| **Navegación GPS** | Routing paso a paso hacia la residencia (Leaflet + OSRM) |
+| **Navegación GPS** | Routing paso a paso hacia la propiedad (Leaflet + OSRM) |
 | **Reviews** | Calificaciones de propiedades y usuarios |
 | **Notificaciones** | Badge counts + toasts en tiempo real |
 | **Moderación** | Panel de operador para aprobar/rechazar propiedades y KYC |

@@ -26,12 +26,12 @@ function RatePopoverContent({
   loading,
   onRefresh,
 }: {
-  rate: { usdToVes: number; lastUpdated?: string; source?: string; rates?: Record<string, { usdToVes: number; lastUpdated?: string; source?: string }> } | null;
+  rate: { usdToCop: number; lastUpdated?: string; source?: string; rates?: Record<string, { usdToCop: number; lastUpdated?: string; source?: string }> } | null;
   loading: boolean;
   onRefresh: () => void;
 }) {
   const entries = rate?.rates
-    ? (Object.entries(rate.rates) as [RateType, { usdToVes: number; lastUpdated?: string; source?: string }][])
+    ? (Object.entries(rate.rates) as [RateType, { usdToCop: number; lastUpdated?: string; source?: string }][])
     : [];
 
   return (
@@ -56,11 +56,11 @@ function RatePopoverContent({
                   </span>
                 </div>
                 <span className="text-sm font-bold">
-                  {rateEntry.usdToVes.toLocaleString("es-VE", {
+                  {rateEntry.usdToCop.toLocaleString("es-VE", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}{" "}
-                  <span className="text-muted-foreground font-normal">Bs</span>
+                  <span className="text-muted-foreground font-normal">$</span>
                 </span>
               </div>
               <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
@@ -75,11 +75,11 @@ function RatePopoverContent({
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">1 USD</span>
             <span className="text-base font-bold">
-              {rate.usdToVes.toLocaleString("es-VE", {
+              {rate.usdToCop.toLocaleString("es-VE", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}{" "}
-              <span className="text-muted-foreground font-normal">Bs</span>
+              <span className="text-muted-foreground font-normal">$</span>
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -118,7 +118,7 @@ export function ExchangeRateBadge() {
   const { rate, loading, error, refresh } = useExchangeRate();
   const [open, setOpen] = useState(false);
 
-  if (loading || error || !rate || rate.usdToVes === 0) {
+  if (loading || error || !rate || rate.usdToCop === 0) {
     return null;
   }
 
@@ -128,11 +128,11 @@ export function ExchangeRateBadge() {
         <button className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-xs font-medium text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-950/50 transition-colors cursor-pointer whitespace-nowrap">
           <span className="text-[10px]">🇻🇪</span>
           <span className="font-semibold">
-            {rate.usdToVes.toLocaleString("es-VE", {
+            {rate.usdToCop.toLocaleString("es-VE", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 2,
             })}{" "}
-            Bs
+            $
           </span>
         </button>
       </PopoverTrigger>
@@ -147,7 +147,7 @@ export function ExchangeRateBadgeMobile() {
   const { rate, loading, error, refresh } = useExchangeRate();
   const [open, setOpen] = useState(false);
 
-  if (loading || error || !rate || rate.usdToVes === 0) {
+  if (loading || error || !rate || rate.usdToCop === 0) {
     return null;
   }
 
@@ -157,11 +157,11 @@ export function ExchangeRateBadgeMobile() {
         <button className="flex md:hidden items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 text-xs font-medium text-green-700 dark:text-green-400 cursor-pointer">
           <span>🇻🇪</span>
           <span className="font-semibold">
-            {rate.usdToVes.toLocaleString("es-VE", {
+            {rate.usdToCop.toLocaleString("es-VE", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 2,
             })}{" "}
-            Bs
+            $
           </span>
         </button>
       </PopoverTrigger>

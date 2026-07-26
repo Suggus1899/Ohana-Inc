@@ -25,7 +25,7 @@ import {
 import { api, Property, Pagination, User } from "@/services/api";
 import { toast } from "sonner";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPriceShort, usdToVes } from "../../../utils/formatPrice";
+import { formatDualPriceShort, usdToCop } from "../../../utils/formatPrice";
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -302,7 +302,7 @@ const PropertiesSection = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-4 ml-20 lg:ml-0">
-                    <span className="text-lg font-bold text-primary">{rate ? formatDualPriceShort(property.price, usdToVes(property.price, rate.usdToVes), 'mes') : `$${property.price}/mes`}</span>
+                    <span className="text-lg font-bold text-primary">{rate ? formatDualPriceShort(property.price, usdToCop(property.price, rate.usdToCop), 'mes') : `$${property.price}/mes`}</span>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" disabled={isActioning === property.id}>

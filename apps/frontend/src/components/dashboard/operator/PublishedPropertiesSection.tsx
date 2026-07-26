@@ -15,7 +15,7 @@ import {
 import { Loader2, Search, ExternalLink, Ban, Home, DollarSign, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPriceShort, usdToVes } from "../../../utils/formatPrice";
+import { formatDualPriceShort, usdToCop } from "../../../utils/formatPrice";
 
 const PublishedPropertiesSection = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -82,7 +82,7 @@ const PublishedPropertiesSection = () => {
                       <td className="p-2 font-medium">{p.title || "Sin titulo"}</td>
                       <td className="p-2 text-muted-foreground">{p.ownerId}</td>
                       <td className="p-2">{p.type || "-"}</td>
-                       <td className="p-2">{p.price != null ? (rate ? formatDualPriceShort(p.price, usdToVes(p.price, rate.usdToVes), 'mes') : `$${p.price.toLocaleString()}`) : "-"}</td>
+                       <td className="p-2">{p.price != null ? (rate ? formatDualPriceShort(p.price, usdToCop(p.price, rate.usdToCop), 'mes') : `$${p.price.toLocaleString()}`) : "-"}</td>
                       <td className="p-2">{statusBadge(p.status || "approved")}</td>
                       <td className="p-2">
                         <div className="flex gap-1">

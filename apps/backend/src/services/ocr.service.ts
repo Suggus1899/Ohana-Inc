@@ -5,10 +5,10 @@ import { DependencyError, LivenessValidationError, LivenessProcessingError } fro
 
 /**
  * OCRService
- * 
- * Servicio de extracción de texto usando Tesseract OCR para documentos de identidad venezolanos.
+ *
+ * Servicio de extracción de texto usando Tesseract OCR para documentos de identidad colombianos.
  * Implementa preprocesamiento de imágenes con sharp y parsing de campos específicos con regex.
- * 
+ *
  * Requisitos: 5.1-5.13, 20.1-20.13
  */
 
@@ -16,7 +16,7 @@ export interface OCRData {
   documentNumber: string;
   fullName: string;
   dateOfBirth: Date | null;
-  nationality: 'Venezolana' | 'Extranjera' | null;
+  nationality: 'Colombiana' | 'Extranjera' | null;
   expirationDate: Date | null;
   rawText: string;
   confidence: number;
@@ -92,10 +92,10 @@ export class OCRService {
       if (!documentNumber) {
         validationIssues.push('no_detectado: número de cédula');
       } else {
-        // Validar patrón de número de cédula (Requisito 5.10)
-        const documentPattern = /^[VE]\d{7,8}$/;
+        // Validar patrón de número de cédula colombiana (CC: 6-10 dígitos, CE: CE + dígitos)
+        const documentPattern = /^(CC|CE)?\d{6,10}$/i;
         if (!documentPattern.test(documentNumber)) {
-          validationIssues.push('formato_invalido: número de cédula no cumple patrón ^[VE]\\d{7,8}$');
+          validationIssues.push('formato_invalido: número de cédula no cumple patrón ^(CC|CE)?\\d{6,10}$');
         }
       }
 
@@ -150,23 +150,29 @@ export class OCRService {
 
   /**
    * Parsea número de cédula del texto extraído
-   * Formato: V-XXXXXXXX o E-XXXXXXXX (con o sin guión)
-   * 
+   * Formato Colombia: CC-XXXXXXXXXX, CE-XXXXXXXXXX, o número solo (6-10 dígitos)
+   *
    * @param text - Texto extraído por OCR
    * @returns Número de cédula normalizado (sin guión) o null si no se detecta
-   * 
+   *
    * Requisitos: 5.3, 20.7
    */
   parseDocumentNumber(text: string): string | null {
-    const regex = /[VE]-?\d{7,8}/i;
-    const match = text.match(regex);
-    
-    if (!match) {
-      return null;
+    // Primero intentar con prefijo CC/CE
+    const regexWithPrefix = /(?:CC|CE)-?\d{6,10}/i;
+    const matchWithPrefix = text.match(regexWithPrefix);
+    if (matchWithPrefix) {
+      return matchWithPrefix[0].toUpperCase().replace('-', '');
     }
 
-    // Normalizar: mayúsculas y sin guión
-    return match[0].toUpperCase().replace('-', '');
+    // Si no encuentra con prefijo, buscar número solo de 6-10 dígitos
+    const regexNumberOnly = /\b\d{6,10}\b/;
+    const matchNumberOnly = text.match(regexNumberOnly);
+    if (matchNumberOnly) {
+      return matchNumberOnly[0];
+    }
+
+    return null;
   }
 
   /**
@@ -229,22 +235,22 @@ export class OCRService {
 
   /**
    * Parsea nacionalidad del texto extraído
-   * Detecta prefijo V (Venezolana) o E (Extranjera)
-   * 
+   * Detecta prefijo CC (Cédula de Ciudadanía = Colombiana) o CE (Cédula de Extranjería = Extranjera)
+   *
    * @param text - Texto extraído por OCR
-   * @returns 'Venezolana' o 'Extranjera' o null si no se detecta
-   * 
+   * @returns 'Colombiana' o 'Extranjera' o null si no se detecta
+   *
    * Requisitos: 5.6
    */
-  parseNationality(text: string): 'Venezolana' | 'Extranjera' | null {
-    if (text.includes('V-') || text.includes('V ') || /\bV\d/.test(text)) {
-      return 'Venezolana';
+  parseNationality(text: string): 'Colombiana' | 'Extranjera' | null {
+    if (text.includes('CC-') || text.includes('CC ') || /\bCC\d/i.test(text)) {
+      return 'Colombiana';
     }
-    
-    if (text.includes('E-') || text.includes('E ') || /\bE\d/.test(text)) {
+
+    if (text.includes('CE-') || text.includes('CE ') || /\bCE\d/i.test(text)) {
       return 'Extranjera';
     }
-    
+
     return null;
   }
 

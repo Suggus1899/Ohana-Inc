@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getMyTransactions } from "@/services/transaction.service";
 import { TransactionStatus } from "@/types/transaction.types";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatCurrency, usdToVes } from "../../../utils/formatPrice";
+import { formatCurrency, usdToCop } from "../../../utils/formatPrice";
 
 interface MonthlyIncome {
   month: string;
@@ -242,7 +242,7 @@ const StatsSection = () => {
             <div className="text-3xl font-bold">${(stats?.projectedIncome || 0).toLocaleString()}</div>
             {rate && !rateLoading && (
               <div className="text-base font-semibold text-muted-foreground">
-                {formatCurrency(usdToVes(stats?.projectedIncome || 0, rate.usdToVes), 'VES')}
+                {formatCurrency(usdToCop(stats?.projectedIncome || 0, rate.usdToCop), 'COP')}
               </div>
             )}
             <p className="text-sm text-muted-foreground mt-1">
@@ -262,7 +262,7 @@ const StatsSection = () => {
             <div className="text-3xl font-bold text-green-600">${(stats?.collectedIncome || 0).toLocaleString()}</div>
             {rate && !rateLoading && (
               <div className="text-base font-semibold text-muted-foreground">
-                {formatCurrency(usdToVes(stats?.collectedIncome || 0, rate.usdToVes), 'VES')}
+                {formatCurrency(usdToCop(stats?.collectedIncome || 0, rate.usdToCop), 'COP')}
               </div>
             )}
             <p className="text-sm text-muted-foreground mt-1">

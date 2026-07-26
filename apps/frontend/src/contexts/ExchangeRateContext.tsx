@@ -6,10 +6,10 @@ export interface ExchangeRateContextValue {
   loading: boolean;
   error: string | null;
   refresh: () => void;
-  /** Get VES value for a USD amount at a specific rate type */
-  getVesFor: (usdAmount: number, rateType?: RateType) => number;
+  /** Get COP value for a USD amount at a specific rate type */
+  getCopFor: (usdAmount: number, rateType?: RateType) => number;
   /** Get rate info for a specific rate type */
-  getRateType: (rateType?: RateType) => { usdToVes: number } | null;
+  getRateType: (rateType?: RateType) => { usdToCop: number } | null;
 }
 
 const ExchangeRateContext = createContext<ExchangeRateContextValue>({
@@ -17,7 +17,7 @@ const ExchangeRateContext = createContext<ExchangeRateContextValue>({
   loading: true,
   error: null,
   refresh: () => {},
-  getVesFor: () => 0,
+  getCopFor: () => 0,
   getRateType: () => null,
 });
 
@@ -33,33 +33,33 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       setError(null);
       const data = await fetchExchangeRate();
-      if (data.usdToVes > 0) {
+      if (data.usdToCop > 0) {
         setRate(data);
       } else {
-        setError('No se pudo obtener tasa de cambio');
+        setError('No se pudo obtener la TRM');
       }
     } catch (e) {
-      setError('Error al obtener tasa de cambio');
+      setError('Error al obtener la TRM');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const getVesFor = useCallback(
+  const getCopFor = useCallback(
     (usdAmount: number, rateType?: RateType): number => {
       if (!rate?.rates) return 0;
       const r = getRate(rate.rates, rateType);
-      if (!r || r.usdToVes === 0) return 0;
-      return Math.round(usdAmount * r.usdToVes * 100) / 100;
+      if (!r || r.usdToCop === 0) return 0;
+      return Math.round(usdAmount * r.usdToCop * 100) / 100;
     },
     [rate],
   );
 
   const getRateType = useCallback(
-    (rateType?: RateType): { usdToVes: number } | null => {
+    (rateType?: RateType): { usdToCop: number } | null => {
       if (!rate?.rates) return null;
       const r = getRate(rate.rates, rateType);
-      return r ? { usdToVes: r.usdToVes } : null;
+      return r ? { usdToCop: r.usdToCop } : null;
     },
     [rate],
   );
@@ -71,7 +71,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
   }, [load]);
 
   return (
-    <ExchangeRateContext.Provider value={{ rate, loading, error, refresh: load, getVesFor, getRateType }}>
+    <ExchangeRateContext.Provider value={{ rate, loading, error, refresh: load, getCopFor, getRateType }}>
       {children}
     </ExchangeRateContext.Provider>
   );

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { api, Property, RentalRequest } from "@/services/api";
 import { UserReviewsModal } from "@/components/reviews";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToVes } from "../../../utils/formatPrice";
+import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 interface OwnerStats {
@@ -191,7 +191,7 @@ const HomeSection = ({ onNavigate }: { onNavigate?: (section: string) => void })
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-primary">{rate && !rateLoading ? <DualPrice usd={Number(property.price)} vesRate={rate.usdToVes} period="mes" variant="inline" /> : `$${Number(property.price).toLocaleString()}/mes`}</p>
+                          <p className="text-primary">{rate && !rateLoading ? <DualPrice usd={Number(property.price)} copRate={rate.usdToCop} period="mes" variant="inline" /> : `$${Number(property.price).toLocaleString()}/mes`}</p>
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Eye className="h-3 w-3" />
                             {property.views} vistas

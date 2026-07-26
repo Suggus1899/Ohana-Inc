@@ -137,7 +137,7 @@ Transaction.init(
     paymentMethod: {
       type: DataTypes.STRING(50),
       allowNull: true,
-      comment: 'Transferencia, Pago Móvil, Zelle, etc.',
+      comment: 'PSE, Nequi, Daviplata, Efecty, etc.',
     },
     paymentReference: {
       type: DataTypes.STRING(100),

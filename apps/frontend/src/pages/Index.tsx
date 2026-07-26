@@ -408,7 +408,7 @@ const Index = () => {
               Nuestra zona de cobertura
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Todas nuestras propiedades están ubicadas en San Juan de los Morros, Guárico, cerca de las principales universidades y centros educativos
+              Todas nuestras propiedades están ubicadas en las principales ciudades de Colombia (Bogotá, Medellín, Cali, Barranquilla), cerca de las principales universidades y centros educativos
             </p>
           </m.div>
 
@@ -429,7 +429,7 @@ const Index = () => {
             className="mt-8 text-center"
           >
             <p className="text-muted-foreground mb-4">
-                <MapPin className="h-4 w-4 inline-block mr-1" /> San Juan de los Morros, Estado Guárico, Venezuela
+                <MapPin className="h-4 w-4 inline-block mr-1" /> Bogotá, Medellín, Cali, Barranquilla — Colombia
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <div className="flex items-center gap-2 px-4 py-2 bg-secondary/50 rounded-full">

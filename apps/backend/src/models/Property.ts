@@ -11,7 +11,7 @@ class Property extends Model<PropertyAttributes, PropertyCreationAttributes> imp
   public listingType!: ListingType;
   public price!: number;
   public priceType!: 'monthly' | 'daily';
-  public priceRate!: 'oficial' | 'paralelo';
+  public priceRate!: 'trm';
   
   declare lat: number;
   declare lng: number;
@@ -98,7 +98,7 @@ class Property extends Model<PropertyAttributes, PropertyCreationAttributes> imp
     priceRate: {
       type: DataTypes.STRING(20),
       field: 'price_rate',
-      defaultValue: 'paralelo',
+      defaultValue: 'trm',
       allowNull: false
     },
     lat: {

@@ -6,7 +6,7 @@ import { unreadMessagesDigestTemplate } from '../services/email-templates';
 
 /**
  * Job: Digest diario de mensajes sin leer
- * Se ejecuta todos los días a las 6:00 PM hora de Venezuela (UTC-4 = 22:00 UTC)
+ * Se ejecuta todos los días a las 6:00 PM hora de Colombia (UTC-5 = 23:00 UTC)
  * 
  * Lógica:
  * - Busca en Redis todas las keys `msg_digest:{userId}` que contienen sets de senderIds
@@ -98,13 +98,13 @@ async function processMessageDigest(): Promise<void> {
 
 /**
  * Inicializar el job de digest de mensajes
- * Cron: "0 22 * * *" = todos los días a las 22:00 UTC = 6:00 PM Venezuela (UTC-4)
+ * Cron: "0 23 * * *" = todos los días a las 23:00 UTC = 6:00 PM Colombia (UTC-5)
  */
 export function initMessageDigestJob(): void {
-  cron.schedule('0 22 * * *', () => {
-    console.log('[MessageDigest] Ejecutando digest diario (6:00 PM VEN)...');
+  cron.schedule('0 23 * * *', () => {
+    console.log('[MessageDigest] Ejecutando digest diario (6:00 PM CO)...');
     processMessageDigest();
   });
 
-  console.log('✅ Message digest job initialized (daily at 6:00 PM VEN / 22:00 UTC)');
+  console.log('✅ Message digest job initialized (daily at 6:00 PM CO / 23:00 UTC)');
 }

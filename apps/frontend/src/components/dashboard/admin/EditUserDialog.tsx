@@ -26,9 +26,9 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phonePrefix: "+58",
+    phonePrefix: "+57",
     phone: "",
-    cedulaType: "V",
+    cedulaType: "CC",
     cedula: "",
     dateOfBirth: "",
     city: "",
@@ -53,9 +53,9 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
       setFormData({
         name: user.name || "",
         email: user.email || "",
-        phonePrefix: user.phonePrefix || "+58",
+        phonePrefix: user.phonePrefix || "+57",
         phone: user.phone || "",
-        cedulaType: cedulaParts[0] || "V",
+        cedulaType: cedulaParts[0] || "CC",
         cedula: cedulaParts[1] || "",
         dateOfBirth: formattedDate,
         city: user.city || "",
@@ -185,9 +185,8 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="V">V - Venezolano</SelectItem>
-                    <SelectItem value="E">E - Extranjero</SelectItem>
-                    <SelectItem value="J">J - Jurídico</SelectItem>
+                    <SelectItem value="CC">CC - Cédula de Ciudadanía</SelectItem>
+                    <SelectItem value="CE">CE - Cédula de Extranjería</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -228,9 +227,9 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="+58">+58 (Venezuela)</SelectItem>
-                    <SelectItem value="+1">+1 (USA/Canadá)</SelectItem>
                     <SelectItem value="+57">+57 (Colombia)</SelectItem>
+                    <SelectItem value="+1">+1 (USA/Canadá)</SelectItem>
+                    <SelectItem value="+58">+58 (Venezuela)</SelectItem>
                     <SelectItem value="+34">+34 (España)</SelectItem>
                   </SelectContent>
                 </Select>

@@ -34,11 +34,11 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Date validation regex (YYYY-MM-DD)
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-// Valid cedula types
-const VALID_CEDULA_TYPES = ['V', 'E', 'J'];
+// Valid document types (Colombia)
+const VALID_CEDULA_TYPES = ['CC', 'CE'];
 
-// Valid phone prefixes
-const VALID_PHONE_PREFIXES = ['+58', '+1', '+34', '+57', '+52', '+54', '+56', '+51'];
+// Valid phone prefixes (Colombia first)
+const VALID_PHONE_PREFIXES = ['+57', '+1', '+34', '+58', '+52', '+54', '+56', '+51'];
 
 export function validateEmail(email: string | undefined): ValidationError | null {
   if (!email || email.trim() === '') {
@@ -75,7 +75,7 @@ export function validateCedulaType(cedulaType: string | undefined): ValidationEr
     return { field: 'cedulaType', message: 'El tipo de cédula es obligatorio' };
   }
   if (!VALID_CEDULA_TYPES.includes(cedulaType)) {
-    return { field: 'cedulaType', message: 'Tipo de cédula inválido. Debe ser V (Venezolano), E (Extranjero) o J (Jurídico)' };
+    return { field: 'cedulaType', message: 'Tipo de documento inválido. Debe ser CC (Cédula de Ciudadanía) o CE (Cédula de Extranjería)' };
   }
   return null;
 }

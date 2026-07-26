@@ -39,15 +39,14 @@ function isLegitimateContext(text: string, matchIndex: number, matchLength: numb
 }
 
 const CONTACT_PATTERNS: PatternConfig[] = [
-  // Venezuelan phone numbers - complete format
-  { pattern: /\b0(412|414|416|424|426)\s*[-.]?\s*\d{3}\s*[-.]?\s*\d{4}\b/gi, score: 40, type: 'phone' },
-  { pattern: /\b(412|414|416|424|426)\s*[-.]?\s*\d{3}\s*[-.]?\s*\d{4}\b/gi, score: 40, type: 'phone' },
-  { pattern: /\+58\s*[-.]?\s*(412|414|416|424|426)\s*[-.]?\s*\d{3}\s*[-.]?\s*\d{4}\b/gi, score: 40, type: 'phone' },
-  // Phone numbers split across messages (e.g., "412" in one, "7541234" in another)
-  // Pattern: operadora venezolana seguida de 7 dígitos
-  { pattern: /\b(412|414|416|424|426)\s*[\n\r,;]+\s*\d{7}\b/gi, score: 50, type: 'phone_split' },
-  // Pattern: solo operadora venezolana (posible parte 1) - con word boundary estricto
-  { pattern: /^(\s*412\s*|\s*414\s*|\s*416\s*|\s*424\s*|\s*426\s*)$/gi, score: 35, type: 'phone_operator_only' },
+  // Colombian phone numbers - complete format (10 digits starting with 3)
+  { pattern: /\b3(00|01|02|03|04|05|06|07|08|09|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|59|60|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|76|77|78|79|80|81|82|83|84|85|86|87|88|89|90|91|92|93|94|95|96|97|98|99)\s*[-.]?\s*\d{3}\s*[-.]?\s*\d{4}\b/gi, score: 40, type: 'phone' },
+  { pattern: /\+57\s*[-.]?\s*3\d{2}\s*[-.]?\s*\d{3}\s*[-.]?\s*\d{4}\b/gi, score: 40, type: 'phone' },
+  // Phone numbers split across messages (e.g., "300" in one, "1234567" in another)
+  // Pattern: operadora colombiana (3XX) seguida de 7 dígitos
+  { pattern: /\b3\d{2}\s*[\n\r,;]+\s*\d{7}\b/gi, score: 50, type: 'phone_split' },
+  // Pattern: solo operadora colombiana (posible parte 1) - con word boundary estricto
+  { pattern: /^\s*3\d{2}\s*$/gi, score: 35, type: 'phone_operator_only' },
   // Pattern: 7 dígitos exactos que parecen ser parte de teléfono (posible parte 2)
   { pattern: /^\s*\d{7}\s*$/gi, score: 35, type: 'phone_number_part' },
   // Pattern: 6-7 dígitos con separadores (754-1234, 754 1234)
@@ -56,14 +55,10 @@ const CONTACT_PATTERNS: PatternConfig[] = [
   { pattern: /^\s*\d{4}\s*$/gi, score: 25, type: 'phone_short_part' },
   // Pattern: 3 dígitos exactos (posible inicio de número)
   { pattern: /^\s*\d{3}\s*$/gi, score: 20, type: 'phone_tiny_part' },
-  // Evasive phone patterns (spaced out numbers)
-  { pattern: /\b0\s*4\s*1\s*2\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
-  { pattern: /\b0\s*4\s*1\s*4\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
-  { pattern: /\b0\s*4\s*1\s*6\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
-  { pattern: /\b0\s*4\s*2\s*4\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
-  { pattern: /\b0\s*4\s*2\s*6\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
-  // Special characters between digits
-  { pattern: /\b0[._\-]*4[._\-]*1[._\-]*[2-6][._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d\b/gi, score: 45, type: 'phone_evasive' },
+  // Evasive phone patterns (spaced out numbers) - Colombian mobile (3XX + 7 digits)
+  { pattern: /\b3\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\b/gi, score: 45, type: 'phone_evasive' },
+  // Special characters between digits - Colombian mobile
+  { pattern: /\b3[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d[._\-]*\d\b/gi, score: 45, type: 'phone_evasive' },
   // International formats
   { pattern: /\b\+?\d{1,3}[-.\s]?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g, score: 35, type: 'phone_international' },
   // Sequential numbers that could be phones (but be more strict)

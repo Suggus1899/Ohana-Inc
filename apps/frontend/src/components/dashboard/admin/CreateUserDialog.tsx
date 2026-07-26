@@ -21,9 +21,9 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phonePrefix: "+58",
+    phonePrefix: "+57",
     phone: "",
-    cedulaType: "V",
+    cedulaType: "CC",
     cedula: "",
     dateOfBirth: "",
     city: "",
@@ -205,10 +205,10 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="+58">🇻🇪 +58</SelectItem>
+                  <SelectItem value="+57">🇨🇴 +57</SelectItem>
                   <SelectItem value="+1">🇺🇸 +1</SelectItem>
                   <SelectItem value="+34">🇪🇸 +34</SelectItem>
-                  <SelectItem value="+57">🇨🇴 +57</SelectItem>
+                  <SelectItem value="+58">🇻🇪 +58</SelectItem>
                 </SelectContent>
               </Select>
               <Input
@@ -238,9 +238,8 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="V">V</SelectItem>
-                  <SelectItem value="E">E</SelectItem>
-                  <SelectItem value="J">J</SelectItem>
+                  <SelectItem value="CC">CC</SelectItem>
+                  <SelectItem value="CE">CE</SelectItem>
                 </SelectContent>
               </Select>
               <Input

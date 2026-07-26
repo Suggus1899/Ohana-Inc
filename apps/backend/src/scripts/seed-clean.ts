@@ -49,12 +49,12 @@ const migrations = [
 
 const adminData = {
   name: 'Admin User',
-  email: 'admin@residencias.com',
+  email: 'admin@ohana.com',
   password: 'Admin123!',
   role: 'admin' as const,
-  phonePrefix: '+58',
-  phone: '4241234567',
-  cedulaType: 'V',
+  phonePrefix: '+57',
+  phone: '3001234567',
+  cedulaType: 'CC',
   cedula: '12345678',
   isVerified: true,
   verificationLevel: 5,

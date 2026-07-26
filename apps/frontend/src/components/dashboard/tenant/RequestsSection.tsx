@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getSocket } from "@/services/socket";
 import CompletedPropertyView from "./CompletedPropertyView";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPrice, usdToVes } from "../../../utils/formatPrice";
+import { formatDualPrice, usdToCop } from "../../../utils/formatPrice";
 import {
   Dialog,
   DialogContent,

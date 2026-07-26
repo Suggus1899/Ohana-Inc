@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api, Favorite } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToVes } from "../../../utils/formatPrice";
+import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 const FavoritesSection = () => {
@@ -116,8 +116,8 @@ const FavoritesSection = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                    {rate?.usdToVes ? (
-                      <DualPrice usd={fav.property.price} vesRate={rate.usdToVes} period="mes" variant="inline" />
+                    {rate?.usdToCop ? (
+                      <DualPrice usd={fav.property.price} copRate={rate.usdToCop} period="mes" variant="inline" />
                     ) : (
                       <span className="text-lg font-bold text-primary">${fav.property.price}/mes</span>
                     )}

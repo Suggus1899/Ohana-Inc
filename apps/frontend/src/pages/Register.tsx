@@ -38,8 +38,8 @@ const Register = () => {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState("");
   const [formData, setFormData] = useState({
-    name: "", email: "", phonePrefix: "+58", phone: "",
-    cedulaType: "V", cedula: "", dateOfBirth: "", gender: "",
+    name: "", email: "", phonePrefix: "+57", phone: "",
+    cedulaType: "CC", cedula: "", dateOfBirth: "", gender: "",
     password: "", confirmPassword: "",
     role: "estudiante" as UserRole,
   });
@@ -161,8 +161,8 @@ const Register = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className={selectContentCls}>
-                    <SelectItem value="+58">+58</SelectItem><SelectItem value="+1">+1</SelectItem>
-                    <SelectItem value="+34">+34</SelectItem><SelectItem value="+57">+57</SelectItem>
+                    <SelectItem value="+57">+57</SelectItem><SelectItem value="+1">+1</SelectItem>
+                    <SelectItem value="+34">+34</SelectItem><SelectItem value="+58">+58</SelectItem>
                     <SelectItem value="+52">+52</SelectItem><SelectItem value="+54">+54</SelectItem>
                   </SelectContent>
                 </Select>
@@ -178,7 +178,7 @@ const Register = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className={selectContentCls}>
-                    <SelectItem value="V">V</SelectItem><SelectItem value="E">E</SelectItem><SelectItem value="J">J</SelectItem>
+                    <SelectItem value="CC">CC</SelectItem><SelectItem value="CE">CE</SelectItem>
                   </SelectContent>
                 </Select>
                 <Input id="cedula" name="cedula" placeholder="12345678" value={formData.cedula} onChange={handleChange} required disabled={isLoading} className={`flex-1 ${inputCls}`} />
