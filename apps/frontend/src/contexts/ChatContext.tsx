@@ -536,12 +536,30 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     // Asegurar que estamos en la room antes de enviar
     socket.emit('join_conversation', conv.id);
 
-    // Emitir sin callback — el server emite message_received de vuelta
+    // Emitir con callback — el server confirma recepción o error
     socket.emit('send_message', {
       conversationId: conv.id,
       content: content.trim(),
       tempId,
+    }, (ack: { error?: string } | undefined) => {
+      if (ack?.error) {
+        setMessages(prev => prev.map(m => m.id === tempId ? { ...m, isFailed: true } : m));
+      }
+      // Si no hay error, el server emitirá message_received con tempId
+      // y onMessageReceived reemplazará el mensaje temporal por el real.
     });
+
+    // Timeout de seguridad: si el server no confirma en 10s, marcar como fallido.
+    // onMessageReceived reemplaza el mensaje temporal antes de que esto dispare.
+    setTimeout(() => {
+      setMessages(prev => {
+        const stillPending = prev.find(m => m.id === tempId && m.tempId === tempId);
+        if (stillPending && !stillPending.isFailed) {
+          return prev.map(m => m.id === tempId ? { ...m, isFailed: true } : m);
+        }
+        return prev;
+      });
+    }, 10000);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
