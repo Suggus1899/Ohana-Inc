@@ -79,68 +79,72 @@ export class KYCService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    // Buscar CUALQUIER verificación existente del usuario (sin filtrar por status)
-    // para permitir reiniciar si está rejected/expired o en estado inicial sin docs
-    const existingVerification = await KYCVerification.findOne({
-      where: { userId }
-    });
+    return await sequelize.transaction(async (t) => {
+      // Buscar CUALQUIER verificación existente del usuario con lock para prevenir race condition
+      const existingVerification = await KYCVerification.findOne({
+        where: { userId },
+        lock: t.LOCK.UPDATE,
+        transaction: t,
+      });
 
-    if (existingVerification) {
-      // Si está rechazada, expirada, o en estado inicial SIN documentos subidos, permitir crear nueva
-      const RESTARTABLE_STATUSES = ['rejected', 'expired', 'not_started', 'documents_uploaded', 'pending_review'];
-      if (RESTARTABLE_STATUSES.includes(existingVerification.status)) {
-        // Verificar si hay documentos subidos
-        const docsCount = await KYCDocument.count({
-          where: { verificationId: existingVerification.id }
-        });
-        
-        // Si no hay documentos o está rechazada/expirada, eliminar y permitir nueva
-        if (docsCount === 0 || ['rejected', 'expired'].includes(existingVerification.status)) {
-          console.log(`[KYCSERVICE] Eliminando verificación anterior (status: ${existingVerification.status}, docs: ${docsCount})`);
-          await existingVerification.destroy();
+      if (existingVerification) {
+        const RESTARTABLE_STATUSES = ['rejected', 'expired', 'not_started', 'documents_uploaded', 'pending_review'];
+        if (RESTARTABLE_STATUSES.includes(existingVerification.status)) {
+          const docsCount = await KYCDocument.count({
+            where: { verificationId: existingVerification.id },
+            transaction: t,
+          });
+
+          if (docsCount === 0 || ['rejected', 'expired'].includes(existingVerification.status)) {
+            await existingVerification.destroy({ transaction: t });
+          } else {
+            await existingVerification.destroy({ transaction: t });
+          }
+        } else if (existingVerification.status === 'approved') {
+          throw new Error('User is already verified');
         } else {
-           // Si hay documentos y no está rechazada/expirada, podríamos querer actualizar o bloquear.
-           // Basado en el requerimiento, vamos a permitir el reinicio eliminando la anterior si es necesario.
-           await existingVerification.destroy();
+          throw new Error('User already has an active verification in progress');
         }
-      } else if (existingVerification.status === 'approved') {
-        throw new Error('User is already verified');
-      } else {
-        throw new Error('User already has an active verification in progress');
       }
-    }
 
-    // Validar límite de 3 intentos en 30 días (Requisito 3.5, 3.6)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      // Validar límite de 3 intentos en 30 días
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const recentAttempts = await KYCVerification.count({
-      where: {
+      const recentAttempts = await KYCVerification.count({
+        where: {
+          userId,
+          createdAt: {
+            [Op.gte]: thirtyDaysAgo
+          }
+        },
+        transaction: t,
+      });
+
+      if (recentAttempts >= 3) {
+        throw new Error('Maximum of 3 verification attempts per 30 days exceeded');
+      }
+
+      // Crear nueva verificación
+      const verification = await KYCVerification.create({
         userId,
-        createdAt: {
-          [Op.gte]: thirtyDaysAgo
-        }
+        status: 'not_started',
+        verificationLevel: 0,
+        currentLevel: 0,
+        attempts: 0,
+        consentedAt: consentedAt || new Date()
+      }, { transaction: t });
+
+      return verification;
+    }).then(async (verification) => {
+      // Log audit after transaction commits — don't block or rollback for audit failures
+      try {
+        await auditLogger.logVerificationStarted(userId);
+      } catch (auditErr) {
+        console.error('Audit log failed for verification start:', auditErr);
       }
+      return verification;
     });
-
-    if (recentAttempts >= 3) {
-      throw new Error('Maximum of 3 verification attempts per 30 days exceeded');
-    }
-
-    // Crear nueva verificación (Requisito 3.1, 16.13, 16.14, 16.15, 31.5)
-    const verification = await KYCVerification.create({
-      userId,
-      status: 'not_started',
-      verificationLevel: 0,
-      currentLevel: 0,
-      attempts: 0,
-      consentedAt: consentedAt || new Date()
-    });
-
-    // Registrar inicio de verificación en logs de auditoría (Requisito 32.1)
-    await auditLogger.logVerificationStarted(userId);
-
-    return verification;
   }
 
   /**

@@ -117,17 +117,19 @@ export class ReviewService {
         };
       }
 
-      // Crear el review de propiedad
-      const review = await PropertyReview.create({
-        propertyId,
-        userId,
-        rating,
-        comment,
-        rentRequestId: resolvedRentRequestId
-      });
+      // Crear el review de propiedad y actualizar cache en una transacción
+      const review = await sequelize.transaction(async (t) => {
+        const created = await PropertyReview.create({
+          propertyId,
+          userId,
+          rating,
+          comment,
+          rentRequestId: resolvedRentRequestId
+        }, { transaction: t });
 
-      // Actualizar cache de ratings de la propiedad
-      await this._updatePropertyRatingCache(propertyId);
+        await this._updatePropertyRatingCache(propertyId, t);
+        return created;
+      });
 
       return {
         success: true,
@@ -339,11 +341,11 @@ export class ReviewService {
         };
       }
 
-      // Actualizar el review
-      await review.update({ rating, comment });
-
-      // Actualizar cache
-      await this._updatePropertyRatingCache(review.propertyId);
+      // Actualizar el review y cache en una transacción
+      await sequelize.transaction(async (t) => {
+        await review.update({ rating, comment }, { transaction: t });
+        await this._updatePropertyRatingCache(review.propertyId, t);
+      });
 
       return {
         success: true,
@@ -398,10 +400,10 @@ export class ReviewService {
       }
 
       const propertyId = review.propertyId;
-      await review.destroy();
-
-      // Actualizar cache
-      await this._updatePropertyRatingCache(propertyId);
+      await sequelize.transaction(async (t) => {
+        await review.destroy({ transaction: t });
+        await this._updatePropertyRatingCache(propertyId, t);
+      });
 
       return {
         success: true,
@@ -558,17 +560,19 @@ export class ReviewService {
       // Usar el transactionId de la transacción completada (si no se especificó uno)
       const resolvedTransactionId = transactionId || transactionBetweenUsers.id;
 
-      // Crear el review
-      const review = await UserReview.create({
-        reviewerId,
-        reviewedId,
-        rating,
-        comment,
-        transactionId: resolvedTransactionId
-      });
+      // Crear el review y actualizar cache en una transacción
+      const review = await sequelize.transaction(async (t) => {
+        const created = await UserReview.create({
+          reviewerId,
+          reviewedId,
+          rating,
+          comment,
+          transactionId: resolvedTransactionId
+        }, { transaction: t });
 
-      // Actualizar cache de ratings del usuario
-      await this._updateUserRatingCache(reviewedId);
+        await this._updateUserRatingCache(reviewedId, t);
+        return created;
+      });
 
       return {
         success: true,
@@ -746,11 +750,11 @@ export class ReviewService {
         };
       }
 
-      // Actualizar el review
-      await review.update({ rating, comment });
-
-      // Actualizar cache
-      await this._updateUserRatingCache(review.reviewedId);
+      // Actualizar el review y cache en una transacción
+      await sequelize.transaction(async (t) => {
+        await review.update({ rating, comment }, { transaction: t });
+        await this._updateUserRatingCache(review.reviewedId, t);
+      });
 
       return {
         success: true,
@@ -805,10 +809,10 @@ export class ReviewService {
       }
 
       const reviewedId = review.reviewedId;
-      await review.destroy();
-
-      // Actualizar cache
-      await this._updateUserRatingCache(reviewedId);
+      await sequelize.transaction(async (t) => {
+        await review.destroy({ transaction: t });
+        await this._updateUserRatingCache(reviewedId, t);
+      });
 
       return {
         success: true,
@@ -834,65 +838,54 @@ export class ReviewService {
   /**
    * Actualizar cache de ratings de propiedad
    */
-  private async _updatePropertyRatingCache(propertyId: number): Promise<void> {
+  private async _updatePropertyRatingCache(propertyId: number, transaction?: any): Promise<void> {
     try {
-      console.log(`🔄 Actualizando cache de rating para propiedad ${propertyId}`);
-      
       const result = await PropertyReview.findAll({
         where: { propertyId },
         attributes: [
           [sequelize.fn('AVG', sequelize.col('rating')), 'avgRating'],
           [sequelize.fn('COUNT', sequelize.col('id')), 'reviewCount']
         ],
-        raw: true
+        raw: true,
+        transaction,
       });
 
-      // Type assertion para el resultado de agregación
       const aggResult = result[0] as any;
-      console.log('📊 Resultado de agregación:', aggResult);
-      
+
       const avgRating = aggResult && aggResult.avgRating !== null ? 
         (typeof aggResult.avgRating === 'string' ? parseFloat(aggResult.avgRating) : aggResult.avgRating) : 0;
       
       const reviewCount = aggResult && aggResult.reviewCount !== null ? 
         (typeof aggResult.reviewCount === 'string' ? parseInt(aggResult.reviewCount, 10) : aggResult.reviewCount) : 0;
 
-      console.log(`📈 Nuevos valores: avgRating=${avgRating}, reviewCount=${reviewCount}`);
-
       await Property.update(
         {
           avgRating,
           reviewCount
         },
-        { where: { id: propertyId } }
+        { where: { id: propertyId }, transaction }
       );
 
-      console.log(`✅ Cache actualizado para propiedad ${propertyId}`);
-
     } catch (error) {
-      console.error('❌ Error updating property rating cache:', error);
+      console.error('Error updating property rating cache:', error);
     }
   }
 
   /**
    * Actualizar cache de ratings de usuario
    */
-  private async _updateUserRatingCache(userId: number): Promise<void> {
+  private async _updateUserRatingCache(userId: number, transaction?: any): Promise<void> {
     try {
-      console.log(`🔄 [USER CACHE] Iniciando actualización para usuario ${userId} - Método llamado`);
-      
       // Reviews como owner (cuando el usuario es propietario y es calificado por clientes/estudiantes)
-      // Usar consulta SQL directa para evitar problemas con raw: true y includes
       const [ownerReviewsRaw] = await sequelize.query(
         `SELECT AVG(ur.rating) as avgRating, COUNT(ur.id) as reviewCount
          FROM user_reviews ur
          JOIN users u ON ur."reviewerId" = u.id
          WHERE ur."reviewedId" = ? AND u.role IN ('cliente', 'estudiante')`,
-        { replacements: [userId] }
+        { replacements: [userId], transaction }
       );
 
       const ownerAggResult = (ownerReviewsRaw as any[])[0] as any;
-      console.log('📊 Resultado owner reviews (raw):', ownerAggResult);
       
       const avgRatingAsOwner = ownerAggResult && ownerAggResult.avgrating !== null ? 
         (typeof ownerAggResult.avgrating === 'string' ? parseFloat(ownerAggResult.avgrating) : ownerAggResult.avgrating) : 0;
@@ -906,11 +899,10 @@ export class ReviewService {
          FROM user_reviews ur
          JOIN users u ON ur."reviewerId" = u.id
          WHERE ur."reviewedId" = ? AND u.role = 'propietario'`,
-        { replacements: [userId] }
+        { replacements: [userId], transaction }
       );
 
       const tenantAggResult = (tenantReviewsRaw as any[])[0] as any;
-      console.log('📊 Resultado tenant reviews (raw):', tenantAggResult);
       
       const avgRatingAsTenant = tenantAggResult && tenantAggResult.avgrating !== null ? 
         (typeof tenantAggResult.avgrating === 'string' ? parseFloat(tenantAggResult.avgrating) : tenantAggResult.avgrating) : 0;
@@ -918,30 +910,18 @@ export class ReviewService {
       const reviewCountAsTenant = tenantAggResult && tenantAggResult.reviewcount !== null ? 
         (typeof tenantAggResult.reviewcount === 'string' ? parseInt(tenantAggResult.reviewcount, 10) : tenantAggResult.reviewcount) : 0;
 
-      console.log(`📈 Nuevos valores calculados: owner=${avgRatingAsOwner}/${reviewCountAsOwner}, tenant=${avgRatingAsTenant}/${reviewCountAsTenant}`);
-      console.log(`🔍 Tipo avgRatingAsOwner: ${typeof avgRatingAsOwner}, valor: ${avgRatingAsOwner}`);
-      console.log(`🔍 Tipo reviewCountAsOwner: ${typeof reviewCountAsOwner}, valor: ${reviewCountAsOwner}`);
-
-      const updateResult = await User.update(
+      await User.update(
         {
           avgRatingAsOwner,
           reviewCountAsOwner,
           avgRatingAsTenant,
           reviewCountAsTenant
         },
-        { where: { id: userId } }
+        { where: { id: userId }, transaction }
       );
 
-      console.log(`✅ Cache actualizado para usuario ${userId}. Filas afectadas: ${updateResult[0]}`);
-
-      // Verificar que los valores se guardaron correctamente
-      const updatedUser = await User.findByPk(userId);
-      if (updatedUser) {
-        console.log(`🔍 Verificación post-update: avgRatingAsOwner=${updatedUser.avgRatingAsOwner}, reviewCountAsOwner=${updatedUser.reviewCountAsOwner}`);
-      }
-
     } catch (error) {
-      console.error('❌ Error updating user rating cache:', error);
+      console.error('Error updating user rating cache:', error);
     }
   }
 }
