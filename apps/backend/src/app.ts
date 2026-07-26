@@ -43,20 +43,30 @@ function getClientIp(req: Request): string {
   return req.socket.remoteAddress || req.ip || 'unknown';
 }
 
-const FRONTEND_URL = (process.env.FRONTEND_URL || 'https://habitasweb.me').trim();
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:5173').trim();
+const EXTRA_CORS_ORIGINS = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+const ALLOWED_ORIGINS = new Set([
+  FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  ...EXTRA_CORS_ORIGINS,
+]);
 
 const app: Application = express();
 
 setupPassport();
 app.use(passport.initialize());
 
-console.log(`[CORS] FRONTEND_URL="${FRONTEND_URL}" (length=${FRONTEND_URL.length})`);
-
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin;
 
-  if (!origin || origin === FRONTEND_URL || origin.toLowerCase().endsWith('.habitasweb.me') || origin === 'https://habitasweb.me' || origin === 'http://habitasweb.me') {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  if (!origin || ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || FRONTEND_URL);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, x-session-id');
@@ -70,7 +80,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
 
   const ip = getClientIp(req);
-  console.warn(`🚫 CORS | ${new Date().toISOString()} | ${ip} | ${origin}`);
+  console.warn(`CORS blocked | ${new Date().toISOString()} | ${ip} | ${origin}`);
 
   if (req.method === 'OPTIONS') {
     res.status(204).end();
@@ -80,7 +90,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(403).json({ success: false, error: { message: 'Not allowed by CORS' } });
 });
 
-app.use(express.json());
+app.use(express.json({
+  verify: (req: any, _res, buf) => {
+    // Store raw body for webhook signature verification
+    req.rawBody = buf;
+  },
+}));
 
 app.use(auditMiddleware);
 
