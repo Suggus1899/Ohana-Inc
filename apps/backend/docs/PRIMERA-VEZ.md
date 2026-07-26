@@ -81,7 +81,7 @@ curl http://localhost:3001/api/health
 
 ### 5️⃣ Verificar Tablas en la Base de Datos
 ```bash
-docker exec -it residencias-postgres-dev psql -U residencias_user -d residencias_db -c "\dt"
+docker exec -it ohana-postgres-prod psql -U ohana_user -d ohana_db -c "\dt"
 ```
 
 **Deberías ver:**

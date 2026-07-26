@@ -81,7 +81,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: `**Entorno de desarrollo desplegado**\n\n🔗 Backend disponible en: ${ACCESS_URL}\n\nRama: \`${BRANCH_NAME}\`\nBD: \`residencias_db\` (aislada)`
+                body: `**Entorno de desarrollo desplegado**\n\n🔗 Backend disponible en: ${ACCESS_URL}\n\nRama: \`${BRANCH_NAME}\`\nBD: \`ohana_db\` (aislada)`
               });
             }
         env:

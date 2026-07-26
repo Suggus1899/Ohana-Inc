@@ -6,15 +6,16 @@ dotenv.config();
 const isTest = process.env.NODE_ENV === 'test';
 
 // Usar PostgreSQL tanto para desarrollo como para tests
+// Defaults apuntan a PostgreSQL local (no Docker). En producción usar .env.docker.
 export const sequelize = new Sequelize({
   dialect: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: isTest 
-    ? (process.env.DB_NAME_TEST || 'residencias_db_test')
-    : (process.env.DB_NAME || 'residencias_db'),
-  username: process.env.DB_USER || 'residencias_user',
-  password: process.env.DB_PASSWORD || 'residencias_password_2026',
+  database: isTest
+    ? (process.env.DB_NAME_TEST || 'ohana_db_test')
+    : (process.env.DB_NAME || 'ohana_db'),
+  username: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '1234',
   logging: (msg: string) => {
     if (msg.startsWith('Executing')) return;
     console.log('[Sequelize]', msg);

@@ -29,16 +29,12 @@
     "seed:force-lease": "ts-node src/scripts/force-completed-rental.ts",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "docker:up": "docker-compose --env-file .env up --build -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f backend",
-    "docker:restart": "docker-compose restart backend",
-    "docker:clean": "docker-compose down -v",
-    "docker:dev": "docker-compose up --build",
-    "docker:dev:down": "docker-compose down",
-    "docker:dev:logs": "docker-compose logs -f backend",
-    "docker:dev:clean": "docker-compose down -v",
-    "docker:rebuild:fresh": "docker-compose down && docker-compose build --no-cache backend && docker-compose up -d --renew-anon-volumes"
+    "docker:prod:up": "docker-compose -f docker-compose.prod.yml --env-file .env.docker up --build -d",
+    "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
+    "docker:prod:logs": "docker-compose -f docker-compose.prod.yml logs -f backend",
+    "docker:prod:restart": "docker-compose -f docker-compose.prod.yml restart backend",
+    "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v",
+    "docker:prod:rebuild:fresh": "docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml build --no-cache backend && docker-compose -f docker-compose.prod.yml up -d --renew-anon-volumes"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1024.0",

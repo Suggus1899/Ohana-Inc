@@ -76,12 +76,12 @@ npm run dev
 Copia `.env.example` a `.env` y configura:
 
 ```env
-# Base de datos
+# Base de datos (PostgreSQL local — no Docker para dev)
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=residencias_db
-DB_USER=residencias_user
-DB_PASSWORD=tu_password
+DB_NAME=ohana_db
+DB_USER=postgres
+DB_PASSWORD=1234
 
 # JWT
 JWT_SECRET=tu_secret_key
@@ -118,20 +118,19 @@ npm run generate:key
 
 ## 🚀 Comandos Disponibles
 
-### Desarrollo
+### Desarrollo (PostgreSQL local — sin Docker)
 ```bash
-npm run dev                 # Desarrollo local
-npm run docker:dev          # Desarrollo con Docker (hot-reload)
-npm run docker:dev:logs     # Ver logs
-npm run docker:dev:down     # Detener
+npm run dev                 # Desarrollo local (tsx watch)
+npm run build               # Compilar TypeScript
+npm run start               # Iniciar servidor compilado
 ```
 
-### Producción
+### Producción (Docker)
 ```bash
-npm run build               # Compilar TypeScript
-npm run start               # Iniciar servidor
-npm run docker:up           # Producción con Docker
-npm run docker:down         # Detener Docker
+npm run docker:prod:up      # Levantar stack completo con Docker
+npm run docker:prod:logs    # Ver logs
+npm run docker:prod:down    # Detener
+npm run docker:prod:clean   # Detener y borrar volúmenes
 ```
 
 ### Base de Datos
@@ -183,8 +182,8 @@ backend-residencias/
 ├── models/               # Modelos face-api
 ├── dist/                 # Código compilado
 │
-├── docker-compose.yml           # Docker producción
-├── docker-compose.dev.yml       # Docker desarrollo
+├── docker-compose.prod.yml      # Docker producción
+├── .env.docker                  # Variables entorno Docker (prod)
 ├── Dockerfile                   # Build producción
 ├── Dockerfile.dev               # Build desarrollo
 │

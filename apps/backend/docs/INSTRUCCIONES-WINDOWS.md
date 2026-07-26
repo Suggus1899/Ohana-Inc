@@ -193,13 +193,13 @@ C:\tu\ruta\backend-residencias\
 
 ## 🔗 Conectar a Servicios desde Windows
 
-### PostgreSQL
+### PostgreSQL (local — sin Docker para dev)
 ```
 Host: localhost
 Port: 5432
-Database: residencias_db
-User: residencias_user
-Password: residencias_password_2026
+Database: ohana_db
+User: postgres
+Password: 1234
 ```
 
 ### Redis

@@ -10,8 +10,8 @@ async function setupTestDatabase() {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     database: 'postgres', // Connect to default postgres database
-    username: process.env.DB_USER || 'residencias_user',
-    password: process.env.DB_PASSWORD || 'residencias_password_2026',
+    username: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '1234',
     logging: false,
   });
 
@@ -20,23 +20,23 @@ async function setupTestDatabase() {
     console.log('✅ Connected to PostgreSQL');
 
     // Drop test database if exists
-    await sequelize.query('DROP DATABASE IF EXISTS residencias_db_test;');
+    await sequelize.query('DROP DATABASE IF EXISTS ohana_db_test;');
     console.log('🗑️  Dropped existing test database (if any)');
 
     // Create test database
-    await sequelize.query('CREATE DATABASE residencias_db_test;');
-    console.log('✅ Created test database: residencias_db_test');
+    await sequelize.query('CREATE DATABASE ohana_db_test;');
+    console.log('✅ Created test database: ohana_db_test');
 
     await sequelize.close();
-    
+
     // Now connect to test database and sync models
     const testSequelize = new Sequelize({
       dialect: 'postgres',
       host: process.env.DB_HOST || 'localhost',
       port: parseInt(process.env.DB_PORT || '5432'),
-      database: 'residencias_db_test',
-      username: process.env.DB_USER || 'residencias_user',
-      password: process.env.DB_PASSWORD || 'residencias_password_2026',
+      database: 'ohana_db_test',
+      username: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || '1234',
       logging: false,
     });
 

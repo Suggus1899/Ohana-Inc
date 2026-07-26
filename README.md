@@ -224,7 +224,7 @@ pnpm install
 
 ```bash
 cd apps/backend
-cp .env.example .env   # configurar DATABASE_URL, JWT_SECRET, etc.
+cp .env.example .env   # configurar JWT_SECRET, etc. (DB defaults: postgres/1234/ohana_db)
 pnpm run reset          # sync models + seed completo
 ```
 
@@ -247,13 +247,13 @@ pnpm build:backend      # solo backend (tsc → dist/)
 pnpm build:frontend     # solo frontend (vite build → dist/)
 ```
 
-### 5. Docker (opcional)
+### 5. Docker (solo producción)
 
 ```bash
 cd apps/backend
-pnpm run docker:up      # levanta backend + PostgreSQL + Redis
-pnpm run docker:logs    # ver logs
-pnpm run docker:down    # detener
+pnpm run docker:prod:up      # levanta backend + PostgreSQL + Redis + OSRM
+pnpm run docker:prod:logs    # ver logs
+pnpm run docker:prod:down    # detener
 ```
 
 ## 📊 Reglas de Negocio
