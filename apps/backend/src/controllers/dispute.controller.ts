@@ -122,12 +122,35 @@ export const getPendingDisputes = async (req: AuthRequest, res: Response): Promi
 export const getDisputeDetails = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
+    const userId = req.user?.userId;
+    const userRole = req.user?.role;
+    if (!userId) {
+      res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'No autenticado' } });
+      return;
+    }
+
     const dispute = await disputeService.getDisputeDetails(parseInt(id));
 
     if (!dispute) {
       res.status(404).json({
         success: false,
         error: { code: 'NOT_FOUND', message: 'Disputa no encontrada' },
+      });
+      return;
+    }
+
+    // Authorization: reporter, reported, transaction owner/client, or admin/operator
+    const isPrivileged = userRole === 'admin' || userRole === 'operator';
+    const isInvolved =
+      dispute.reporterId === userId ||
+      dispute.reportedId === userId ||
+      dispute.transaction?.ownerId === userId ||
+      dispute.transaction?.clientId === userId;
+
+    if (!isInvolved && !isPrivileged) {
+      res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'No tienes acceso a esta disputa' },
       });
       return;
     }

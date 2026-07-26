@@ -45,6 +45,33 @@ export const createVisit = async (req: AuthRequest, res: Response) => {
 export const getPropertyVisits = async (req: AuthRequest, res: Response) => {
   try {
     const { propertyId } = req.params;
+    const userId = req.user?.userId;
+    const userRole = req.user?.role;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'No autenticado' }
+      });
+    }
+
+    // Authorization: property owner or admin/operator
+    const isPrivileged = userRole === 'admin' || userRole === 'operator';
+    if (!isPrivileged) {
+      const property = await Property.findByPk(propertyId, { attributes: ['authorId'] });
+      if (!property) {
+        return res.status(404).json({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Propiedad no encontrada' }
+        });
+      }
+      if (property.authorId !== userId) {
+        return res.status(403).json({
+          success: false,
+          error: { code: 'FORBIDDEN', message: 'No tienes acceso a las visitas de esta propiedad' }
+        });
+      }
+    }
+
     const visits = await PropertyVisit.findAll({
       where: { propertyId },
       order: [['createdAt', 'DESC']],

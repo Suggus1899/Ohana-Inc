@@ -38,13 +38,22 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
 export const getTickets = async (req: AuthRequest, res: Response) => {
   try {
     const { status, priority, assignedTo, userId, category, startDate, endDate, page = 1, limit = 50 } = req.query;
+    const currentUserRole = req.user?.role;
+    const currentUserId = req.user?.userId;
     const where: any = {};
+
+    // Non-admin/operator users can only see their own tickets
+    const isPrivileged = currentUserRole === 'admin' || currentUserRole === 'operator';
+    if (!isPrivileged) {
+      where.userId = currentUserId;
+    } else if (userId) {
+      where.userId = userId;
+    }
 
     if (status) where.status = status;
     if (priority) where.priority = priority;
     if (category) where.category = category;
     if (assignedTo) where.assignedTo = assignedTo;
-    if (userId) where.userId = userId;
     if (startDate) where.createdAt = { ...where.createdAt, [Op.gte]: new Date(startDate as string) };
     if (endDate) where.createdAt = { ...where.createdAt, [Op.lte]: new Date(endDate as string) };
 
