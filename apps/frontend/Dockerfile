@@ -1,19 +1,22 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Build-time variable for API URL
-ARG VITE_API_URL=http://localhost:3001/api
+ARG VITE_API_URL=http://localhost:3026/api
 ENV VITE_API_URL=$VITE_API_URL
 
-# Instalar dependencias
-COPY package*.json ./
-RUN npm install
+# Copiar archivos de dependencias (desde raiz del monorepo)
+COPY apps/frontend/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# Copiar el código fuente y construir
-COPY . .
-RUN npm run build
+# Copiar el codigo fuente y construir
+COPY apps/frontend/ .
+RUN pnpm run build
 
-# Etapa de producción con Nginx
+# Etapa de produccion con Nginx
 FROM nginx:alpine
 
 # Copiar los archivos compilados de Vite (carpeta dist)

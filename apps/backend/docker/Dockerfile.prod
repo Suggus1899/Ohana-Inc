@@ -8,10 +8,10 @@ RUN apt-get update && \
 
 RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml ./
+COPY apps/backend/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
-COPY . .
+COPY apps/backend/ .
 RUN pnpm run build
 
 FROM node:20-bookworm
@@ -24,7 +24,7 @@ RUN apt-get update && \
 
 RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml ./
+COPY apps/backend/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
@@ -36,7 +36,7 @@ ENV PORT=5000
 
 EXPOSE 5000
 
-COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY apps/backend/docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]

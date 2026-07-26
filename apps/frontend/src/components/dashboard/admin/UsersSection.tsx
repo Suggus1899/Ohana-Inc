@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import CreateUserDialog from "./createUserDialog.tsx";
+import CreateUserDialog from "./CreateUserDialog";
 import EditUserDialog from "./EditUserDialog.tsx";
 import { useToastNotification } from "@/contexts/ToastNotificationContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

@@ -133,7 +133,6 @@ const ContentReviewSection = () => {
 
   const handleApprove = async (property: PendingProperty) => {
     setIsProcessing(true);
-    console.log(`[ContentReview] Approving property ${property.id}`);
     try {
       const response = await api.updatePropertyStatus(property.id, 'approved');
       if (response.success) {
@@ -159,7 +158,6 @@ const ContentReviewSection = () => {
       return;
     }
     setIsProcessing(true);
-    console.log(`[ContentReview] Rejecting property ${selectedProperty.id}`);
     try {
       const response = await api.updatePropertyStatus(selectedProperty.id, 'rejected', rejectReason);
       if (response.success) {

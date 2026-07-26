@@ -25,7 +25,7 @@ const BehaviorTrackerContext = createContext<BehaviorTrackerContextType>({
 
 const FLUSH_INTERVAL_MS = 30_000;
 const MAX_BATCH_SIZE = 50;
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3026/api';
 
 export const BehaviorTrackerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();

@@ -156,7 +156,18 @@
       "Exec(\"=== 1. Crear apps/ ===\")",
       "Exec(\"=== Eliminar lockfiles y workspace.yaml duplicados ===\")",
       "Exec(\"=== Eliminar .gitignore duplicados de subdirs ===\")",
-      "Exec(\"=== ESTRUCTURA FINAL DEL MONOREPO ===\")"
+      "Exec(\"=== ESTRUCTURA FINAL DEL MONOREPO ===\")",
+      "Exec(\"=== .env files en apps/backend ===\")",
+      "Exec(\"=== Mover .github/workflows a raiz ===\")",
+      "Exec(\"=== 1. Mover optimize-video.ps1 a apps/frontend/scripts/ ===\")",
+      "Exec(\"=== pnpm version ===\")",
+      "Exec(\"=== pnpm-lock.yaml generado? ===\")",
+      "Exec(\"=== pnpm-lock.yaml ===\")",
+      "Exec(\"=== .git en raiz ===\")",
+      "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\backend\\docs\")",
+      "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\")",
+      "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\\components\\dashboard\\admin\")",
+      "Exec(\"=== hooks export patterns ===\")"
     ]
   }
 }

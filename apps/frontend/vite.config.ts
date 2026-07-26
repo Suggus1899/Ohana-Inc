@@ -29,7 +29,10 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router-dom")) {
+            if (id.includes("@vladmandic/face-api") || id.includes("@tensorflow")) {
+              return "vendor-ai";
+            }
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/react-router-dom/") || id.includes("/scheduler/")) {
               return "vendor-react";
             }
             if (id.includes("@radix-ui")) {
@@ -50,7 +53,16 @@ export default defineConfig(({ mode }) => ({
             if (id.includes("socket.io-client")) {
               return "vendor-socket";
             }
-            return "vendor-react";
+            if (id.includes("@tanstack/react-query")) {
+              return "vendor-query";
+            }
+            if (id.includes("date-fns")) {
+              return "vendor-date";
+            }
+            if (id.includes("jspdf") || id.includes("canvas-confetti") || id.includes("driver.js")) {
+              return "vendor-utils";
+            }
+            return "vendor-misc";
           }
         }
       }

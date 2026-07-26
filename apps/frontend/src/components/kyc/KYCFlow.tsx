@@ -164,7 +164,6 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           maxRetries: 3,
           baseDelay: 1000,
           onRetry: (attempt, err) => {
-            console.log(`Retrying verification initialization (attempt ${attempt})...`);
           },
         }
       );
@@ -232,7 +231,6 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           maxRetries: 3,
           baseDelay: 1000,
           onRetry: (attempt, err) => {
-            console.log(`Retrying upload (attempt ${attempt})...`);
             setRetryCount(attempt);
           },
         }
@@ -299,7 +297,6 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           maxRetries: 3,
           baseDelay: 1000,
           onRetry: (attempt, err) => {
-            console.log(`Retrying video upload (attempt ${attempt})...`);
             setRetryCount(attempt);
           },
         }
@@ -357,7 +354,6 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           maxRetries: 3,
           baseDelay: 2000,
           onRetry: (attempt, err) => {
-            console.log(`Retrying verification processing (attempt ${attempt})...`);
           },
         }
       );
@@ -489,7 +485,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           return;
         }
       } catch (err) {
-        console.log('No existing verification, showing normal flow');
+        // No existing verification, showing normal flow
       }
       setIsVerified(false);
     };

@@ -16,6 +16,6 @@ jobs:
       - name: Eliminar entorno de la rama cerrada
         run: |
           BRANCH_NAME=$(echo "${{ github.head_ref }}" | sed 's/\//-/g')
-          ssh root@31.97.171.120 "cd /root/apps/$BRANCH_NAME && \
+          ssh root@31.97.171.120 "cd /root/apps/$BRANCH_NAME/apps/backend && \
             docker-compose -p residencias-$BRANCH_NAME down -v || true && \
-            cd .. && rm -rf $BRANCH_NAME"
+            cd ../../ && rm -rf $BRANCH_NAME"

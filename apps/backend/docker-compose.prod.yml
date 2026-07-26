@@ -35,8 +35,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.prod
+      context: ../..
+      dockerfile: apps/backend/docker/Dockerfile.prod
     image: residencias-backend-prod:latest
     container_name: residencias-backend-prod
     restart: always
@@ -65,8 +65,8 @@ services:
 
   osrm:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.combined
+      context: ../..
+      dockerfile: apps/backend/docker/Dockerfile.combined
     image: residencias-combined-prod:latest
     container_name: residencias-osrm-prod
     restart: always

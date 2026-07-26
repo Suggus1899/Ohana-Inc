@@ -49,7 +49,7 @@ export async function fetchExchangeRate(): Promise<ExchangeRateData> {
   if (pendingFetch) return pendingFetch;
 
   pendingFetch = (async () => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3026/api';
     try {
       const res = await fetch(`${baseUrl}/exchange-rate`);
       const json = await res.json();

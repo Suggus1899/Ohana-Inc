@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3026/api';
 
 function getSessionId(): string {
   let sessionId = localStorage.getItem('sessionId');
@@ -409,15 +409,13 @@ class ApiService {
 
     try {
       const url = `${this.baseUrl}${endpoint}`;
-      console.log('API Request:', { url, method: options.method || 'GET', body: options.body });
-      
+
       const response = await fetch(url, {
         ...options,
         headers,
       });
 
       const data = await response.json();
-      console.log('API Response:', { status: response.status, data });
 
       // Dispatch global auth expired event on 401 (login/register expect 401 on bad credentials so skip)
       if (response.status === 401 && !isAuthEndpoint) {

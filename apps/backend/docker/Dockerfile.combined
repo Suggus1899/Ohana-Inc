@@ -15,8 +15,8 @@ RUN curl -fsSL https://nodejs.org/dist/v16.20.2/node-v16.20.2-linux-x64.tar.xz \
   && rm /tmp/node.tar.xz \
   && node --version && npm --version
 
-COPY geocoding/server.js /app/geocode-server.js
-COPY docker/combined-entrypoint.sh /usr/local/bin/combined-entrypoint.sh
+COPY apps/backend/geocoding/server.js /app/geocode-server.js
+COPY apps/backend/docker/combined-entrypoint.sh /usr/local/bin/combined-entrypoint.sh
 RUN chmod +x /usr/local/bin/combined-entrypoint.sh
 
 EXPOSE 5000 8080

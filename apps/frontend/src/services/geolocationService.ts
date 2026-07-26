@@ -15,7 +15,6 @@ export const isGeolocationSupported = (): boolean => {
 
 export const getCurrentPosition = (options?: PositionOptions): Promise<GeoPosition> => {
   if (import.meta.env.VITE_USE_MOCK_GEOLOCATION === 'true') {
-    console.log('Using MOCK geolocation');
     return new Promise((resolve) => {
       mockGeolocation.getCurrentPosition((pos) => {
         resolve({
@@ -27,8 +26,6 @@ export const getCurrentPosition = (options?: PositionOptions): Promise<GeoPositi
       });
     });
   }
-
-  console.log('Using REAL browser geolocation');
 
   return new Promise((resolve, reject) => {
     if (!isGeolocationSupported()) {
@@ -59,7 +56,6 @@ export const watchPosition = (
   options?: PositionOptions
 ): number => {
   if (import.meta.env.VITE_USE_MOCK_GEOLOCATION === 'true') {
-    console.log('Watching MOCK location');
     return mockGeolocation.watchPosition((pos) => {
       onSuccess({
         lat: pos.coords.latitude,
@@ -81,7 +77,6 @@ export const watchPosition = (
     return -1;
   }
 
-  console.log('Watching REAL GPS signals');
   return navigator.geolocation.watchPosition(
     (position) => {
       onSuccess({

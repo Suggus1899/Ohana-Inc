@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { api, User } from "@/services/api";
-import CreateUserDialog from "./createUserDialog";
+import CreateUserDialog from "./CreateUserDialog";
 import EditUserDialog from "./EditUserDialog";
 import { toast } from "sonner";
 

@@ -223,9 +223,6 @@ export function CreatePropertyForm({ onSuccess, onCancel }: CreatePropertyFormPr
 
       // Excluir areaUnknown y features del envío (features se agrega manualmente con JSON.stringify)
       const { areaUnknown, features: _ignoredFeatures, ...submitData } = data;
-      console.log('[DEBUG CreateProperty] submitData keys:', Object.keys(submitData));
-      console.log('[DEBUG CreateProperty] availableRooms:', submitData.availableRooms, typeof submitData.availableRooms);
-      console.log('[DEBUG CreateProperty] occupiedRooms:', submitData.occupiedRooms, typeof submitData.occupiedRooms);
       Object.entries(submitData).forEach(([key, val]) => {
         if (val !== undefined && val !== null && val !== '') formData.append(key, String(val));
       });

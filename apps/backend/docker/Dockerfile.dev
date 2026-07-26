@@ -9,8 +9,8 @@ RUN apt-get update && \
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Copiar archivos de dependencias e instalar
-COPY package.json pnpm-lock.yaml ./
+# Copiar archivos de dependencias e instalar (desde raiz del monorepo)
+COPY apps/backend/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # Instalar dependencias
 RUN pnpm install
 
@@ -22,7 +22,7 @@ ENV PORT=5000
 EXPOSE 5000
 
 # Entrypoint de desarrollo: verifica/instala dependencias antes de arrancar
-COPY docker/entrypoint.dev.sh /usr/local/bin/docker-entrypoint.dev.sh
+COPY apps/backend/docker/entrypoint.dev.sh /usr/local/bin/docker-entrypoint.dev.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.dev.sh
 
 ENTRYPOINT ["docker-entrypoint.dev.sh"]

@@ -173,7 +173,7 @@ if (Test-Path $outputFile) {
     
     Write-Host ""
     Write-ColorOutput Cyan "📋 PRÓXIMOS PASOS:"
-    Write-Host "   1. Copia el video a: frontend-residencias/public/videos/"
+    Write-Host "   1. Copia el video a: apps/frontend/public/videos/"
     Write-Host "   2. Renombra a: hero-background.mp4"
     Write-Host "   3. Reinicia el servidor de desarrollo"
     Write-Host ""

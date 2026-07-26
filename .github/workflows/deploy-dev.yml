@@ -45,7 +45,7 @@ jobs:
 
       - name: Desplegar con Docker Compose en el VPS
         run: |
-          ssh root@31.97.171.120 "cd /root/apps/$BRANCH_NAME && \
+          ssh root@31.97.171.120 "cd /root/apps/$BRANCH_NAME/apps/backend && \
             export BRANCH_NAME=$BRANCH_NAME && \
             export BACKEND_PORT=$BACKEND_PORT && \
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && \
@@ -56,7 +56,7 @@ jobs:
           
       - name: Ejecutar migraciones y seed en el backend
         run: |
-          ssh root@31.97.171.120 "docker exec residencias-backend-${BRANCH_NAME} sh -c 'npm run sync && npm run seed:complete'"
+          ssh root@31.97.171.120 "docker exec residencias-backend-${BRANCH_NAME} sh -c 'pnpm run sync && pnpm run seed:complete'"
         env:
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
 

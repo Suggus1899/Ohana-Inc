@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3026';
 
 type EventCallback = (...args: any[]) => void;
 
@@ -29,22 +29,15 @@ class SocketService {
 
       this.socket.on('connect', () => {
         this._connected = true;
-        console.log('[Socket] Connected:', this.socket?.id);
         // Re-join active conversation on reconnect (ChatContext compat)
         if (this._activeConversationId) {
           this.socket?.emit('join_conversation', this._activeConversationId);
-          console.log('[Socket] Joined conversation after connect:', this._activeConversationId);
         }
         this._onReconnectCallback?.();
       });
 
       this.socket.on('disconnect', (reason) => {
         this._connected = false;
-        console.log('[Socket] Disconnected:', reason);
-      });
-
-      this.socket.on('reconnect_attempt', (attemptNumber) => {
-        console.log('[Socket] Reconnection attempt', attemptNumber);
       });
 
       this.socket.on('reconnect_error', (err) => {
@@ -116,7 +109,6 @@ class SocketService {
     this._activeConversationId = convId;
     if (this.socket?.connected && convId) {
       this.socket.emit('join_conversation', convId);
-      console.log('[Socket] Re-joined conversation:', convId);
     }
   }
 

@@ -136,7 +136,6 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
         ]);
 
         modelsLoadedRef.current = true;
-        console.log('[LivenessCapture] Face-api models loaded');
       } catch (err) {
         console.warn('[LivenessCapture] Failed to load face-api models:', err);
       } finally {
@@ -179,13 +178,11 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
 
     detectionRef.current = setInterval(async () => {
       if (!detectingRef.current || !webcamRef.current?.video || !modelsLoadedRef.current) {
-        console.log('[Liveness] ⏭ skip: detecting=', detectingRef.current, 'video=', !!webcamRef.current?.video, 'models=', modelsLoadedRef.current);
         return;
       }
 
       const video = webcamRef.current.video;
       if (video.readyState < 2) {
-        console.log('[Liveness] ⏳ video.readyState=', video.readyState, '(esperando frames...)');
         return;
       }
 
@@ -243,9 +240,7 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
               }
             }
           } else if (currentType === 'turn_left') {
-            const { direction, ratio } = headTurn(pts);
-            // DEBUG: ver qué detecta al girar
-            console.log('[Liveness] turn_left:', { direction, ratio: ratio.toFixed(3), pts0: pts[0][0].toFixed(0), pts16: pts[16][0].toFixed(0), pts30: pts[30][0].toFixed(0) });
+            const { direction } = headTurn(pts);
             if (direction === 'left') {
               gestureConfirmCountRef.current += 1;
               if (gestureConfirmCountRef.current >= GESTURE_CONFIRM_FRAMES) {
@@ -255,8 +250,7 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
               gestureConfirmCountRef.current = 0;
             }
           } else if (currentType === 'turn_right') {
-            const { direction, ratio } = headTurn(pts);
-            console.log('[Liveness] turn_right:', { direction, ratio: ratio.toFixed(3) });
+            const { direction } = headTurn(pts);
             if (direction === 'right') {
               gestureConfirmCountRef.current += 1;
               if (gestureConfirmCountRef.current >= GESTURE_CONFIRM_FRAMES) {
@@ -267,7 +261,6 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
             }
           }
         } else {
-          console.log('[Liveness] ❌ Sin detección facial (detections.length=', detections?.length, ')');
           setFaceDetected(false);
         }
       } catch (err) {
