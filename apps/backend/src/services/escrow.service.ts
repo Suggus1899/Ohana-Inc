@@ -3,6 +3,7 @@ import TransactionTimeline from '../models/TransactionTimeline';
 import PropertyAssignment from '../models/PropertyAssignment';
 import Property from '../models/Property';
 import RentalRequest from '../models/RentalRequest';
+import { sequelize } from '../config/database';
 
 export class EscrowService {
   // Iniciar escrow cuando cliente marca como pagado
@@ -23,35 +24,37 @@ export class EscrowService {
 
     const previousStatus = transaction.status;
 
-    // Actualizar a estado de escrow
-    await transaction.update({
-      status: TransactionStatus.PAYMENT_SUBMITTED,
-      escrowStatus: EscrowStatus.HOLDING,
-      clientConfirmedAt: new Date(),
+    return await sequelize.transaction(async (t) => {
+      // Actualizar a estado de escrow
+      await transaction.update({
+        status: TransactionStatus.PAYMENT_SUBMITTED,
+        escrowStatus: EscrowStatus.HOLDING,
+        clientConfirmedAt: new Date(),
+      }, { transaction: t });
+
+      // Registrar en timeline
+      await TransactionTimeline.create({
+        transactionId: transaction.id,
+        action: 'payment_submitted',
+        actor: 'client',
+        actorId: userId,
+        previousStatus,
+        newStatus: TransactionStatus.PAYMENT_SUBMITTED,
+        description: previousStatus === TransactionStatus.REJECTED
+          ? 'Cliente reenvió el comprobante de pago'
+          : 'Cliente marcó el pago como realizado',
+      }, { transaction: t });
+
+      // Sincronizar estado de la solicitud de alquiler
+      if (transaction.rentalRequestId) {
+        await RentalRequest.update(
+          { status: 'payment_submitted' },
+          { where: { id: transaction.rentalRequestId }, transaction: t }
+        );
+      }
+
+      return transaction;
     });
-
-    // Registrar en timeline
-    await TransactionTimeline.create({
-      transactionId: transaction.id,
-      action: 'payment_submitted',
-      actor: 'client',
-      actorId: userId,
-      previousStatus,
-      newStatus: TransactionStatus.PAYMENT_SUBMITTED,
-      description: previousStatus === TransactionStatus.REJECTED
-        ? 'Cliente reenvió el comprobante de pago'
-        : 'Cliente marcó el pago como realizado',
-    });
-
-    // Sincronizar estado de la solicitud de alquiler
-    if (transaction.rentalRequestId) {
-      await RentalRequest.update(
-        { status: 'payment_submitted' },
-        { where: { id: transaction.rentalRequestId } }
-      );
-    }
-
-    return transaction;
   }
 
   // Liberar pago cuando propietario confirma
@@ -72,76 +75,85 @@ export class EscrowService {
       throw new Error('Estado de transacción inválido para liberar pago');
     }
 
-    // Liberar escrow y completar transacción
-    await transaction.update({
-      status: TransactionStatus.PAYMENT_CONFIRMED,
-      escrowStatus: EscrowStatus.RELEASED,
-      ownerConfirmedAt: new Date(),
-      completedAt: new Date(),
-    });
-
-    // Registrar en timeline
-    await TransactionTimeline.create({
-      transactionId: transaction.id,
-      action: 'payment_confirmed',
-      actor: 'owner',
-      actorId: userId,
-      previousStatus: TransactionStatus.PAYMENT_SUBMITTED,
-      newStatus: TransactionStatus.PAYMENT_CONFIRMED,
-      description: 'Propietario confirmó la recepción del pago',
-    });
-
-    // Asignar propiedad al cliente
-    await this.assignProperty(transaction);
-
-    // Actualizar estado de la propiedad y contadores de habitaciones
     const property = transaction.property;
-    if (property) {
-      if (property.type === 'Residencia') {
-        const currentAvail = (property as any).availableRooms ?? 0;
-        const currentOccup = (property as any).occupiedRooms ?? 0;
-        const newAvail = Math.max(0, currentAvail - 1);
-        const newOccup = currentOccup + 1;
-        await Property.update(
-          {
-            availableRooms: newAvail,
-            occupiedRooms: newOccup,
-          },
-          { where: { id: transaction.propertyId } }
-        );
-      } else {
-        const newPropertyStatus = property.listingType === 'Venta' ? 'sold' : 'rented';
-        await Property.update(
-          { status: newPropertyStatus as any },
-          { where: { id: transaction.propertyId } }
+
+    return await sequelize.transaction(async (t) => {
+      // Liberar escrow y completar transacción
+      await transaction.update({
+        status: TransactionStatus.PAYMENT_CONFIRMED,
+        escrowStatus: EscrowStatus.RELEASED,
+        ownerConfirmedAt: new Date(),
+        completedAt: new Date(),
+      }, { transaction: t });
+
+      // Registrar en timeline
+      await TransactionTimeline.create({
+        transactionId: transaction.id,
+        action: 'payment_confirmed',
+        actor: 'owner',
+        actorId: userId,
+        previousStatus: TransactionStatus.PAYMENT_SUBMITTED,
+        newStatus: TransactionStatus.PAYMENT_CONFIRMED,
+        description: 'Propietario confirmó la recepción del pago',
+      }, { transaction: t });
+
+      // Asignar propiedad al cliente
+      await PropertyAssignment.create({
+        propertyId: transaction.propertyId,
+        clientId: transaction.clientId,
+        transactionId: transaction.id,
+        startDate: new Date(),
+        status: 'active',
+      }, { transaction: t });
+
+      // Actualizar estado de la propiedad y contadores de habitaciones
+      if (property) {
+        if (property.type === 'Residencia') {
+          const currentAvail = (property as any).availableRooms ?? 0;
+          const currentOccup = (property as any).occupiedRooms ?? 0;
+          const newAvail = Math.max(0, currentAvail - 1);
+          const newOccup = currentOccup + 1;
+          await Property.update(
+            {
+              availableRooms: newAvail,
+              occupiedRooms: newOccup,
+            },
+            { where: { id: transaction.propertyId }, transaction: t }
+          );
+        } else {
+          const newPropertyStatus = property.listingType === 'Venta' ? 'sold' : 'rented';
+          await Property.update(
+            { status: newPropertyStatus as any },
+            { where: { id: transaction.propertyId }, transaction: t }
+          );
+        }
+      }
+
+      // Marcar como completada
+      await transaction.update({
+        status: TransactionStatus.COMPLETED,
+      }, { transaction: t });
+
+      await TransactionTimeline.create({
+        transactionId: transaction.id,
+        action: 'completed',
+        actor: 'system',
+        actorId: null,
+        previousStatus: TransactionStatus.PAYMENT_CONFIRMED,
+        newStatus: TransactionStatus.COMPLETED,
+        description: 'Transacción completada y propiedad asignada',
+      }, { transaction: t });
+
+      // Sincronizar estado de la solicitud de alquiler como completada
+      if (transaction.rentalRequestId) {
+        await RentalRequest.update(
+          { status: 'completed' },
+          { where: { id: transaction.rentalRequestId }, transaction: t }
         );
       }
-    }
 
-    // Marcar como completada
-    await transaction.update({
-      status: TransactionStatus.COMPLETED,
+      return transaction;
     });
-
-    await TransactionTimeline.create({
-      transactionId: transaction.id,
-      action: 'completed',
-      actor: 'system',
-      actorId: null,
-      previousStatus: TransactionStatus.PAYMENT_CONFIRMED,
-      newStatus: TransactionStatus.COMPLETED,
-      description: 'Transacción completada y propiedad asignada',
-    });
-
-    // Sincronizar estado de la solicitud de alquiler como completada
-    if (transaction.rentalRequestId) {
-      await RentalRequest.update(
-        { status: 'completed' },
-        { where: { id: transaction.rentalRequestId } }
-      );
-    }
-
-    return transaction;
   }
 
   // Reembolsar en caso de disputa o cancelación
@@ -162,23 +174,25 @@ export class EscrowService {
 
     const previousStatus = transaction.status;
 
-    await transaction.update({
-      status: TransactionStatus.REFUNDED,
-      escrowStatus: EscrowStatus.REFUNDED,
-    });
+    return await sequelize.transaction(async (t) => {
+      await transaction.update({
+        status: TransactionStatus.REFUNDED,
+        escrowStatus: EscrowStatus.REFUNDED,
+      }, { transaction: t });
 
-    // Registrar en timeline
-    await TransactionTimeline.create({
-      transactionId: transaction.id,
-      action: 'refunded',
-      actor: 'operator',
-      actorId,
-      previousStatus,
-      newStatus: TransactionStatus.REFUNDED,
-      description: `Pago reembolsado. Razón: ${reason}`,
-    });
+      // Registrar en timeline
+      await TransactionTimeline.create({
+        transactionId: transaction.id,
+        action: 'refunded',
+        actor: 'operator',
+        actorId,
+        previousStatus,
+        newStatus: TransactionStatus.REFUNDED,
+        description: `Pago reembolsado. Razón: ${reason}`,
+      }, { transaction: t });
 
-    return transaction;
+      return transaction;
+    });
   }
 
   // Congelar escrow en caso de disputa
@@ -191,32 +205,23 @@ export class EscrowService {
 
     const previousStatus = transaction.status;
 
-    await transaction.update({
-      status: TransactionStatus.DISPUTED,
-      escrowStatus: EscrowStatus.FROZEN,
-    });
+    return await sequelize.transaction(async (t) => {
+      await transaction.update({
+        status: TransactionStatus.DISPUTED,
+        escrowStatus: EscrowStatus.FROZEN,
+      }, { transaction: t });
 
-    await TransactionTimeline.create({
-      transactionId: transaction.id,
-      action: 'disputed',
-      actor: 'system',
-      actorId: null,
-      previousStatus,
-      newStatus: TransactionStatus.DISPUTED,
-      description: 'Escrow congelado por disputa',
-    });
+      await TransactionTimeline.create({
+        transactionId: transaction.id,
+        action: 'disputed',
+        actor: 'system',
+        actorId: null,
+        previousStatus,
+        newStatus: TransactionStatus.DISPUTED,
+        description: 'Escrow congelado por disputa',
+      }, { transaction: t });
 
-    return transaction;
-  }
-
-  // Asignar propiedad al cliente
-  private async assignProperty(transaction: Transaction): Promise<void> {
-    await PropertyAssignment.create({
-      propertyId: transaction.propertyId,
-      clientId: transaction.clientId,
-      transactionId: transaction.id,
-      startDate: new Date(),
-      status: 'active',
+      return transaction;
     });
   }
 }

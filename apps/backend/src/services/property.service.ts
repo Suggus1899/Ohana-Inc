@@ -5,6 +5,7 @@ import PropertyView from '../models/PropertyView';
 import { mediaProcessingService } from './media-processing.service';
 import { PropertyCreationAttributes, PropertyStatus } from '../types';
 import { notificationInAppService } from './notification-inapp.service';
+import { sequelize } from '../config/database';
 
 export interface PropertyFilters {
   search?: string;
@@ -49,11 +50,6 @@ export class PropertyService {
       processedVideo = mediaProcessingService.toPublicUrl(vp);
     }
 
-    console.log('[DEBUG service] rest.availableRooms:', rest.availableRooms, typeof rest.availableRooms);
-    console.log('[DEBUG service] rest.occupiedRooms:', rest.occupiedRooms, typeof rest.occupiedRooms);
-    console.log('[DEBUG service] processedImages (public URLs):', JSON.stringify(processedImages));
-    console.log('[DEBUG service] processedVideo (public URL):', processedVideo);
-
     const property = await Property.create({
       ...rest,
       images: processedImages,
@@ -63,10 +59,6 @@ export class PropertyService {
       isFeatured: false,
       isVerified: false,
     } as any);
-
-    console.log('[DEBUG service] Property created - ID:', property.id);
-    console.log('[DEBUG service] Property.images stored:', JSON.stringify((property as any).images));
-    console.log('[DEBUG service] Property.mainImage stored:', (property as any).mainImage);
 
     if (processedVideo) {
       await property.update({ videoUrl: processedVideo } as any);
@@ -158,20 +150,22 @@ export class PropertyService {
     const property = await Property.findByPk(propertyId);
     if (!property) throw new Error('Propiedad no encontrada');
 
-    await property.increment('views');
-
     const sessionId = options?.sessionId || `anon-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const source = (options?.source as 'search' | 'direct' | 'favorite' | 'recommendation') || 'direct';
     const deviceType = (options?.deviceType as 'desktop' | 'mobile' | 'tablet') || 'desktop';
 
-    await PropertyView.create({
-      propertyId,
-      userId: options?.viewerUserId || null,
-      sessionId,
-      source,
-      deviceType,
-      timestamp: new Date(),
-    } as any);
+    // Increment views and create view record in a single transaction
+    await sequelize.transaction(async (t) => {
+      await property.increment('views', { transaction: t });
+      await PropertyView.create({
+        propertyId,
+        userId: options?.viewerUserId || null,
+        sessionId,
+        source,
+        deviceType,
+        timestamp: new Date(),
+      } as any, { transaction: t });
+    });
 
     return property;
   }

@@ -8,6 +8,7 @@ import { TransactionNotificationService } from './transaction-notification.servi
 import { TransactionStateMachine } from '../utils/transaction-state-machine';
 import { TransactionExpiryService } from './transaction-expiry.service';
 import { Op } from 'sequelize';
+import { sequelize } from '../config/database';
 import { notificationInAppService } from './notification-inapp.service';
 
 export class TransactionService {
@@ -211,34 +212,24 @@ export class TransactionService {
       TransactionStatus.PAYMENT_SUBMITTED
     );
 
-    // Actualizar información de pago
-    await transaction.update({
-      paymentMethod: data.paymentMethod,
-      paymentReference: data.paymentReference,
-      paymentProof: data.paymentProof,
-      paymentDate: data.paymentDate,
+    // Actualizar información de pago y expiración en una transacción
+    await sequelize.transaction(async (t) => {
+      await transaction.update({
+        paymentMethod: data.paymentMethod,
+        paymentReference: data.paymentReference,
+        paymentProof: data.paymentProof,
+        paymentDate: data.paymentDate,
+        expiresAt: TransactionExpiryService.calculateExpiryTime(
+          TransactionStatus.PAYMENT_SUBMITTED
+        ),
+      }, { transaction: t });
     });
 
-    // Iniciar escrow
+    // Iniciar escrow (own transaction — updates status, timeline, RentalRequest)
     await this.escrowService.holdPayment(transactionId, clientId);
-
-    // Actualizar tiempo de expiración
-    await transaction.update({
-      expiresAt: TransactionExpiryService.calculateExpiryTime(
-        TransactionStatus.PAYMENT_SUBMITTED
-      ),
-    });
 
     // Notificar al propietario
     await this.notificationService.notifyOwnerPaymentSubmitted(transaction);
-
-    // Actualizar RentalRequest
-    if (transaction.rentalRequestId) {
-      await RentalRequest.update(
-        { status: 'payment_submitted' },
-        { where: { id: transaction.rentalRequestId } }
-      );
-    }
 
     // Reload to get latest state
     await transaction.reload();
@@ -251,6 +242,8 @@ export class TransactionService {
     transactionId: number,
     ownerId: number
   ): Promise<Transaction> {
+    // releasePayment handles all state changes, timeline, property assignment,
+    // and RentalRequest update in a single transaction
     const transaction = await this.escrowService.releasePayment(transactionId, ownerId);
 
     // Notificar al cliente (in-app)
@@ -268,14 +261,6 @@ export class TransactionService {
     }
 
     await this.notificationService.notifyClientPaymentConfirmed(transaction);
-
-    // Actualizar RentalRequest
-    if (transaction.rentalRequestId) {
-      await RentalRequest.update(
-        { status: 'completed' },
-        { where: { id: transaction.rentalRequestId } }
-      );
-    }
 
     return transaction;
   }
