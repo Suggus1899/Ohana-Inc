@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import { Loader2, Upload, X } from 'lucide-react';
 
 interface SubmitPaymentFormProps {
@@ -44,7 +45,7 @@ const SubmitPaymentForm: React.FC<SubmitPaymentFormProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     if (files.length + newFiles.length > 5) {
-      toast({ title: 'Error', description: 'Máximo 5 archivos permitidos', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.MAX_FILES_EXCEEDED));
       return;
     }
     setFiles((prev) => [...prev, ...newFiles]);
@@ -58,12 +59,12 @@ const SubmitPaymentForm: React.FC<SubmitPaymentFormProps> = ({
     e.preventDefault();
 
     if (!formData.paymentMethod) {
-      toast({ title: 'Error', description: 'Selecciona un método de pago', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.PAYMENT_METHOD_REQUIRED));
       return;
     }
 
     if (!formData.paymentReference) {
-      toast({ title: 'Error', description: 'Ingresa la referencia de pago', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.PAYMENT_REFERENCE_REQUIRED));
       return;
     }
 

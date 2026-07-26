@@ -1,0 +1,5 @@
+{
+  "verifiedAt": "2026-07-26T09:42:15.1391804-04:00",
+  "scope": ".devin/config.local.json, apps/frontend/src/components/disputes/CreateDisputeModal.tsx, apps/frontend/src/components/disputes/DisputePanel.tsx, apps/frontend/src/components/transactions/P2PPaymentFlow.tsx, apps/frontend/src/components/transactions/RequestTransactionModal.tsx, apps/frontend/src/components/transactions/SubmitPaymentForm.tsx, apps/frontend/src/components/transactions/TransactionDetails.tsx, apps/frontend/src/components/transactions/TransactionPanel.tsx",
+  "project": "F:\\Proyectos\\Ohana Inc"
+}

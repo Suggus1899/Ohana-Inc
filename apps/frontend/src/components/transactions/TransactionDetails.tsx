@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import {
   Loader2,
   Clock,
@@ -63,7 +64,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       const { transaction: data } = await getTransactionDetails(transactionId);
       setTransaction(data);
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setLoading(false);
     }
@@ -84,7 +85,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       onUpdate?.();
       loadDetails();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setActionLoading(false);
     }
@@ -101,7 +102,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       onUpdate?.();
       loadDetails();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setActionLoading(false);
     }
@@ -117,7 +118,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       onUpdate?.();
       loadDetails();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setActionLoading(false);
     }
@@ -134,7 +135,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       onUpdate?.();
       loadDetails();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setActionLoading(false);
     }
@@ -151,7 +152,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       onUpdate?.();
       loadDetails();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setActionLoading(false);
     }

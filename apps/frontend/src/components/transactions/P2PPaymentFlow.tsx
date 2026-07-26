@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import {
   Loader2,
   Upload,
@@ -139,7 +140,7 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     if (files.length + newFiles.length > 5) {
-      toast({ title: 'Error', description: 'Máximo 5 archivos permitidos', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.MAX_FILES_EXCEEDED));
       return;
     }
     setFiles((prev) => [...prev, ...newFiles]);
@@ -151,11 +152,11 @@ const P2PPaymentFlow: React.FC<P2PPaymentFlowProps> = ({
 
   const handleSubmitPayment = async () => {
     if (!paymentMethod) {
-      toast({ title: 'Error', description: 'Selecciona un método de pago', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.PAYMENT_METHOD_REQUIRED));
       return;
     }
     if (!paymentReference) {
-      toast({ title: 'Error', description: 'Ingresa la referencia de pago', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.PAYMENT_REFERENCE_REQUIRED));
       return;
     }
 

@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,7 @@ const DisputePanel: React.FC = () => {
       const { disputes: data } = await getPendingDisputes();
       setDisputes(data);
     } catch (error: unknown) {
-      toast({ title: 'Error', description: 'No se pudieron cargar las disputas', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.LOAD_DISPUTES));
     } finally {
       setLoading(false);
     }
@@ -68,13 +69,13 @@ const DisputePanel: React.FC = () => {
       toast({ title: 'Disputa marcada como en revisión' });
       loadDisputes();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     }
   };
 
   const handleResolve = async (disputeId: number, decision: 'refund' | 'release' | 'cancel') => {
     if (!resolveNotes.trim()) {
-      toast({ title: 'Error', description: 'Debes agregar notas de resolución', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.RESOLUTION_NOTES_REQUIRED));
       return;
     }
     try {
@@ -85,7 +86,7 @@ const DisputePanel: React.FC = () => {
       setResolveNotes('');
       loadDisputes();
     } catch (error: unknown) {
-      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Error desconocido', variant: 'destructive' });
+      toast(ERROR_TOAST(error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN));
     } finally {
       setResolveLoading(false);
     }

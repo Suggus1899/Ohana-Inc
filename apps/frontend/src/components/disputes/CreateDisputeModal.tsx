@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import { Loader2, Upload, X, AlertTriangle } from 'lucide-react';
 
 interface CreateDisputeModalProps {
@@ -43,7 +44,7 @@ const CreateDisputeModal: React.FC<CreateDisputeModalProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     if (evidence.length + newFiles.length > 5) {
-      toast({ title: 'Error', description: 'Máximo 5 archivos permitidos', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.MAX_FILES_EXCEEDED));
       return;
     }
     setEvidence((prev) => [...prev, ...newFiles]);
@@ -57,11 +58,11 @@ const CreateDisputeModal: React.FC<CreateDisputeModalProps> = ({
     e.preventDefault();
 
     if (!formData.reason) {
-      toast({ title: 'Error', description: 'Selecciona un motivo', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.DISPUTE_REASON_REQUIRED));
       return;
     }
     if (!formData.description || formData.description.length < 20) {
-      toast({ title: 'Error', description: 'La descripción debe tener al menos 20 caracteres', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.DISPUTE_DESCRIPTION_TOO_SHORT));
       return;
     }
 

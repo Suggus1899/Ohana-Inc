@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import { Loader2, ArrowRight, RefreshCw, BadgeCheck } from 'lucide-react';
 
 interface TransactionPanelProps {
@@ -37,7 +38,7 @@ const TransactionPanel: React.FC<TransactionPanelProps> = ({ currentUserId }) =>
       setTransactions(data);
     } catch (error: unknown) {
       console.error('Error loading transactions:', error);
-      toast({ title: 'Error', description: 'No se pudieron cargar las transacciones', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.LOAD_TRANSACTIONS));
     } finally {
       setLoading(false);
     }

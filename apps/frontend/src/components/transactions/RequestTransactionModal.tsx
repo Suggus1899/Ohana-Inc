@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { ERROR_TOAST, ERROR_MESSAGES } from '@/constants';
 import { Loader2, Info } from 'lucide-react';
 
 interface RequestTransactionModalProps {
@@ -35,7 +36,7 @@ const RequestTransactionModal: React.FC<RequestTransactionModalProps> = ({
     e.preventDefault();
 
     if (!formData.amount || formData.amount <= 0) {
-      toast({ title: 'Error', description: 'El monto debe ser mayor a 0', variant: 'destructive' });
+      toast(ERROR_TOAST(ERROR_MESSAGES.AMOUNT_MUST_BE_POSITIVE));
       return;
     }
 

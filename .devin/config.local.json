@@ -175,7 +175,9 @@
       "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\\components\\common\")",
       "Exec(})",
       "Exec(\"`n=== Check navigation NavLink ===\")",
-      "Exec(git remote)"
+      "Exec(git remote)",
+      "Exec(\"=== AGENTS.md ===\")",
+      "Exec(Get-Date)"
     ]
   }
 }
