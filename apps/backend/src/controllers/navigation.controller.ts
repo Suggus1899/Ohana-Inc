@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import * as osrmService from '../services/osrmService';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 dotenv.config();
 
@@ -54,7 +55,7 @@ export const geocode = async (req: Request, res: Response) => {
     // Geocoding local (Nominatim-compatible)
     const url = `${NOMINATIM_API_URL}/search?q=${encodeURIComponent(address)}&format=json&limit=5`;
 
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       headers: {
         'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
       }

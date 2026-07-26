@@ -3,6 +3,7 @@ import { Property, User, Service, PropertyAssignment, Transaction } from '../mod
 import { Op, WhereOptions, Sequelize } from 'sequelize';
 import { PropertyAttributes, AuthRequest } from '../types';
 import { sequelize } from '../config/database';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 import { propertyService } from '../services/property.service';
 import { mediaProcessingService } from '../services/media-processing.service';
 import { TransactionStatus } from '../models/Transaction';
@@ -504,7 +505,7 @@ export const getZones = async (req: Request, res: Response) => {
       let userCity = '';
       try {
         const url = `${NOMINATIM_API_URL}/reverse?lat=${userLat}&lon=${userLng}&format=json&addressdetails=1`;
-        const response = await fetch(url, {
+        const response = await fetchWithTimeout(url, {
           headers: { 'User-Agent': 'Habitas/1.0', 'Accept-Language': 'es' },
         });
         if (response.ok) {

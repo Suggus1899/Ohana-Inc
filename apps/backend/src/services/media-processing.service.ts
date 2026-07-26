@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import { STORAGE_PATHS } from '../config/storage.config';
 
 export class MediaProcessingService {
@@ -27,7 +27,7 @@ export class MediaProcessingService {
       .webp({ quality: 70 })
       .toFile(thumbnailPath);
 
-    fs.unlinkSync(filePath);
+    await fs.unlink(filePath);
 
     return { processedPath, thumbnailPath };
   }
@@ -53,7 +53,7 @@ export class MediaProcessingService {
   async validateVideoDuration(filePath: string): Promise<void> {
     const duration = await this.getVideoDuration(filePath);
     if (duration > this.MAX_VIDEO_DURATION_SECONDS) {
-      fs.unlinkSync(filePath);
+      await fs.unlink(filePath);
       throw new Error(
         `El video excede la duración máxima de 2 minutos (duración actual: ${Math.round(duration)}s)`
       );

@@ -1,6 +1,8 @@
 // Exchange rate service using open.er-api.com (USD -> COP)
 // Caches the TRM (Tasa Representativa del Mercado) in memory with configurable TTL
 
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
+
 export type RateType = 'trm';
 
 export interface SingleRate {
@@ -100,7 +102,7 @@ class ExchangeRateService {
 
   private async fetchAllRates(): Promise<AllRates> {
     try {
-      const response = await fetch('https://open.er-api.com/v6/latest/USD');
+      const response = await fetchWithTimeout('https://open.er-api.com/v6/latest/USD');
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }

@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { osrmMockData } from '../mocks/osrmMockData';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 dotenv.config();
 
@@ -114,7 +115,7 @@ export const getRoute = async (
   const url = `${OSRM_API_URL}/route/v1/${profile}/${origin.lng},${origin.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson&steps=true&annotations=true`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url);
     if (!response.ok) throw new Error('OSRM service unavailable');
     
     const data = await response.json() as any;

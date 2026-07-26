@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { fetchWithTimeout } from '../utils/fetch-with-timeout';
 
 dotenv.config();
 
@@ -196,7 +197,7 @@ export class GeocodingService {
     try {
       const url = `${baseUrl}/search?q=${encodeURIComponent(address)}&format=json&limit=1`;
       
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
@@ -233,7 +234,7 @@ export class GeocodingService {
     try {
       const url = `${baseUrl}/reverse?lat=${lat}&lon=${lng}&format=json`;
       
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
@@ -271,7 +272,7 @@ export class GeocodingService {
       
       const url = `${baseUrl}/search?format=json&limit=20&viewbox=${viewbox}&bounded=1`;
       
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }
@@ -307,7 +308,7 @@ export class GeocodingService {
     try {
       const url = `${baseUrl}/search?q=${encodeURIComponent(query)}&format=json&limit=${limit}`;
       
-      const response = await fetch(url, {
+      const response = await fetchWithTimeout(url, {
         headers: {
           'User-Agent': 'Ohana/1.0 (plataforma de alquileres)'
         }

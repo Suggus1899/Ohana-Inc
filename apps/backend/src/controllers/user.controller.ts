@@ -184,7 +184,7 @@ export const getUserById = async (req: AuthRequest, res: Response) => {
         name: publicFields.name,
         role: publicFields.role,
         isVerified: publicFields.isVerified,
-        avatar: publicFields.avatar,
+        profilePhotoUrl: publicFields.profilePhotoUrl,
         phonePrefix: publicFields.phonePrefix,
         phone: publicFields.phone,
       };

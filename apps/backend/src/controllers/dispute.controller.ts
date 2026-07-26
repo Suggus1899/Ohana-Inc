@@ -142,8 +142,8 @@ export const getDisputeDetails = async (req: AuthRequest, res: Response): Promis
     // Authorization: reporter, reported, transaction owner/client, or admin/operator
     const isPrivileged = userRole === 'admin' || userRole === 'operator';
     const isInvolved =
-      dispute.reporterId === userId ||
-      dispute.reportedId === userId ||
+      dispute.reportedBy === userId ||
+      dispute.reportedAgainst === userId ||
       dispute.transaction?.ownerId === userId ||
       dispute.transaction?.clientId === userId;
 
