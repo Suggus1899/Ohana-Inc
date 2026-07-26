@@ -53,9 +53,9 @@ router.post(
 // Publish property
 router.post('/:id/publish', requireRole(['admin', 'propietario']), publishProperty);
 
-// Update/Delete (Owner or Admin handled in controller)
-router.put('/:id', uploadPropertyMedia, updateProperty);
-router.delete('/:id', deleteProperty);
+// Update/Delete (Owner or Admin — role check at route level, ownership in controller)
+router.put('/:id', requireRole(['admin', 'propietario']), uploadPropertyMedia, updateProperty);
+router.delete('/:id', requireRole(['admin', 'propietario']), deleteProperty);
 
 // Status update (Operator or Admin ONLY)
 router.patch('/:id/status', requireRole(['admin', 'operator']), updatePropertyStatus);
