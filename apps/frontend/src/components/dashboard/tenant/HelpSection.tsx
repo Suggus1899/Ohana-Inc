@@ -71,7 +71,7 @@ export default function HelpSection() {
   const { toast } = useToast();
   const { startDirectConversation } = useChat();
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const isPropietario = user?.role === 'propietario';
 
   const [formData, setFormData] = useState({

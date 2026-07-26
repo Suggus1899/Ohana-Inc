@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 const AuthCallback = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { setUser, setToken: setAuthToken } = useAuth();
+  const { completeAuth } = useAuth();
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -25,11 +25,10 @@ const AuthCallback = () => {
     }
 
     api.setToken(token);
-    setAuthToken(token);
     api.getCurrentUser().then((res) => {
       if (res.success && res.data) {
         const user = res.data.user;
-        setUser(user);
+        completeAuth(token, user);
         const role = user.role;
         const paths: Record<string, string> = {
           admin: "/admin",

@@ -33,7 +33,7 @@ const PlaceholderSection = ({ title }: { title: string }) => (
 // Panel Cliente / Estudiante: Solo puede consumir información (reutiliza el mismo componente)
 const TenantDashboard = () => {
   const [activeSection, setActiveSection] = useState("home");
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const { messages: unreadMessages } = useUnreadBadges();
   const location = useLocation();
@@ -60,12 +60,12 @@ const TenantDashboard = () => {
       celebrationFired.current = true;
       fireCelebration();
     }
-  }, [setUser, saveTutorialCompleted]);
+  }, [updateUser, saveTutorialCompleted]);
 
   const handleTutorialSkip = useCallback(async () => {
     setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
     await saveTutorialCompleted();
-  }, [setUser, saveTutorialCompleted]);
+  }, [updateUser, saveTutorialCompleted]);
 
   const steps = getTutorialSteps(user?.name || '', clientSidebarItems, user?.role);
   const { startTutorial } = useDriver(steps, {

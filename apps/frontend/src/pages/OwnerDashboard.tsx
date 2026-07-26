@@ -28,7 +28,7 @@ const HelpSection = lazy(() => import("@/components/dashboard/tenant/HelpSection
 
 const OwnerDashboard = () => {
   const [activeSection, setActiveSection] = useState("home");
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const { messages: unreadMessages } = useUnreadBadges();
   const location = useLocation();
@@ -62,12 +62,12 @@ const OwnerDashboard = () => {
       celebrationFired.current = true;
       fireCelebration();
     }
-  }, [setUser, saveTutorialCompleted]);
+  }, [updateUser, saveTutorialCompleted]);
 
   const handleTutorialSkip = useCallback(async () => {
     setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
     await saveTutorialCompleted();
-  }, [setUser, saveTutorialCompleted]);
+  }, [updateUser, saveTutorialCompleted]);
 
   const steps = getTutorialSteps(user?.name || '', ownerSidebarItems, user?.role);
   const { startTutorial } = useDriver(steps, {

@@ -15,7 +15,7 @@ const GoogleSetup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { showError, showSuccess } = useToastNotification();
-  const { setUser, setToken: setAuthToken } = useAuth();
+  const { completeAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const tempToken = searchParams.get("tempToken") || "";
@@ -71,9 +71,7 @@ const GoogleSetup = () => {
         gender: gender || undefined,
       });
 
-      api.setToken(data.token);
-      setAuthToken(data.token);
-      setUser(data.user);
+      completeAuth(data.token, data.user);
       showSuccess("Registro completado correctamente");
 
       const paths: Record<string, string> = {

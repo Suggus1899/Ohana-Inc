@@ -18,7 +18,7 @@ import { clientSidebarItems, ownerSidebarItems } from "@/config/sidebarConfig";
 import { fireCelebration } from "@/utils/confetti";
 
 const SettingsSection = () => {
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -91,7 +91,7 @@ const SettingsSection = () => {
     setSavingProfile(true);
     try {
       const res = await api.updateProfile({ name, phone, dateOfBirth: dateOfBirth || undefined, gender: gender || undefined });
-      setUser?.({ ...user!, name: res.user.name, phone: res.user.phone, dateOfBirth: res.user.dateOfBirth, gender: res.user.gender });
+      updateUser({ name: res.user.name, phone: res.user.phone, dateOfBirth: res.user.dateOfBirth, gender: res.user.gender });
       toast({ title: 'Perfil actualizado', description: 'Tus datos personales se guardaron correctamente.' });
     } catch {
       toast({ title: 'Error', description: 'Error de conexión al guardar datos.', variant: 'destructive' });
@@ -131,7 +131,7 @@ const SettingsSection = () => {
       // Refresh user to update hasPassword flag
       const userRes = await api.getCurrentUser();
       if (userRes.success && userRes.data) {
-        setUser(userRes.data.user);
+        updateUser(userRes.data.user);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error de conexión.';
@@ -194,7 +194,7 @@ const SettingsSection = () => {
   const celebrationRef = useRef(false);
 
   const handleTutorialDone = async () => {
-    setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
+    updateUser({ tutorialCompleted: true });
     try {
       await api.markTutorialCompleted();
       if (!celebrationRef.current) {
@@ -207,7 +207,7 @@ const SettingsSection = () => {
   };
 
   const handleTutorialSkip = async () => {
-    setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
+    updateUser({ tutorialCompleted: true });
     try {
       await api.markTutorialCompleted();
     } catch (err) {

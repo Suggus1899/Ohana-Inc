@@ -51,8 +51,8 @@ interface AuthContextType {
   logout: () => void;
   getRedirectPath: () => string;
   googleLogin: () => void;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  updateUser: (updates: Partial<User>) => void;
+  completeAuth: (token: string, user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -188,6 +188,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = `${apiUrl}/api/auth/google`;
   }, []);
 
+  const updateUser = useCallback((updates: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  }, []);
+
+  const completeAuth = useCallback((newToken: string, userData: User) => {
+    setUser(userData);
+    setToken(newToken);
+    api.setToken(newToken);
+  }, []);
+
   const getRedirectPath = useCallback(() => {
     if (!user) return '/login';
     
@@ -218,11 +228,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login, 
         register, 
         logout,
-    getRedirectPath,
-    googleLogin,
-    setUser,
-    setToken,
-  }}
+        getRedirectPath,
+        googleLogin,
+        updateUser,
+        completeAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

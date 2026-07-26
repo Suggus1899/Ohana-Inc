@@ -13,7 +13,7 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { showSuccess, showError } = useToastNotification();
-  const { setUser, setToken, logout } = useAuth();
+  const { completeAuth, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [code, setCode] = useState("");
@@ -44,9 +44,7 @@ const VerifyEmail = () => {
 
         // The backend now returns a JWT + user after email verification
         if (res.data?.token && res.data?.user) {
-          api.setToken(res.data.token);
-          setUser(res.data.user);
-          setToken(res.data.token);
+          completeAuth(res.data.token, res.data.user);
         }
 
         setVerified(true);
