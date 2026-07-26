@@ -1,0 +1,88 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: residencias-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-residencias_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-residencias_password_2026}
+      POSTGRES_DB: ${DB_NAME:-residencias_db}
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-residencias_user} -d ${DB_NAME:-residencias_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    networks:
+      - residencias-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: residencias-redis-prod
+    restart: always
+    ports:
+      - "${REDIS_PORT:-6381}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - residencias-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+    image: residencias-backend-prod:latest
+    container_name: residencias-backend-prod
+    restart: always
+    ports:
+      - "${BACKEND_PORT:-3026}:5000"
+    environment:
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379
+      OSRM_API_URL: http://osrm:5000
+      NOMINATIM_API_URL: http://osrm:8080
+    env_file:
+      - .env
+    volumes:
+      - storage_prod:/app/storage
+      - logs_prod:/app/logs
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - residencias-network
+
+  osrm:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.combined
+    image: residencias-combined-prod:latest
+    container_name: residencias-osrm-prod
+    restart: always
+    ports:
+      - "${OSRM_PORT:-5001}:5000"
+      - "${GEOCODE_PORT:-8082}:8080"
+    volumes:
+      - ./data:/data
+    networks:
+      - residencias-network
+
+networks:
+  residencias-network:
+    driver: bridge
+
+volumes:
+  pgdata_prod:
+  storage_prod:
+  logs_prod:

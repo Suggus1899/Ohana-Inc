@@ -1,0 +1,89 @@
+name: Deploy Dev Environment to VPS
+
+on:
+  push:
+    branches:
+      - 'dev'
+      - 'feature/*'
+      - 'develop'
+      - 'hotfix/*'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar variables de entorno dinámicas
+        id: vars
+        run: |
+          # Limpiar nombre de rama (reemplazar '/' por '-')
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          
+          # Puerto único basado en hash de nombre de rama (rango 3000-3999)
+          PORT=$(( 3000 + $(echo $BRANCH_NAME | cksum | cut -f 1 -d ' ' | awk '{print $1 % 1000}') ))
+          echo "BACKEND_PORT=$PORT" >> $GITHUB_ENV
+          
+          # URL de acceso para comentar en el PR
+          echo "ACCESS_URL=http://31.97.171.120:$PORT" >> $GITHUB_ENV
+
+      - name: Configurar SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+
+      - name: Copiar archivos al VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no root@31.97.171.120 "mkdir -p /root/apps/$BRANCH_NAME"
+          rsync -avz --exclude '.git' --exclude 'node_modules' --exclude 'storage_*' --exclude 'logs_*' --exclude 'pgdata_*' ./ root@31.97.171.120:/root/apps/$BRANCH_NAME/
+
+      - name: Desplegar con Docker Compose en el VPS
+        run: |
+          ssh root@31.97.171.120 "cd /root/apps/$BRANCH_NAME && \
+            export BRANCH_NAME=$BRANCH_NAME && \
+            export BACKEND_PORT=$BACKEND_PORT && \
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }} && \
+            export JWT_SECRET=${{ secrets.JWT_SECRET }} && \
+            export ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }} && \
+            docker-compose -p residencias-$BRANCH_NAME down || true && \
+            docker-compose -p residencias-$BRANCH_NAME up -d --build"
+          
+      - name: Ejecutar migraciones y seed en el backend
+        run: |
+          ssh root@31.97.171.120 "docker exec residencias-backend-${BRANCH_NAME} sh -c 'npm run sync && npm run seed:complete'"
+        env:
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+
+      - name: Comentar URL en el Pull Request (si existe)
+        if: github.event_name == 'push' && github.ref != 'refs/heads/main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { BRANCH_NAME, ACCESS_URL } = process.env;
+            
+            // Buscar PR abierto que coincida con esta rama
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${context.payload.ref.replace('refs/heads/', '')}`
+            });
+            
+            if (pulls.length > 0) {
+              const prNumber = pulls[0].number;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `**Entorno de desarrollo desplegado**\n\n🔗 Backend disponible en: ${ACCESS_URL}\n\nRama: \`${BRANCH_NAME}\`\nBD: \`residencias_db\` (aislada)`
+              });
+            }
+        env:
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          ACCESS_URL: ${{ env.ACCESS_URL }}

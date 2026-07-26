@@ -1,0 +1,13 @@
+# Dockerfile para el servidor de geocoding mejorado de Habitas
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copiar el servidor de geocoding
+COPY geocoding/server-enhanced.js /app/geocode-server-enhanced.js
+
+# Exponer puerto
+EXPOSE 8081
+
+# Comando para iniciar el servidor
+CMD ["node", "geocode-server-enhanced.js"]

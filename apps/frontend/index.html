@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habitas - Residencias, Apartamentos, Casas y más en San Juan de los Morros</title>
+    <meta name="description" content="Encuentra tu hogar ideal en San Juan de los Morros. Alquiler de residencias, apartamentos, casas y cuartos con atención personalizada y proceso rápido." />
+    <meta name="author" content="Habitas" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="./logo.png">
+  </head>
+
+  <body>
+    <noscript>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;padding:20px;text-align:center;background:#f9fafb">
+        <div style="width:64px;height:64px;border-radius:50%;background:#1a365d;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h1 style="font-size:1.5rem;font-weight:700;color:#111827;margin-bottom:8px">JavaScript requerido</h1>
+        <p style="color:#6b7280;max-width:400px;line-height:1.5">Habitas necesita JavaScript para funcionar. Por favor, activa JavaScript en tu navegador e intenta de nuevo.</p>
+      </div>
+    </noscript>
+    <div id="root">
+      <div id="app-loading" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;background:#f9fafb;gap:16px">
+        <div style="width:40px;height:40px;border:4px solid #e5e7eb;border-top-color:#1a365d;border-radius:50%;animation:spin .8s linear infinite"></div>
+        <p style="color:#6b7280;font-size:14px">Cargando Habitas...</p>
+      </div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    </div>
+    <script>
+      (function(){
+        // ---- Guardian: recarga inmediata si la p\u00e1gina no carga ----
+        var TIMEOUT_MS = 12000;   // Si en 12s no carga, recarga
+        var SLOW_MSG_MS = 5000;   // Mensaje de conexi\u00f3n lenta a los 5s
+
+        var retryCount = 0;
+        try { retryCount = parseInt(sessionStorage.getItem('hb_r') || '0', 10); } catch(e) {}
+        function saveRetry(n) { try { sessionStorage.setItem('hb_r', String(n)); } catch(e) {} }
+        function clearRetry() { try { sessionStorage.removeItem('hb_r'); } catch(e) {} }
+
+        var timers = {};
+        var loaded = false;
+
+        function isOnline() { return navigator.onLine; }
+        function isLoading() { var r = document.getElementById('root'); return r && r.querySelector('#app-loading'); }
+        function hasErrorUI() { return document.querySelector('[data-error-ui]'); }
+
+        function clearAll() { for (var k in timers) clearTimeout(timers[k]); }
+
+        function setLoadingText(msg) {
+          var p = document.querySelector('#app-loading p');
+          if (p) p.textContent = msg;
+        }
+
+        // ---- Recarga inmediata (sin espera) ----
+        function reloadNow() {
+          retryCount++;
+          saveRetry(retryCount);
+          location.reload();
+        }
+
+        // ---- UI solo para cuando no hay internet ----
+        function showOfflineUI() {
+          var root = document.getElementById('root');
+          if (!root || hasErrorUI()) return;
+          root.innerHTML = '';
+
+          var c = document.createElement('div');
+          c.setAttribute('data-error-ui', '');
+          c.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;padding:20px;text-align:center;background:#f9fafb';
+
+          var ic = document.createElement('div');
+          ic.style.cssText = 'width:64px;height:64px;border-radius:50%;background:#d97706;display:flex;align-items:center;justify-content:center;margin-bottom:16px';
+          ic.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+          c.appendChild(ic);
+
+          var h = document.createElement('h1');
+          h.textContent = 'Sin conexi\u00f3n a internet';
+          h.style.cssText = 'font-size:1.5rem;font-weight:700;color:#111827;margin-bottom:8px';
+          c.appendChild(h);
+
+          var p = document.createElement('p');
+          p.textContent = 'No hay conexi\u00f3n a internet. La p\u00e1gina se recargar\u00e1 autom\u00e1ticamente cuando la conexi\u00f3n se restablezca.';
+          p.style.cssText = 'color:#6b7280;margin-bottom:8px;max-width:400px;line-height:1.5';
+          c.appendChild(p);
+
+          var w = document.createElement('p');
+          w.textContent = 'Esperando conexi\u00f3n...';
+          w.style.cssText = 'color:#d97706;font-size:0.9rem';
+          c.appendChild(w);
+
+          var clearBtn = document.createElement('button');
+          clearBtn.textContent = 'Limpiar cach\u00e9 y reintentar';
+          clearBtn.style.cssText = 'margin-top:24px;padding:8px 20px;background:transparent;color:#6b7280;border:1px solid #d1d5db;border-radius:8px;font-size:0.85rem;cursor:pointer';
+          clearBtn.addEventListener('click', function(){
+            if ('caches' in window) { caches.keys().then(function(ks) { for (var i = 0; i < ks.length; i++) caches.delete(ks[i]).catch(function(){}); }).catch(function(){}); }
+            localStorage.clear();
+            location.reload();
+          });
+          c.appendChild(clearBtn);
+
+          root.appendChild(c);
+        }
+
+        // ---- Unregister SW ----
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            for (var i = 0; i < regs.length; i++) regs[i].unregister();
+          });
+        }
+
+        // ---- Network events ----
+        window.addEventListener('offline', function() {
+          if (loaded) return;
+          if (isLoading()) setLoadingText('Sin conexi\u00f3n a internet');
+          else if (hasErrorUI()) {
+            var w = document.querySelector('[data-error-ui] p:last-of-type');
+            if (w) w.textContent = 'Sin conexi\u00f3n. Esperando...';
+          }
+        });
+
+        window.addEventListener('online', function() {
+          if (loaded) return;
+          if (isLoading() || hasErrorUI()) location.reload();
+        });
+
+        // ---- Timeout: si en 12s la p\u00e1gina no ha cargado ----
+        timers.t = setTimeout(function() {
+          if (loaded || !isLoading()) return;
+          clearAll();
+          if (isOnline()) {
+            retryCount++;
+            saveRetry(retryCount);
+            var msgP = document.querySelector('#app-loading p');
+            if (msgP) msgP.textContent = 'Reintentando (intento #' + retryCount + ')...';
+            timers.r = setTimeout(function() { location.reload(); }, 2500);
+          } else {
+            showOfflineUI();
+          }
+        }, TIMEOUT_MS);
+
+        // ---- Mensaje de conexi\u00f3n lenta ----
+        timers.s = setTimeout(function() {
+          if (loaded || !isLoading()) return;
+          setLoadingText(isOnline() ? 'Conexi\u00f3n lenta...' : 'Sin conexi\u00f3n a internet');
+        }, SLOW_MSG_MS);
+
+        // ---- Error de carga del script ----
+        window.addEventListener('error', function(e) {
+          if (loaded || !isLoading()) return;
+          if (!e.target || e.target.tagName !== 'SCRIPT') return;
+          e.preventDefault();
+          clearAll();
+          if (isOnline()) reloadNow();
+          else showOfflineUI();
+        }, true);
+
+        // ---- UI-rendered guardian ----
+        // After the module loads, actively check if React painted content.
+        // If root stays empty (white screen), reload immediately and retry
+        // until the UI finally renders.
+        function startUIPolling() {
+          // Give React a moment to mount, then start checking
+          var pollTimer = setTimeout(function poll() {
+            var root = document.getElementById('root');
+            if (root && root.children.length > 0) {
+              return; // UI painted, stop
+            }
+            // Root empty — React didn't render → reload immediately
+            retryCount++;
+            saveRetry(retryCount);
+            location.reload();
+          }, 400);
+          timers.ui = pollTimer;
+        }
+
+        window.__clearAppFallback = function() {
+          clearAll();
+          loaded = true;
+          clearRetry();
+          startUIPolling();
+        };
+
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

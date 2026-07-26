@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.docker
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+
+# Runtime data
+data/
+temp/
+uploads/
+storage/
+pgdata_*/
+storage_*/
+logs_*/
+
+# Test artifacts
+coverage/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker volumes
+postgres_data/
+
+# AI tool configs
+.agents/
+.kiro/skills/
+skills-lock.json
+.omo/

@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+
+allowBuilds:
+  "@tensorflow/tfjs-node": true
+  canvas: true
+  core-js: true
+  esbuild: true
+  sharp: true
+  tesseract.js: true
