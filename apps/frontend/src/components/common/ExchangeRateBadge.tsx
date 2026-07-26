@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useExchangeRate } from "../contexts/ExchangeRateContext";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useExchangeRate } from "../../contexts/ExchangeRateContext";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { RefreshCw, Clock, Database, ChevronRight } from "lucide-react";
-import { Button } from "./ui/button";
-import { type RateType, RATE_LABELS, RATE_COLORS } from "../utils/formatPrice";
+import { Button } from "../ui/button";
+import { type RateType, RATE_LABELS, RATE_COLORS } from "../../utils/formatPrice";
 
 function formatLastUpdated(dateStr?: string): string {
   if (!dateStr) return "No disponible";

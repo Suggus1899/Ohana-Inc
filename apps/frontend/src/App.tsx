@@ -10,8 +10,8 @@ import { ChatProvider } from "@/contexts";
 import { ToastNotificationProvider } from "@/contexts/ToastNotificationContext";
 import { BehaviorTrackerProvider } from "@/contexts/BehaviorTrackerContext";
 import { ExchangeRateProvider } from "@/contexts/ExchangeRateContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 const Index = lazy(() => import("./pages/Index"));
 const PropertyDetail = lazy(() => import("./pages/PropertyDetail"));

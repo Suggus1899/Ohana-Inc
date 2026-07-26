@@ -5,8 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import { Bed, Bath, Square, MapPin } from 'lucide-react';
 import api, { Property } from '@/services/api';
 import { retryWithBackoff } from '@/utils/retryWithBackoff';
-import { useExchangeRate } from '../contexts/ExchangeRateContext';
-import { formatDualPriceShort, usdToVes } from '../utils/formatPrice';
+import { useExchangeRate } from '../../contexts/ExchangeRateContext';
+import { formatDualPriceShort, usdToVes } from '../../utils/formatPrice';
 
 const iconMap: Record<string, string> = {
   Residencia: '/images/icon-maps/residencia.png',

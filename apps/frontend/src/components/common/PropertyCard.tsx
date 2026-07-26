@@ -7,8 +7,8 @@ import { m, AnimatePresence } from "framer-motion";
 import { useState, useCallback, useEffect, memo } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useRouteCalculation } from "@/hooks/useRouteCalculation";
-import { useExchangeRate } from "../contexts/ExchangeRateContext";
-import { usdToVes } from "../utils/formatPrice";
+import { useExchangeRate } from "../../contexts/ExchangeRateContext";
+import { usdToVes } from "../../utils/formatPrice";
 import { DualPrice } from "./DualPrice";
 
 interface PropertyCardProps {

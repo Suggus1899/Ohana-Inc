@@ -7,7 +7,7 @@ import { api, Property, RentalRequest } from "@/services/api";
 import { UserReviewsModal } from "@/components/reviews";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToVes } from "../../../utils/formatPrice";
-import { DualPrice } from "../../../components/DualPrice";
+import { DualPrice } from "../../../components/common/DualPrice";
 
 interface OwnerStats {
   activeProperties: number;

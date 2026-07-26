@@ -31,7 +31,7 @@ import api, { Property } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToVes, formatDualPrice } from "../../../utils/formatPrice";
-import { DualPrice } from "../../../components/DualPrice";
+import { DualPrice } from "../../../components/common/DualPrice";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 
 const getStatusBadge = (status: string) => {

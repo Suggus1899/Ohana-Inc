@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Loader2, CheckCircle, ChevronRight, ChevronLeft, X, GripVertical, ArrowUpDown } from 'lucide-react';
-import { PricePreviewField } from '@/components/PricePreviewField';
+import { PricePreviewField } from '@/components/common/PricePreviewField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

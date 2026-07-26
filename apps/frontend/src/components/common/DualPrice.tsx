@@ -1,4 +1,4 @@
-import { usdToVes, formatCurrency } from "../utils/formatPrice";
+import { usdToVes, formatCurrency } from "../../utils/formatPrice";
 
 interface DualPriceProps {
   usd: number;

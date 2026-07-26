@@ -29,7 +29,7 @@ import { GeocodeResult, geocodingService } from "@/services/geocoding.service";
 import LocationSearchBar from "@/components/search/LocationSearchBar";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToVes } from "../../../utils/formatPrice";
-import { DualPrice } from "../../../components/DualPrice";
+import { DualPrice } from "../../../components/common/DualPrice";
 
 // Leaflet fix
 delete (L.Icon.Default.prototype as typeof L.Icon.Default.prototype & { _getIconUrl?: unknown })._getIconUrl;

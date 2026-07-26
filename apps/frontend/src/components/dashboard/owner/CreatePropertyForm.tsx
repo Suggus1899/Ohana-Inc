@@ -6,7 +6,7 @@ import { formatDualPrice } from '../../../utils/formatPrice';
 import { ImageUploader } from '@/components/common/ImageUploader';
 import { VideoUploader } from '@/components/common/VideoUploader';
 import { MapPicker, MapPickerValue } from '@/components/common/MapPicker';
-import { PricePreviewField } from '@/components/PricePreviewField';
+import { PricePreviewField } from '@/components/common/PricePreviewField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

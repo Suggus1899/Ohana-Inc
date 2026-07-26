@@ -8,7 +8,7 @@ import { useToastNotification } from "@/contexts/ToastNotificationContext";
 import { Loader2, Building, Eye, EyeOff, UserPlus, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthLayout from "@/components/auth/AuthLayout";
-import RoleSelector from "@/components/RoleSelector";
+import RoleSelector from "@/components/auth/RoleSelector";
 
 type UserRole = 'estudiante' | 'cliente' | 'propietario';
 

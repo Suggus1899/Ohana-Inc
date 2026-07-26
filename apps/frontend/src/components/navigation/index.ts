@@ -4,3 +4,4 @@ export { default as NavigationButton } from './NavigationButton';
 export { default as NavigationControls } from './NavigationControls';
 export { default as NavigationMap } from './NavigationMap';
 export { default as RouteInstructions } from './RouteInstructions';
+export { NavLink } from './NavLink';

@@ -1,5 +1,5 @@
-import { useExchangeRate } from "../contexts/ExchangeRateContext";
-import { formatCurrency, usdToVes, type RateType } from "../utils/formatPrice";
+import { useExchangeRate } from "../../contexts/ExchangeRateContext";
+import { formatCurrency, usdToVes, type RateType } from "../../utils/formatPrice";
 
 interface PricePreviewFieldProps {
   value?: string | number;

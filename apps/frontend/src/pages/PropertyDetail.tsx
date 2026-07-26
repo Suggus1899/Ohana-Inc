@@ -29,9 +29,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyCard from "@/components/common/PropertyCard";
 import NavigationButton from "@/components/navigation/NavigationButton";
-import Footer from "@/components/Footer";
+import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 import { useAuth } from "@/contexts/AuthContext";

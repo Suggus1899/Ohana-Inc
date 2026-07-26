@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Exec(pnpm install)",
+      "Exec(pnpm run)",
+      "Exec(pnpm -r)",
+      "Exec(pnpm --filter)",
+      "Exec(pnpm test)",
+      "Exec(pnpm dev)",
+      "Exec(pnpm build)",
+      "Exec(pnpm lint)",
+      "Exec(node)",
+      "Exec(npx)",
+      "Exec(git status)",
+      "Exec(git diff)",
+      "Exec(git log)",
+      "Exec(git branch)",
+      "Exec(git add)",
+      "Exec(git commit)",
+      "Exec(powershell)",
+      "Exec(Get-ChildItem)",
+      "Exec(Get-Content)",
+      "Exec(cd)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "powershell -ExecutionPolicy Bypass -File \"%APPDATA%\\devin\\hooks\\pre-commit-check.ps1\"",
+            "type": "command",
+            "timeout": 10
+          }
+        ],
+        "matcher": "exec"
+      }
+    ]
+  }
+}

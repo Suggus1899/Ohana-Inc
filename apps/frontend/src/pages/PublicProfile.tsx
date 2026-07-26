@@ -4,10 +4,10 @@ import { ArrowLeft, User, Star, Loader2, Mail, Phone, Calendar, ShieldCheck, Bad
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import PropertyCard from "@/components/PropertyCard";
-import Footer from "@/components/Footer";
-import ProfileIcon from "@/components/ProfileIcon";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import PropertyCard from "@/components/common/PropertyCard";
+import Footer from "@/components/layout/Footer";
+import ProfileIcon from "@/components/common/ProfileIcon";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import api, { User as UserType } from "@/services/api";
 import { UserReviewsModal } from "@/components/reviews";

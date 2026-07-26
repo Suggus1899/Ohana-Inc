@@ -7,7 +7,7 @@ import { api, Favorite } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToVes } from "../../../utils/formatPrice";
-import { DualPrice } from "../../../components/DualPrice";
+import { DualPrice } from "../../../components/common/DualPrice";
 
 const FavoritesSection = () => {
   const [favorites, setFavorites] = useState<Favorite[]>([]);

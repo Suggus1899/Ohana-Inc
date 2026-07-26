@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Hero from "@/components/Hero";
+import Hero from "@/components/layout/Hero";
 import Navbar from "@/components/layout/Navbar";
-import PropertyCard from "@/components/PropertyCard";
-import Features from "@/components/Features";
-import Footer from "@/components/Footer";
-import LocationMap from "@/components/LocationMap";
+import PropertyCard from "@/components/common/PropertyCard";
+import Features from "@/components/layout/Features";
+import Footer from "@/components/layout/Footer";
+import LocationMap from "@/components/common/LocationMap";
 import api, { Property } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import {

@@ -167,7 +167,15 @@
       "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\backend\\docs\")",
       "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\")",
       "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\\components\\dashboard\\admin\")",
-      "Exec(\"=== hooks export patterns ===\")"
+      "Exec(\"=== hooks export patterns ===\")",
+      "Exec($fe\\components)",
+      "Exec(#)",
+      "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\\components\")",
+      "Exec($fe\\auth\\RoleSelector.tsx)",
+      "Exec(\"F:\\Proyectos\\Ohana Inc\\apps\\frontend\\src\\components\\common\")",
+      "Exec(})",
+      "Exec(\"`n=== Check navigation NavLink ===\")",
+      "Exec(git remote)"
     ]
   }
 }

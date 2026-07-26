@@ -12,7 +12,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { ExchangeRateBadge, ExchangeRateBadgeMobile } from "../ExchangeRateBadge";
+import { ExchangeRateBadge, ExchangeRateBadgeMobile } from "../common/ExchangeRateBadge";
 import { 
   Menu, 
   Home, 

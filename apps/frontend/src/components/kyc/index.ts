@@ -23,3 +23,5 @@ export { VerificationBadge } from './VerificationBadge';
 export { VerificationRestrictionAlert } from './VerificationRestrictionAlert';
 
 export { KYCErrorBoundary } from './KYCErrorBoundary';
+
+export { KYCDialog } from './KYCDialog';
