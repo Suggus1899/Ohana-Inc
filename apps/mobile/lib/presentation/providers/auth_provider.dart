@@ -51,6 +51,22 @@ class AuthService {
     await _ref.read(apiClientProvider).register(data);
   }
 
+  /// Verify email with token. If backend returns JWT + user, persist session.
+  Future<bool> verifyEmail(String token) async {
+    final response = await _ref.read(apiClientProvider).verifyEmail(token);
+    final data = response.data as Map<String, dynamic>;
+    final jwt = data['token'] as String?;
+    final user = data['user'] as Map<String, dynamic>?;
+
+    if (jwt != null && user != null) {
+      await _storage.write(key: AppConstants.keyToken, value: jwt);
+      await _storage.write(key: AppConstants.keyUser, value: jsonEncode(user));
+      _ref.read(authStateProvider.notifier).setAuthenticated(jwt, user);
+      return true;
+    }
+    return false;
+  }
+
   /// Logout and clear stored data.
   Future<void> logout() async {
     await _storage.delete(key: AppConstants.keyToken);

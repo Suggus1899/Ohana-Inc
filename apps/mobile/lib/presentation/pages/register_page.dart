@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../data/services/api_client.dart';
+import '../providers/auth_provider.dart';
 
 /// Registration page with multi-field form.
 class RegisterPage extends ConsumerStatefulWidget {
@@ -43,7 +43,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(apiClientProvider).register({
+      await ref.read(authServiceProvider).register({
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'password': _passwordController.text,

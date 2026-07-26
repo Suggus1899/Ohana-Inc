@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
@@ -6,6 +8,19 @@ import 'presentation/providers/auth_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Catch errors outside Flutter's build tree (async, isolates)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('Unhandled platform error: $error\n$stack');
+    return true;
+  };
+
+  // Catch errors in Flutter's build/layout/paint phases
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    debugPrint('Flutter error: ${details.exception}\n${details.stack}');
+  };
+
   runApp(const ProviderScope(child: OhanaApp()));
 }
 
@@ -18,6 +33,7 @@ class OhanaApp extends ConsumerStatefulWidget {
 
 class _OhanaAppState extends ConsumerState<OhanaApp> {
   bool _initialized = false;
+  bool _initFailed = false;
 
   @override
   void initState() {
@@ -26,8 +42,20 @@ class _OhanaAppState extends ConsumerState<OhanaApp> {
   }
 
   Future<void> _initAuth() async {
-    await ref.read(authServiceProvider).init();
-    if (mounted) setState(() => _initialized = true);
+    try {
+      await ref.read(authServiceProvider).init();
+      if (mounted) setState(() => _initialized = true);
+    } catch (e, stack) {
+      debugPrint('Auth init failed: $e\n$stack');
+      // Mark as initialized so user can proceed to login
+      // rather than being stuck on a loading screen forever
+      if (mounted) {
+        setState(() {
+          _initialized = true;
+          _initFailed = true;
+        });
+      }
+    }
   }
 
   @override

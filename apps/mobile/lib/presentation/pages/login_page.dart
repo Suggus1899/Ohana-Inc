@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/services/api_client.dart';
+import '../providers/auth_provider.dart';
 
 /// Login page with email/password form.
 class LoginPage extends ConsumerStatefulWidget {
@@ -31,18 +32,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     setState(() => _isLoading = true);
     try {
-      final res = await ref
-          .read(apiClientProvider)
+      // Use AuthService which persists token to secure storage
+      await ref
+          .read(authServiceProvider)
           .login(_emailController.text.trim(), _passwordController.text);
 
-      final data = res.data as Map<String, dynamic>;
-      final token = data['token'] as String? ?? '';
-      final user = (data['user'] as Map<String, dynamic>?) ?? const {};
-
-      ref.read(authStateProvider.notifier).setAuthenticated(token, user);
-
       if (mounted) {
-        final role = user['role'] as String?;
+        final user = ref.read(authStateProvider).user;
+        final role = user?['role'] as String?;
         context.go(_dashboardPathForRole(role));
       }
     } catch (e) {

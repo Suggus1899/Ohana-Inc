@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../data/services/api_client.dart';
+import '../providers/auth_provider.dart';
 
 /// Email verification page — user enters the token sent to their email.
 class VerifyEmailPage extends ConsumerStatefulWidget {
@@ -29,16 +29,26 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
 
     setState(() => _isLoading = true);
     try {
-      await ref
-          .read(apiClientProvider)
+      final authenticated = await ref
+          .read(authServiceProvider)
           .verifyEmail(_tokenController.text.trim());
-      if (mounted) setState(() => _verified = true);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Correo verificado correctamente')),
-        );
-        await Future.delayed(const Duration(seconds: 1));
-        if (mounted) context.go('/login');
+
+      if (!mounted) return;
+      setState(() => _verified = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Correo verificado correctamente')),
+      );
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
+
+      if (authenticated) {
+        // Backend returned JWT — go directly to dashboard
+        final user = ref.read(authStateProvider).user;
+        final role = user?['role'] as String?;
+        context.go(_dashboardPathForRole(role));
+      } else {
+        // No JWT returned — go to login
+        context.go('/login');
       }
     } catch (e) {
       if (mounted) {
@@ -48,6 +58,21 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _dashboardPathForRole(String? role) {
+    switch (role) {
+      case 'admin':
+        return '/admin';
+      case 'operator':
+        return '/operator';
+      case 'propietario':
+        return '/propietario';
+      case 'estudiante':
+      case 'cliente':
+      default:
+        return '/estudiante';
     }
   }
 
