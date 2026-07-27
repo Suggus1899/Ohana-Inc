@@ -22,22 +22,13 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import PropertyCard from "@/components/common/PropertyCard";
-import NavigationButton from "@/components/navigation/NavigationButton";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useExchangeRate } from "@/contexts/ExchangeRateContext";
 import { formatDualPrice, formatCurrency, usdToCop } from "@/utils/formatPrice";
-import RequestTransactionModal from "@/components/transactions/RequestTransactionModal";
 import { useChat } from "@/hooks/useChat";
 import { toast } from "sonner";
 import api, { Property, PropertyReview } from "@/services/api";
@@ -52,12 +43,8 @@ import {
   Phone,
   MessageCircle,
   Calendar,
-  User,
-  Home,
   Eye,
-  CheckCircle,
   Loader2,
-  AlertCircle,
   Shield,
   MessageSquare,
   Star,
@@ -69,28 +56,10 @@ import {
   Copy,
   Check,
   ExternalLink,
-  Wifi,
-  Droplets,
-  Zap,
-  Wind,
-  CookingPot,
-  Car,
-  Sofa,
-  Tv,
-  Flame,
-  Sparkles,
-  Waves,
-  Dumbbell,
-  TreePine,
-  BookOpen,
-  UtensilsCrossed,
-  ShowerHead,
-  Fan,
-  Sun,
 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { RatingStars, ReviewCard, ReviewForm } from "@/components/reviews";
+import { ReviewCard, ReviewForm } from "@/components/reviews";
 
 const iconMap: Record<string, string> = {
   Residencia: '/images/icon-maps/residencia.png',
@@ -132,13 +101,13 @@ const PropertyDetail = () => {
 
   // API integration states
   const [property, setProperty] = useState<Property | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [verificationLevel, setVerificationLevel] = useState(0);
+  const [_loading, setLoading] = useState(true);
+  const [_error, setError] = useState<string | null>(null);
+  const [_verificationLevel, setVerificationLevel] = useState(0);
   const [canRequest, setCanRequest] = useState(false);
-  const [hasConfirmedTransaction, setHasConfirmedTransaction] = useState(false);
+  const [hasConfirmedTransaction, _setHasConfirmedTransaction] = useState(false);
   const [checkingTransaction, setCheckingTransaction] = useState(true);
-  const [remainingFreeRequests, setRemainingFreeRequests] = useState<number | null>(null);
+  const [remainingFreeRequests, _setRemainingFreeRequests] = useState<number | null>(null);
   
   // Reviews states
   const [reviews, setReviews] = useState<PropertyReview[]>([]);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { getPendingDisputes, resolveDispute, markDisputeUnderReview } from '@/services/transaction.service';
-import { Dispute, DisputeStatus, STATUS_LABELS, STATUS_COLORS, TransactionStatus } from '@/types/transaction.types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dispute } from '@/types/transaction.types';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -52,7 +52,7 @@ const DisputePanel: React.FC = () => {
       setLoading(true);
       const { disputes: data } = await getPendingDisputes();
       setDisputes(data);
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       toast(ERROR_TOAST(ERROR_MESSAGES.LOAD_DISPUTES));
     } finally {
       setLoading(false);

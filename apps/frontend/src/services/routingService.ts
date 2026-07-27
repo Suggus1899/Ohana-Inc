@@ -27,6 +27,12 @@ export interface RouteData {
   steps: RouteStep[];
 }
 
+interface ApiResponse<T = unknown> {
+  success?: boolean;
+  error?: { message?: string };
+  data: T;
+}
+
 export const calculateRoute = async (
   origin: RouteCoordinates,
   destination: RouteCoordinates,
@@ -45,23 +51,24 @@ export const calculateRoute = async (
       }),
     });
 
-    const data = await response.json() as any;
+    const data = await response.json() as ApiResponse<RouteData>;
 
     if (!response.ok || !data.success) {
       throw new Error(data.error?.message || 'Error calculating route');
     }
 
     return data.data;
-  } catch (error: any) {
-    console.error('Routing Service Error:', error.message);
-    throw new Error(error.message || 'Error connecting to routing service');
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Routing Service Error:', message);
+    throw new Error(message || 'Error connecting to routing service');
   }
 };
 
 export const geocodeAddress = async (address: string): Promise<RouteCoordinates & { display_name: string }> => {
   try {
     const response = await fetch(`${API_URL}/navigation/geocode?address=${encodeURIComponent(address)}`);
-    const data = await response.json() as any;
+    const data = await response.json() as ApiResponse<{ lat: number; lng: number; address: string }>;
     
     if (!response.ok || !data.success) {
       throw new Error(data.error?.message || 'Error geocoding address');
@@ -72,8 +79,9 @@ export const geocodeAddress = async (address: string): Promise<RouteCoordinates 
       lng: data.data.lng,
       display_name: data.data.address
     };
-  } catch (error: any) {
-    console.error('Geocoding Service Error:', error.message);
-    throw new Error(error.message || 'Error connecting to geocoding service');
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Geocoding Service Error:', message);
+    throw new Error(message || 'Error connecting to geocoding service');
   }
 };

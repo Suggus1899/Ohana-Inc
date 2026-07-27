@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Loader2, Bell, BellDot, CheckCheck, Trash2, AlertCircle, Building, MessageSquare, ShieldCheck, Megaphone, Star, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Loader2, Bell, CheckCheck, Trash2, Building, MessageSquare, ShieldCheck, Megaphone, Star, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import api, { Notification } from '@/services/api';
 
 const ICON_MAP: Record<string, typeof Bell> = {

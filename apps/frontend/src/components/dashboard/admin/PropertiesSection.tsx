@@ -192,8 +192,8 @@ const PropertiesSection = () => {
       toast.success(`"${deleteDialog.property.title}" eliminada`);
       setDeleteDialog({ open: false, property: null });
       fetchProperties();
-    } catch (err: any) {
-      toast.error(err?.message || "Error al eliminar");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Error al eliminar");
     } finally {
       setIsActioning(null);
     }

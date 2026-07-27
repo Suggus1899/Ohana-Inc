@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, Search, MoreVertical, Mail, Calendar, CheckCircle, Plus, Pencil, Loader2, UserCog, Ban, Clock, AlertCircle, UserCheck, UserX, RefreshCw, Settings, ShieldCheck } from "lucide-react";
+import { Users, Search, MoreVertical, Mail, Calendar, Plus, Pencil, Loader2, Ban, AlertCircle, UserCheck, UserX, RefreshCw, Settings, ShieldCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,7 +73,7 @@ const UsersSection = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, roleFilter, search]);
+  }, [page, roleFilter, search, statusFilter, showError]);
 
   const handleApproveUser = async (userId: number, userName: string) => {
     try {
@@ -83,7 +83,7 @@ const UsersSection = () => {
         fetchUsers();
         setPendingActionModal({ isOpen: false, user: null });
       } else {
-        showError("Error al aprobar", (res as any).error?.message || "Error desconocido");
+        showError("Error al aprobar", ((res as Record<string, unknown>).error as { message?: string } | undefined)?.message || "Error desconocido");
       }
     } catch {
       showError("Error de conexión", "No se pudo aprobar el usuario.");
@@ -101,7 +101,7 @@ const UsersSection = () => {
         fetchUsers();
         setPendingActionModal({ isOpen: false, user: null });
       } else {
-        showError("Error al rechazar", (res as any).error?.message || "Error desconocido");
+        showError("Error al rechazar", ((res as Record<string, unknown>).error as { message?: string } | undefined)?.message || "Error desconocido");
       }
     } catch {
       showError("Error de conexión", "No se pudo rechazar el usuario.");
@@ -121,7 +121,7 @@ const UsersSection = () => {
         showSuccess("Estado actualizado", `${u.name} ha sido ${labels[action]}.`);
         fetchUsers();
       } else {
-        showError("Error", (res as any).error?.message || "Error desconocido");
+        showError("Error", ((res as Record<string, unknown>).error as { message?: string } | undefined)?.message || "Error desconocido");
       }
     } catch {
       showError("Error de conexión", "No se pudo actualizar el estado.");
@@ -153,7 +153,7 @@ const UsersSection = () => {
         showSuccess("Usuario verificado", `${userName} ha sido verificado exitosamente.`);
         fetchUsers();
       } else {
-        showError("Error al verificar", (res as any).error?.message || "Error desconocido");
+        showError("Error al verificar", ((res as Record<string, unknown>).error as { message?: string } | undefined)?.message || "Error desconocido");
       }
     } catch {
       showError("Error de conexión", "No se pudo verificar el usuario.");
@@ -166,7 +166,7 @@ const UsersSection = () => {
     setStatusActionModal({ isOpen: true, user, action: 'block' });
   };
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers, statusFilter]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const handleUserCreated = () => { fetchUsers(); };
   const handleUserUpdated = () => { fetchUsers(); };

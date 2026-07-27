@@ -103,7 +103,7 @@ const StatsSection = () => {
           rentedProperties,
           monthlyHistory,
         });
-      } catch (error) {
+      } catch (_error) {
         if (cancelled) return;
         toast({
           title: "Error",
@@ -155,7 +155,7 @@ const StatsSection = () => {
     });
     const total = stats.monthlyHistory.reduce((acc, m) => acc + m.total, 0);
     doc.setFontSize(11);
-    doc.text(`Total histórico: $${total.toLocaleString()}`, 14, (doc as any).lastAutoTable.finalY + 10);
+    doc.text(`Total histórico: $${total.toLocaleString()}`, 14, (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10);
     doc.save(`historial-ingresos-${new Date().toISOString().slice(0, 7)}.pdf`);
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense, useMemo } from "react";
-import DashboardLayout, { UserRole } from "@/components/layout/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import { operatorSidebarItems } from "@/config/sidebarConfig";
 import { api, ModerationStats } from "@/services/api";
 
@@ -18,11 +18,11 @@ const PublishedPropertiesSection = lazy(() => import("@/components/dashboard/ope
 const RentalRequestsSection = lazy(() => import("@/components/dashboard/operator/RentalRequestsSection"));
 const SettingsSection = lazy(() => import("@/components/dashboard/shared/SettingsSection"));
 const DisputePanel = lazy(() => import("@/components/disputes/DisputePanel"));
-const TransactionPanel = lazy(() => import("@/components/transactions/TransactionPanel"));
+const _TransactionPanel = lazy(() => import("@/components/transactions/TransactionPanel"));
 const TransactionsSection = lazy(() => import("@/components/dashboard/operator/TransactionsSection"));
 const MessagesSection = lazy(() => import("@/components/dashboard/shared/MessagesSection"));
 
-const PlaceholderSection = ({ title }: { title: string }) => (
+const _PlaceholderSection = ({ title }: { title: string }) => (
   <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
     <p className="text-muted-foreground">Sección "{title}" en desarrollo</p>
   </div>

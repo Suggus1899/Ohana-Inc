@@ -276,7 +276,7 @@ describe('ImageQualityValidator', () => {
     it('should return all validations passed for valid image', async () => {
       // validateAll calls validateResolution and validateBrightness
       // Each creates a new Image, so we need to simulate load twice
-      const callCount = 0;
+      const _callCount = 0;
       const originalImage = global.Image;
       
       global.Image = class {

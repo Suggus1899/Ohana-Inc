@@ -38,7 +38,7 @@ export function ExchangeRateProvider({ children }: { children: ReactNode }) {
       } else {
         setError('No se pudo obtener la TRM');
       }
-    } catch (e) {
+    } catch (_e) {
       setError('Error al obtener la TRM');
     } finally {
       setLoading(false);

@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClipboardList, Clock, CheckCircle, AlertCircle, User, Loader2 } from "lucide-react";
 import { api, Task } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { exportToPDF } from "@/lib/pdf-export";
 
 // Helper for priority badges
@@ -24,10 +23,10 @@ const getPriorityBadge = (priority: string) => {
 
 // Memoized TaskCard defined outside parent to avoid unmounting on every render
 interface TaskCardProps {
-  task: any;
+  task: Task;
   showActions?: boolean;
   onUpdateStatus: (id: number, newStatus: string) => void;
-  onViewDetails: (task: any) => void;
+  onViewDetails: (task: Task) => void;
 }
 
 const TaskCard = memo(({ task, showActions = true, onUpdateStatus, onViewDetails }: TaskCardProps) => (
@@ -80,7 +79,7 @@ const TasksSection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setIsLoading(true);
     const response = await api.getTasks();
     if (response.success && response.data) {
@@ -101,11 +100,11 @@ const TasksSection = () => {
       });
     }
     setIsLoading(false);
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   // Caching the callback passed to the memoized TaskCard
   const handleUpdateStatus = useCallback(async (id: number, newStatus: string) => {
@@ -114,9 +113,9 @@ const TasksSection = () => {
       toast({ title: "Tarea actualizada" });
       fetchTasks();
     }
-  }, [toast]);
+  }, [toast, fetchTasks]);
 
-  const handleViewDetails = useCallback((task: any) => {
+  const handleViewDetails = useCallback((task: Task) => {
     toast({ title: task.title, description: task.description || 'Sin descripción' });
   }, [toast]);
 

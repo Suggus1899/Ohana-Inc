@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Loader2, X, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { geocodingService } from '@/services/geocoding.service';
+import { geocodingService, GeocodeResult } from '@/services/geocoding.service';
 import { toast } from '@/components/ui/use-toast';
 
 interface LocationSearchBarProps {
@@ -18,7 +18,7 @@ const LocationSearchBar = ({
 }: LocationSearchBarProps) => {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<GeocodeResult[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ const LocationSearchBar = ({
     }
   };
 
-  const handleSuggestionSelect = (suggestion: any) => {
+  const handleSuggestionSelect = (suggestion: GeocodeResult) => {
     setQuery(suggestion.displayName);
     setShowSuggestions(false);
     setSelectedIndex(-1);
@@ -133,10 +133,10 @@ const LocationSearchBar = ({
           variant: "destructive",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error de búsqueda",
-        description: error.message || "No se pudo procesar la ubicación",
+        description: error instanceof Error ? error.message : "No se pudo procesar la ubicación",
         variant: "destructive",
       });
     } finally {

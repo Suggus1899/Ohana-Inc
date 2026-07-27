@@ -42,7 +42,7 @@ const NavigationView = () => {
       if (mockFound) {
         // Normalización de datos mock -> API real
         const normalizedProperty: Property = {
-          ...mockFound as any,
+          ...mockFound as unknown as Property,
           lat: mockFound.coordinates.lat,
           lng: mockFound.coordinates.lng,
           authorId: Number(mockFound.authorId),
@@ -83,10 +83,10 @@ const NavigationView = () => {
   useEffect(() => {
     // Verificación de permisos (Resolución Funcional 2)
     if (navigator.permissions && navigator.permissions.query) {
-      navigator.permissions.query({ name: 'geolocation' as any }).then((result) => {
-        setPermissionStatus(result.state as any);
+      navigator.permissions.query({ name: 'geolocation' as PermissionName }).then((result) => {
+        setPermissionStatus(result.state);
         result.onchange = () => {
-          setPermissionStatus(result.state as any);
+          setPermissionStatus(result.state);
         };
       });
     }

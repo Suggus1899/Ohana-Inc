@@ -1,5 +1,5 @@
 import { useExchangeRate } from "../../contexts/ExchangeRateContext";
-import { formatCurrency, usdToCop, type RateType } from "../../utils/formatPrice";
+import { formatCurrency, type RateType } from "../../utils/formatPrice";
 
 interface PricePreviewFieldProps {
   value?: string | number;
@@ -8,7 +8,7 @@ interface PricePreviewFieldProps {
 }
 
 export function PricePreviewField({ value, className = "", rateType }: PricePreviewFieldProps) {
-  const { rate, loading, getCopFor } = useExchangeRate();
+  const { loading, getCopFor } = useExchangeRate();
 
   if (!value || isNaN(Number(value)) || Number(value) <= 0) {
     return null;

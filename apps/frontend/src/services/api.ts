@@ -451,11 +451,11 @@ class ApiService {
   }
 
   async getSettings() {
-    return this.request<{ settings: Record<string, any> }>('/settings');
+    return this.request<{ settings: Record<string, unknown> }>('/settings');
   }
 
-  async updateSettings(settings: Record<string, any>) {
-    return this.request<{ settings: Record<string, any> }>('/settings', {
+  async updateSettings(settings: Record<string, unknown>) {
+    return this.request<{ settings: Record<string, unknown> }>('/settings', {
       method: 'PUT',
       body: JSON.stringify({ settings }),
     });
@@ -738,18 +738,18 @@ class ApiService {
 
   // Rent Request methods
   async createVisit(data: { propertyId: number; name: string; email: string; phone: string; visitDate: string; message?: string }) {
-    return this.request<{ visit: any }>('/visits', {
+    return this.request<{ visit: Record<string, unknown> }>('/visits', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   async getOwnerVisits() {
-    return this.request<{ visits: any[] }>('/visits/owner/all');
+    return this.request<{ visits: Record<string, unknown>[] }>('/visits/owner/all');
   }
 
   async updateVisitStatus(visitId: number, status: string, scheduledTime?: string) {
-    return this.request<{ visit: any }>(`/visits/${visitId}/status`, {
+    return this.request<{ visit: Record<string, unknown> }>(`/visits/${visitId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status, scheduledTime }),
     });

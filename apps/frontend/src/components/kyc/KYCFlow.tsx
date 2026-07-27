@@ -19,16 +19,7 @@ import { ConsentScreen } from './ConsentScreen';
 import { api } from '@/services/api';
 import { retryWithBackoff } from '@/utils/retryWithBackoff';
 import { formatErrorForUser, ErrorMessage } from '@/utils/kycErrorMessages';
-
-// KYC Step enum
-export enum KYCStep {
-  ID_FRONT = 0,
-  ID_BACK = 1,
-  SELFIE = 2,
-  SELFIE_WITH_DOC = 3,
-  LIVENESS = 4,
-  PROCESSING = 5,
-}
+import { KYCStep } from './KYCStep';
 
 // Step configuration
 const documentTypeMap: Record<string, keyof CapturedDocuments> = {
@@ -115,7 +106,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<ErrorMessage | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [retryCount, setRetryCount] = useState(0);
+  const [_retryCount, setRetryCount] = useState(0);
   const [showManualRetry, setShowManualRetry] = useState(false);
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
@@ -163,7 +154,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
         {
           maxRetries: 3,
           baseDelay: 1000,
-          onRetry: (attempt, err) => {
+          onRetry: (_attempt, _err) => {
           },
         }
       );
@@ -230,7 +221,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
         {
           maxRetries: 3,
           baseDelay: 1000,
-          onRetry: (attempt, err) => {
+          onRetry: (attempt, _err) => {
             setRetryCount(attempt);
           },
         }
@@ -296,7 +287,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
         {
           maxRetries: 3,
           baseDelay: 1000,
-          onRetry: (attempt, err) => {
+          onRetry: (attempt, _err) => {
             setRetryCount(attempt);
           },
         }
@@ -353,7 +344,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
         {
           maxRetries: 3,
           baseDelay: 2000,
-          onRetry: (attempt, err) => {
+          onRetry: (_attempt, _err) => {
           },
         }
       );
@@ -484,7 +475,7 @@ export const KYCFlow: React.FC<KYCFlowProps> = ({ userId, onComplete, onError })
           setIsVerified(true);
           return;
         }
-      } catch (err) {
+      } catch (_err) {
         // No existing verification, showing normal flow
       }
       setIsVerified(false);

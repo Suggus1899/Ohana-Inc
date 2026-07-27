@@ -1,5 +1,3 @@
-import { RouteData } from './routingService';
-
 // Threshold in meters to consider user off-route
 const OFF_ROUTE_THRESHOLD = 50;
 
@@ -93,7 +91,7 @@ export const isUserOffRoute = (
 export const findCurrentStepIndex = (
   currentLat: number,
   currentLng: number,
-  steps: any[]
+  steps: Array<{ maneuver: { location: [number, number] } }>
 ): number => {
   let closestIndex = 0;
   let minDistance = Infinity;

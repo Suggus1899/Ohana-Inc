@@ -67,7 +67,7 @@ const Register = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const { confirmPassword, ...data } = formData;
+      const { confirmPassword: _confirmPassword, ...data } = formData;
       const result = await register(data);
       if (result.success) {
         showSuccess("Cuenta creada!", "Verifica tu correo para completar el registro");

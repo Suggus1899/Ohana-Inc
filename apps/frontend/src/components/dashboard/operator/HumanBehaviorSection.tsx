@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell,
   LineChart, Line,
 } from "recharts";
 import {
@@ -50,7 +50,7 @@ const EVENT_LABELS: Record<string, string> = {
   SCROLL_LIMIT: "Scroll Límite",
 };
 
-const EVENT_ICONS: Record<string, React.ReactNode> = {
+const _EVENT_ICONS: Record<string, React.ReactNode> = {
   CLICK: <MousePointerClick className="h-4 w-4" />,
   SEARCH: <Search className="h-4 w-4" />,
   VIEW: <Eye className="h-4 w-4" />,
@@ -102,7 +102,7 @@ const HumanBehaviorSection = () => {
   const [trending, setTrending] = useState<TrendingData | null>(null);
   const [frequency, setFrequency] = useState<FrequencyData | null>(null);
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     setIsLoading(true);
     try {
       const [sumRes, trendRes, freqRes] = await Promise.all([
@@ -121,11 +121,11 @@ const HumanBehaviorSection = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [days]);
 
   useEffect(() => {
     fetchAll();
-  }, [days]);
+  }, [fetchAll]);
 
   // ── Derived values ──────────────────────────────────────────────────────────
   const totalEvents = summary?.eventDistribution.reduce((acc, e) => acc + e.count, 0) ?? 0;

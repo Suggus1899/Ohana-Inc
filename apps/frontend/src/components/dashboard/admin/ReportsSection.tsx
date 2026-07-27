@@ -8,10 +8,8 @@ import {
   BarChart3,
   FileBarChart,
   TrendingUp,
-  TrendingDown,
   Users,
   Building,
-  Download,
   Target,
   PieChart,
   MapPin,
@@ -25,7 +23,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { api, AdminStats, AnalyticsDashboard } from "@/services/api";
 import { toast } from "sonner";
 import { exportToPDF } from "@/lib/pdf-export";
-import { useAuth } from "@/contexts/AuthContext";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToCop } from "../../../utils/formatPrice";
 
@@ -113,7 +110,7 @@ export const ReportsSection = () => {
 
   const handleExportPDF = () => {
     if (!adminStats) return;
-    const user = (window as any).__AUTH_USER__ || { name: "Administrador" };
+    const user = (window as unknown as { __AUTH_USER__?: { name?: string } }).__AUTH_USER__ || { name: "Administrador" };
     exportToPDF({
       title: "Reporte General - Habitas",
       subtitle: `Generado: ${new Date().toLocaleDateString()}`,
@@ -483,7 +480,7 @@ export const ReportsSection = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {topSearches.map((s: any, i: number) => {
+                  {topSearches.map((s, i) => {
                     const maxCount = topSearches[0]?.count ?? 1;
                     return (
                       <div key={s.term} className="flex items-center gap-4">

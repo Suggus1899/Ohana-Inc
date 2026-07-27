@@ -55,7 +55,7 @@ const UserManagementSection = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [search, roleFilter, statusFilter]);
+  }, [search, roleFilter, statusFilter, toast]);
 
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
@@ -81,7 +81,7 @@ const UserManagementSection = () => {
         setActionReason("");
         fetchUsers();
       } else {
-        toast({ title: "Error", description: (res as any).error?.message || "Error desconocido", variant: "destructive" });
+        toast({ title: "Error", description: ((res as Record<string, unknown>).error as { message?: string } | undefined)?.message || "Error desconocido", variant: "destructive" });
       }
     } catch {
       toast({ title: "Error de conexión", description: "No se pudo actualizar el estado.", variant: "destructive" });

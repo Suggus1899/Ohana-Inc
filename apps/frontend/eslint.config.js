@@ -29,4 +29,17 @@ export default tseslint.config(
       "no-console": ["warn", { allow: ["warn", "error"] }],
     },
   },
+  {
+    // shadcn/ui primitives intentionally export cva variants + sub-components.
+    // Fast Refresh is not valuable for these generated-style files.
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
+  {
+    // Context providers export the useXxx hook + XxxProvider component together
+    // (standard React pattern). Separating would force updating every consumer
+    // import for negligible Fast Refresh benefit on rarely-changed files.
+    files: ["src/contexts/**/*.{ts,tsx}"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
 );

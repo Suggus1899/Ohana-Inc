@@ -45,7 +45,7 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
       if (user.dateOfBirth) {
         try {
           formattedDate = new Date(user.dateOfBirth).toISOString().split('T')[0];
-        } catch (e) {
+        } catch (_e) {
           formattedDate = user.dateOfBirth;
         }
       }
@@ -104,7 +104,7 @@ const EditUserDialog = ({ open, onOpenChange, user, onUserUpdated }: EditUserDia
       } else {
         showError("Error al actualizar", response.error?.message || "Error desconocido");
       }
-    } catch (error) {
+    } catch (_error) {
       showError("Error de conexión", "No se pudo actualizar el usuario.");
     } finally {
       setIsLoading(false);

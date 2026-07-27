@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronDown, MessageCircle, Send, Loader2, HelpCircle, AlertTriangle, Building, CreditCard, UserCheck, Shield, Phone, Mail, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -71,7 +71,7 @@ export default function HelpSection() {
   const { toast } = useToast();
   const { startDirectConversation } = useChat();
   const navigate = useNavigate();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser: _updateUser } = useAuth();
   const isPropietario = user?.role === 'propietario';
 
   const [formData, setFormData] = useState({

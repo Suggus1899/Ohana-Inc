@@ -62,7 +62,7 @@ const Profile = () => {
     bathroom: "Propio"
   });
   const [propertyImage, setPropertyImage] = useState<File | null>(null);
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [_profilePhoto, setProfilePhoto] = useState<File | null>(null);
   useEffect(() => {
     if (user) {
       const properties = JSON.parse(localStorage.getItem('properties') || '[]');
@@ -113,7 +113,7 @@ const Profile = () => {
   };
   const handlePropertySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+    const _properties = JSON.parse(localStorage.getItem('properties') || '[]');
     let imageUrl = '';
     if (propertyImage) {
       const reader = new FileReader();

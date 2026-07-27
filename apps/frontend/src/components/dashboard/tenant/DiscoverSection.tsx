@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Loader2, Search, MapPin, Bed, Bath, Square, Heart, SlidersHorizontal, Grid3X3, List, Star, Building, Home, MessageCircle, CheckCircle, Send, Navigation, MessageSquare, ChevronDown, ArrowLeft, AlertTriangle, Video, X, BadgeCheck } from "lucide-react";
+import { Loader2, Search, MapPin, Bed, Bath, Square, Heart, SlidersHorizontal, Grid3X3, List, Star, Building, Home, MessageCircle, Send, Navigation, MessageSquare, ChevronDown, ArrowLeft, AlertTriangle, X, BadgeCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 import "leaflet/dist/leaflet.css";
@@ -28,7 +28,6 @@ import { useNavigate } from "react-router-dom";
 import { GeocodeResult, geocodingService } from "@/services/geocoding.service";
 import LocationSearchBar from "@/components/search/LocationSearchBar";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 // Leaflet fix
@@ -63,7 +62,7 @@ const DiscoverPropertyCard = memo(({ property, viewMode, isFavorite, onToggleFav
         <img src={property.images[0] || "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800"} alt={property.title} className="w-full h-48 object-cover" />
         <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-white/80 hover:bg-white" onClick={(e) => { e.stopPropagation(); onToggleFavorite(property.id); }}><Heart className={cn("h-5 w-5", isFavorite ? "fill-red-500 text-red-500" : "text-gray-600")} /></Button>
         <Badge variant="secondary" className="absolute bottom-2 left-2"><TypeIcon className="h-3 w-3 mr-1" />{property.type}</Badge>
-        {(property as any).type === 'Residencia' && ((property as any).availableRooms ?? 0) === 0 && (
+        {property.type === 'Residencia' && (property.availableRooms ?? 0) === 0 && (
           <Badge variant="destructive" className="absolute top-2 left-2">Ocupada</Badge>
         )}
       </div>
@@ -450,7 +449,7 @@ const PropertyDetailInline = ({ property, onBack, onRentRequest, onChatWithOwner
       </div>
 
       <div className="flex gap-3">
-        <Button className="flex-1" size="lg" disabled={property.type === 'Residencia' && ((property as any).availableRooms ?? 0) === 0} onClick={() => {
+        <Button className="flex-1" size="lg" disabled={property.type === 'Residencia' && (property.availableRooms ?? 0) === 0} onClick={() => {
           if (hasDispute) {
             setShowDisputeModal(true);
             return;
@@ -462,7 +461,7 @@ const PropertyDetailInline = ({ property, onBack, onRentRequest, onChatWithOwner
           }
         }}>
           <Send className="h-4 w-4 mr-2" />
-          {property.type === 'Residencia' && ((property as any).availableRooms ?? 0) === 0 ? 'Sin habitaciones disponibles' : 'Solicitar Alquiler'}
+          {property.type === 'Residencia' && (property.availableRooms ?? 0) === 0 ? 'Sin habitaciones disponibles' : 'Solicitar Alquiler'}
         </Button>
         {user && user.id !== property.authorId && (
           <Button className="flex-1" size="lg" onClick={() => {
@@ -554,7 +553,7 @@ const RadiusMiniMap = ({ lat, lng, radiusKm, showCircle }: { lat: number; lng: n
       setMapError(true);
     }
     return () => { if (mapInstanceRef.current) { mapInstanceRef.current.remove(); mapInstanceRef.current = null; circleRef.current = null; } };
-  }, [lat, lng]);
+  }, [lat, lng, mapError]);
 
   // Update circle and zoom without recreating the map
   useEffect(() => {
@@ -607,12 +606,12 @@ const DiscoverSection = () => {
   const [furnished, setFurnished] = useState("all");
   const [listingType, setListingType] = useState("all");
   const [location, setLocation] = useState("");
-  const [zones, setZones] = useState<string[]>([]);
-  const [loadingZones, setLoadingZones] = useState(false);
+  const [_zones, setZones] = useState<string[]>([]);
+  const [_loadingZones, setLoadingZones] = useState(false);
   const [radiusKm, setRadiusKm] = useState([10]); // Radio máximo 10km
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
+  const [_services, setServices] = useState<Service[]>([]);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<PropertyUI | null>(null);
   const [rentRequestTarget, setRentRequestTarget] = useState<PropertyUI | null>(null);
@@ -644,7 +643,7 @@ const DiscoverSection = () => {
     } else if (user?.role === 'cliente' && propertyType === 'Residencia') {
       setPropertyType('all');
     }
-  }, [user?.role]);
+  }, [user?.role, propertyType]);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -762,13 +761,13 @@ const DiscoverSection = () => {
             description: `Propiedades cerca de "${searchData.geocoding.searchLocation}" (${searchData.geocoding.radiusKm}km)`,
           });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error searching by location:', error);
         response = {
           success: false,
-          error: { 
-            code: 'GEOLOCATION_ERROR', 
-            message: error.message || 'Error buscando por ubicación' 
+          error: {
+            code: 'GEOLOCATION_ERROR',
+            message: error instanceof Error ? error.message : 'Error buscando por ubicación'
           }
         };
       }
@@ -799,8 +798,8 @@ const DiscoverSection = () => {
     }
     if (response.success && response.data) {
       const sorted = [...response.data.properties].sort((a, b) => {
-        const aAvail = a.type === 'Residencia' ? (a as any).availableRooms ?? 0 : -1;
-        const bAvail = b.type === 'Residencia' ? (b as any).availableRooms ?? 0 : -1;
+        const aAvail = a.type === 'Residencia' ? a.availableRooms ?? 0 : -1;
+        const bAvail = b.type === 'Residencia' ? b.availableRooms ?? 0 : -1;
         if (aAvail > 0 && bAvail <= 0) return -1;
         if (aAvail <= 0 && bAvail > 0) return 1;
         return 0;
@@ -826,17 +825,25 @@ const DiscoverSection = () => {
 
     const favResponse = await api.getFavorites();
     if (favResponse.success && favResponse.data) {
-      const favData = favResponse.data as any;
-      const favArray = Array.isArray(favData) ? favData : (favData?.favorites || []);
-      setFavorites(favArray.map((f: any) => typeof f === 'object' ? f.propertyId : f));
+      const favData = favResponse.data as Record<string, unknown> | unknown[];
+      const favArray = (Array.isArray(favData) ? favData : ((favData as Record<string, unknown>)?.favorites as unknown[]) || []) as Record<string, unknown>[];
+      setFavorites(favArray.map((f) => typeof f === 'object' ? f.propertyId as number : f as number));
     }
 
     setIsLoading(false);
-  }, [searchQuery, pagination.page, pagination.limit, priceRange, propertyType, bedrooms, listingType, location, selectedFeatures, furnished, userLocation, radiusKm, useLocationFilter, trackEvent, toast]);
+    // 'pagination' is intentionally accessed via .page and .limit primitives to avoid
+    // whole-object reference instability (setPagination inside this callback would otherwise cause infinite re-renders)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, pagination.page, pagination.limit, priceRange, propertyType, bedrooms, listingType, location, selectedFeatures, furnished, userLocation, radiusKm, useLocationFilter, trackEvent, toast, user?.role]);
 
   useEffect(() => {
     fetchProperties();
   }, [pagination.page, propertyType, bedrooms, furnished, listingType, selectedFeatures, fetchProperties]);
+
+  const dismissLocationDialog = useCallback(() => {
+    setShowLocationDialog(false);
+    localStorage.setItem('habitas_location_prompt_shown', 'true');
+  }, []);
 
   const requestLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -854,12 +861,7 @@ const DiscoverSection = () => {
         }
       );
     }
-  }, []);
-
-  const dismissLocationDialog = useCallback(() => {
-    setShowLocationDialog(false);
-    localStorage.setItem('habitas_location_prompt_shown', 'true');
-  }, []);
+  }, [dismissLocationDialog]);
 
   const toggleFeature = (feature: string) => {
     setSelectedFeatures(prev =>
@@ -912,11 +914,11 @@ const DiscoverSection = () => {
           variant: "destructive",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error al iniciar chat:", error);
       toast({
         title: "Error",
-        description: error?.message || "Error al iniciar la conversación",
+        description: error instanceof Error ? error.message : "Error al iniciar la conversación",
         variant: "destructive",
       });
     }
@@ -962,7 +964,7 @@ const DiscoverSection = () => {
         });
         if (isDispute) setHasDispute(true);
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "No se pudo enviar la solicitud",

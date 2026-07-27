@@ -11,7 +11,7 @@ import {
 import { Loader2, ArrowLeft, MapPin, Bed, Bath, Square, Star, Building, Home, CheckCircle, MessageSquare, Calendar, Clock, CreditCard, Video, X } from "lucide-react";
 import { api, Property, PropertyReview } from "@/services/api";
 import { getTransactionByRentalRequest } from "@/services/transaction.service";
-import { RatingStars, ReviewCard, ReviewForm } from "@/components/reviews";
+import { ReviewCard, ReviewForm } from "@/components/reviews";
 import { useAuth } from "@/contexts/AuthContext";
 import { AmenityGrid } from "@/components/common/AmenityCard";
 import { useToast } from "@/hooks/use-toast";

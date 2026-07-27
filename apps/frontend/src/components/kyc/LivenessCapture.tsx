@@ -98,7 +98,7 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const gestureTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const detectionRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const faceapiRef = useRef<any>(null);
+  const faceapiRef = useRef<typeof import('@vladmandic/face-api') | null>(null);
   const modelsLoadedRef = useRef(false);
   const gestureConfirmCountRef = useRef(0);
   const blinkStateRef = useRef<'open' | 'closed'>('open');
@@ -162,12 +162,13 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
   useEffect(() => { requestCamera(); }, [requestCamera]);
 
   useEffect(() => {
+    const webcam = webcamRef.current;
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (gestureTimeoutRef.current) clearTimeout(gestureTimeoutRef.current);
       if (detectionRef.current) clearInterval(detectionRef.current);
       if (mediaRecorderRef.current?.state === 'recording') mediaRecorderRef.current.stop();
-      if (webcamRef.current?.stream) webcamRef.current.stream.getTracks().forEach(t => t.stop());
+      if (webcam?.stream) webcam.stream.getTracks().forEach(t => t.stop());
     };
   }, []);
 
@@ -197,7 +198,7 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
         if (detections && detections.length > 0) {
           setFaceDetected(true);
           const det = detections[0];
-          const pts = det.landmarks.positions.map((p: any) => [p.x, p.y]);
+          const pts = det.landmarks.positions.map((p: { x: number; y: number }) => [p.x, p.y]);
           const expressions = det.expressions || {};
 
           const currentType = GESTURES[currentGestureIndexRef.current]?.type;
@@ -263,10 +264,12 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
         } else {
           setFaceDetected(false);
         }
-      } catch (err) {
+      } catch (_err) {
         // Silenciar errores de detección para no saturar logs
       }
     }, DETECTION_INTERVAL);
+    // 'confirmGesture' is a stable useCallback defined below; cannot be added to deps due to TDZ (defined later in render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Vacío: usamos ref para leer el índice actual
 
   const stopDetectionLoop = useCallback(() => {
@@ -308,6 +311,8 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
         return next;
       });
     }
+    // 'stopRecording' is a stable useCallback defined below; cannot be added to deps due to TDZ (defined later in render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Vacío: usamos ref para el índice actual
 
   const startCountdown = useCallback(() => {
@@ -327,6 +332,8 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
         return prev - 1;
       });
     }, 1000);
+    // 'startRecording' is a stable useCallback defined below; cannot be added to deps due to TDZ (defined later in render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startRecording = useCallback(() => {
@@ -390,11 +397,13 @@ export const LivenessCapture: React.FC<LivenessCaptureProps> = ({
             return newIndex;
           });
         }, GESTURE_DURATION * 1000);
-        gestureTimeoutRef.current = fallbackInterval as any;
+        gestureTimeoutRef.current = fallbackInterval as unknown as NodeJS.Timeout;
       }
     } catch (err) {
       onError(err instanceof Error ? err.message : 'Failed to start recording');
     }
+    // 'stopRecording' is a stable useCallback defined below; cannot be added to deps due to TDZ (defined later in render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onError, startDetectionLoop, stopDetectionLoop]);
 
   const stopRecording = useCallback((timeout = false) => {

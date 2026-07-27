@@ -29,8 +29,8 @@ export const useRouteCalculation = (): UseRouteCalculationReturn => {
     try {
       const routeData = await routingService.calculateRoute(origin, destination, mode);
       setRoute(routeData);
-    } catch (err: any) {
-      setError(err.message || 'Error calculating route');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error calculating route');
     } finally {
       setLoading(false);
     }

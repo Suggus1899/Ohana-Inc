@@ -1,11 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Crosshair, 
-  X, 
-  Footprints, 
-  Bike, 
-  Car, 
-  Clock, 
+import {
+  Crosshair,
+  X,
+  Footprints,
+  Bike,
+  Car,
   Map as MapIcon,
   Navigation,
   ChevronUp
@@ -84,7 +83,7 @@ const NavigationControls = ({
                         ? 'bg-primary text-white shadow-lg' 
                         : 'text-white/40 hover:text-white hover:bg-white/10'
                     }`}
-                    onClick={() => onModeChange(mode.id as any)}
+                    onClick={() => onModeChange(mode.id as 'foot' | 'bike' | 'car')}
                   >
                     <mode.icon className="h-5 w-5" />
                   </Button>

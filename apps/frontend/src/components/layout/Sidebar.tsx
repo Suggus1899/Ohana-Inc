@@ -1,9 +1,8 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { LucideIcon, Menu, ChevronLeft, ChevronRight, User, Shield, UserCog, Building, GraduationCap } from "lucide-react";
+import { LucideIcon, ChevronLeft, ChevronRight, User, Shield, UserCog, Building, GraduationCap } from "lucide-react";
 import { useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -52,7 +51,7 @@ const Sidebar = memo(({
   title = "Panel",
   role = "client",
 }: SidebarProps) => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [_mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const roleConfig = getRoleConfig(role);
   const RoleIcon = roleConfig.icon;

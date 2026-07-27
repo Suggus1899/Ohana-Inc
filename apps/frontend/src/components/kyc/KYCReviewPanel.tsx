@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckCircle, XCircle, User, Calendar, FileText, Image as ImageIcon, Filter, X, Clock, RefreshCw, AlertTriangle } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, User, Calendar, FileText, Image as ImageIcon, Filter, X, Clock, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
@@ -110,7 +110,7 @@ interface VerificationFilters {
   fraudScoreMax?: number;
 }
 
-const KYCReviewPanel = ({ operatorId }: KYCReviewPanelProps) => {
+const KYCReviewPanel = ({ operatorId: _operatorId }: KYCReviewPanelProps) => {
   // State
   const [verifications, setVerifications] = useState<KYCVerification[]>([]);
   const [selectedVerification, setSelectedVerification] = useState<KYCVerification | null>(null);
@@ -123,7 +123,7 @@ const KYCReviewPanel = ({ operatorId }: KYCReviewPanelProps) => {
   const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
   const [notes, setNotes] = useState('');
   const [reason, setReason] = useState('');
-  const [documents, setDocuments] = useState<KYCDocument[]>([]);
+  const [_documents, setDocuments] = useState<KYCDocument[]>([]);
   const [imageUrls, setImageUrls] = useState<Record<string, string>>({});
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const [attempts, setAttempts] = useState<KYCAttempt[]>([]);
@@ -133,18 +133,7 @@ const KYCReviewPanel = ({ operatorId }: KYCReviewPanelProps) => {
   const { toast } = useToast();
 
   // Load pending verifications on mount and when filters change
-  useEffect(() => {
-    loadPendingVerifications();
-  }, [filters]);
-
-  // Cleanup image URLs on unmount
-  useEffect(() => {
-    return () => {
-      Object.values(imageUrlsRef.current).forEach(URL.revokeObjectURL);
-    };
-  }, []);
-
-  const loadPendingVerifications = async () => {
+  const loadPendingVerifications = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await api.getPendingKYCVerifications(filters);
@@ -168,7 +157,18 @@ const KYCReviewPanel = ({ operatorId }: KYCReviewPanelProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filters, toast]);
+
+  useEffect(() => {
+    loadPendingVerifications();
+  }, [loadPendingVerifications]);
+
+  // Cleanup image URLs on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(imageUrlsRef.current).forEach(URL.revokeObjectURL);
+    };
+  }, []);
 
   const fetchVerificationDetails = async (verificationId: number) => {
     setIsLoadingDocuments(true);

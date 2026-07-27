@@ -9,7 +9,7 @@ import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { ShieldCheck, Search, Clock, CheckCircle, XCircle, Mail, FileText, Eye, Loader2, Download } from "lucide-react";
+import { ShieldCheck, Search, Clock, CheckCircle, XCircle, Mail, FileText, Eye, Loader2 } from "lucide-react";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { api } from "@/services/api";

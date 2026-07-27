@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import { api } from '@/services/api';
-import { getSocket, connectSocket, setActiveConversationId, disconnectSocket, setOnReconnectCallback } from '@/services/socket';
+import { getSocket, connectSocket, setActiveConversationId, disconnectSocket } from '@/services/socket';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface ChatParticipant {
@@ -95,9 +95,9 @@ export const ChatContext = createContext<ChatContextType | undefined>(undefined)
 const STORAGE_KEY = 'habitas_active_conversation';
 
 // Crear sonido de notificación (usando Web Audio API)
-const createNotificationSound = () => {
+const _createNotificationSound = () => {
   try {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioContext) return null;
     
     const audioContext = new AudioContext();
@@ -162,7 +162,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const [blockedMessages, setBlockedMessages] = useState<BlockedMessageInfo[]>([]);
   const [lastMessageReceived, setLastMessageReceived] = useState<MessageData | null>(null);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null);
+  const [_notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null);
   const typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
   const activeConversationRef = useRef<ConversationData | null>(null);
   const isInitialized = useRef(false);
@@ -176,7 +176,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Inicializar AudioContext después de primera interacción del usuario
   const initAudioContext = useCallback(() => {
     if (!audioContextRef.current && typeof window !== 'undefined') {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioContext) {
         audioContextRef.current = new AudioContext();
       }
@@ -217,7 +217,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, [playMessageSound]);
 
   // Solicitar permiso de notificaciones
-  const requestPermission = useCallback(async () => {
+  const _requestPermission = useCallback(async () => {
     const permission = await requestNotificationPermission();
     setNotificationPermission(permission as unknown as NotificationPermission);
     return permission;
@@ -438,7 +438,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       sk.off('conversation_restored', onConversationRestored);
     };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [isAuthenticated, user?.id]);
 
   const fetchConversations = useCallback(async () => {
@@ -570,7 +570,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     if (socket?.connected) {
       socket.emit('user_typing', { conversationId: conv.id, isTyping });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, []);
 
   const conversationsRef = useRef(conversations);
@@ -635,7 +635,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       // Fallback HTTP si no hay socket
       await api.deleteMessage(messageId).catch(() => {});
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, []);
 
   const deleteConversationFn = useCallback(async (conversationId: number) => {

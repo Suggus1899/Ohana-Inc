@@ -40,7 +40,7 @@ function currentDemoUser(): User {
   return demoUserByRole[role] ?? demoUsers[3];
 }
 
-function emptyList<T>(extra?: Partial<T>): ApiResponse<T> {
+function _emptyList<T>(extra?: Partial<T>): ApiResponse<T> {
   return ok(extra ?? ({} as T));
 }
 

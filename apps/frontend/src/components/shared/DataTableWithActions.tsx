@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RolePermissions } from "@/config/sidebarConfig";
-import { Badge } from "@/components/ui/badge";
 
 export interface Column<T> {
   key: keyof T | string;

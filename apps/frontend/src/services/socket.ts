@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3026';
 
-type EventCallback = (...args: any[]) => void;
+type EventCallback = (...args: unknown[]) => void;
 
 class SocketService {
   private socket: Socket | null = null;
@@ -36,7 +36,7 @@ class SocketService {
         this._onReconnectCallback?.();
       });
 
-      this.socket.on('disconnect', (reason) => {
+      this.socket.on('disconnect', (_reason) => {
         this._connected = false;
       });
 
@@ -53,7 +53,7 @@ class SocketService {
       });
 
       // Global event router — dispatches to registered listeners
-      this.socket.onAny((event: string, ...args: any[]) => {
+      this.socket.onAny((event: string, ...args: unknown[]) => {
         const handlers = this.listeners.get(event);
         if (handlers) {
           handlers.forEach(cb => cb(...args));
@@ -99,7 +99,7 @@ class SocketService {
     this.listeners.get(event)?.delete(callback);
   }
 
-  emit(event: string, ...args: any[]): void {
+  emit(event: string, ...args: unknown[]): void {
     this.socket?.emit(event, ...args);
   }
 

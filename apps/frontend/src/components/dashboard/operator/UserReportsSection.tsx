@@ -17,7 +17,6 @@ import {
   MoreVertical,
   Mail,
   Phone,
-  MapPin,
   Calendar,
   FileText,
   Shield,
@@ -69,7 +68,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
       if (statsRes.success && statsRes.data) {
         setStats(statsRes.data);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al cargar los reportes");
     } finally {
       setIsLoading(false);
@@ -111,7 +110,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
         setDetailsDialogOpen(false);
         fetchReports();
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al actualizar el reporte");
     }
   };
@@ -125,7 +124,7 @@ const [selectedUser, setSelectedUser] = useState<any>(null);
       if (response.success && response.data) {
         setSelectedUser(response.data.user);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al cargar los detalles del usuario");
     } finally {
       setLoadingUserDetails(false);

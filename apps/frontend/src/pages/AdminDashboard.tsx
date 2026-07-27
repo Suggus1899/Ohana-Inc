@@ -12,7 +12,7 @@ const PropertiesSection = lazy(() => import("@/components/dashboard/admin/Proper
 const ReportsSection = lazy(() => import("@/components/dashboard/admin/ReportsSection"));
 const KYCSection = lazy(() => import("@/components/dashboard/admin/KYCSection"));
 const AnnouncementsSection = lazy(() => import("@/components/dashboard/admin/AnnouncementsSection"));
-const SettingsSection = lazy(() => import("@/components/dashboard/shared/SettingsSection"));
+const _SettingsSection = lazy(() => import("@/components/dashboard/shared/SettingsSection"));
 const AdminSettingsSection = lazy(() => import("@/components/dashboard/admin/AdminSettingsSection"));
 const CategoriesSection = lazy(() => import("@/components/dashboard/admin/CategoriesSection"));
 const EscalatedTicketsSection = lazy(() => import("@/components/dashboard/admin/EscalatedTicketsSection"));
@@ -21,7 +21,7 @@ const AuditSection = lazy(() => import("@/components/dashboard/operator/AuditSec
 const MessagesSection = lazy(() => import("@/components/dashboard/shared/MessagesSection"));
 
 // Placeholder sections
-const PlaceholderSection = ({ title }: { title: string }) => (
+const _PlaceholderSection = ({ title }: { title: string }) => (
   <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
     <p className="text-muted-foreground">Sección "{title}" en desarrollo</p>
   </div>
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
         setBadges({
           kyc: statsRes.success && statsRes.data ? statsRes.data.pending.verifications : 0,
           support: statsRes.success && statsRes.data ? statsRes.data.pending.tickets : 0,
-          announcements: annRes.success && annRes.data ? (annRes.data as any).total : 0,
+          announcements: annRes.success && annRes.data ? (annRes.data as Record<string, unknown>).total as number : 0,
         });
       } catch { /* silent */ }
     };

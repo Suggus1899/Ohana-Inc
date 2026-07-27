@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useExchangeRate } from "../../contexts/ExchangeRateContext";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { RefreshCw, Clock, Database, ChevronRight } from "lucide-react";
+import { RefreshCw, Clock, Database } from "lucide-react";
 import { Button } from "../ui/button";
 import { type RateType, RATE_LABELS, RATE_COLORS } from "../../utils/formatPrice";
 

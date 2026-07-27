@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, MessageSquare, ArrowLeft, UserPlus, X, Ban } from "lucide-react";
 import { useChatContext } from "@/contexts";
-import type { ConversationData, ChatParticipant } from "@/contexts";
+import type { ConversationData } from "@/contexts";
 import ConversationList from "@/components/chat/ConversationList";
 import ChatWindow from "@/components/chat/ChatWindow";
 import { BlockedMessageAlert } from "@/components/chat/BlockedMessageAlert";

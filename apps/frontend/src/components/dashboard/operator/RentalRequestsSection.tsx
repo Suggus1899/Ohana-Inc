@@ -22,8 +22,8 @@ const RentalRequestsSection = () => {
   const fetchRequests = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.request<any>("/rent-requests", { method: "GET" });
-      if (res.success && res.data) setRequests(res.data.requests || res.data || []);
+      const res = await api.request<{ requests?: RentalRequest[] } | RentalRequest[]>("/rent-requests", { method: "GET" });
+      if (res.success && res.data) setRequests((res.data as { requests?: RentalRequest[] }).requests || (res.data as RentalRequest[]) || []);
     } catch { toast.error("Error al cargar solicitudes"); }
     setLoading(false);
   }, []);

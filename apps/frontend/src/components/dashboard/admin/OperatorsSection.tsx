@@ -91,7 +91,8 @@ const OperatorsSection = () => {
         setSuspendReason("");
         fetchOperators();
       } else {
-        toast.error((res as any).error?.message || "Error al actualizar estado");
+        const err = (res as Record<string, unknown>).error as { message?: string } | undefined;
+        toast.error(err?.message || "Error al actualizar estado");
       }
     } finally {
       setIsActioning(null);
@@ -108,7 +109,8 @@ const OperatorsSection = () => {
         setDeleteDialog({ open: false, user: null });
         fetchOperators();
       } else {
-        toast.error((res as any).error?.message || "Error al eliminar operador");
+        const err = (res as Record<string, unknown>).error as { message?: string } | undefined;
+        toast.error(err?.message || "Error al eliminar operador");
       }
     } finally {
       setIsActioning(null);

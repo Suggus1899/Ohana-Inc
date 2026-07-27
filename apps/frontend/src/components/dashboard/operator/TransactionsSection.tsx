@@ -12,9 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeftRight, Search, Loader2, RefreshCw, DollarSign, Eye, RotateCcw, BadgeCheck } from "lucide-react";
+import { ArrowLeftRight, Search, Loader2, RefreshCw, DollarSign, RotateCcw, BadgeCheck } from "lucide-react";
 import { getAllTransactions, refundTransaction } from "@/services/transaction.service";
-import { Transaction, TransactionStatus } from "@/types/transaction.types";
+import { Transaction } from "@/types/transaction.types";
 import { toast } from "sonner";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -57,7 +57,7 @@ const TransactionsSection = () => {
   const fetchTransactions = useCallback(async () => {
     setIsLoading(true);
     try {
-      const filters: any = { page, limit: 20 };
+      const filters: Record<string, unknown> = { page, limit: 20 };
       if (statusFilter !== "all") filters.status = statusFilter;
       const res = await getAllTransactions(filters);
       let data = res.transactions;
@@ -71,8 +71,8 @@ const TransactionsSection = () => {
       }
       setTransactions(data);
       setPagination(res.pagination);
-    } catch (error: any) {
-      toast.error(error.message || "Error al cargar transacciones");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Error al cargar transacciones");
     } finally {
       setIsLoading(false);
     }
@@ -89,8 +89,8 @@ const TransactionsSection = () => {
       setRefundDialog({ open: false, tx: null });
       setRefundReason("");
       fetchTransactions();
-    } catch (error: any) {
-      toast.error(error.message || "Error al reembolsar");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Error al reembolsar");
     } finally {
       setIsProcessing(null);
     }

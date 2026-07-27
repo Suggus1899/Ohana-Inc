@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ interface UserSearchResult {
 interface NewConversationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateConversation: (userId: number) => Promise<any>;
+  onCreateConversation: (userId: number) => Promise<unknown>;
 }
 
 export function NewConversationModal({
@@ -66,8 +66,8 @@ export function NewConversationModal({
     }
   }, []);
 
-  const debouncedSearch = useCallback(
-    debounce((query: string) => searchUsers(query), 300),
+  const debouncedSearch = useMemo(
+    () => debounce((query: string) => searchUsers(query), 300),
     [searchUsers]
   );
 

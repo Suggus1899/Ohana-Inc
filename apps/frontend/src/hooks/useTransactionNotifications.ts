@@ -44,12 +44,13 @@ export const useTransactionNotifications = (
 
     // Register one handler per event on the shared socket
     for (const event of TRANSACTION_EVENTS) {
-      const unsub = socketService.on(event, (data: any) => {
+      const unsub = socketService.on(event, (data: unknown) => {
         const meta = EVENT_MAP[event];
         if (!meta) return;
+        const dataRecord = data as Record<string, unknown>;
         callbackRef.current({
           ...meta,
-          message: data.message || meta.message,
+          message: (typeof dataRecord?.message === 'string' ? dataRecord.message : undefined) || meta.message,
           data,
         });
       });

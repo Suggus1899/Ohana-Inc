@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Inbox, Clock, CheckCircle, XCircle, MessageSquare, Mail, Loader2, User, Star, ArrowLeft, Phone, Fingerprint, ShieldCheck, BadgeCheck } from "lucide-react";
 import { api, RentalRequest, User as UserType } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -108,7 +107,7 @@ const ReceivedRequestsSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedTenant, setSelectedTenant] = useState<UserType | null>(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [_isLoadingProfile, setIsLoadingProfile] = useState(false);
   
   // Track which tenants have already been reviewed: key = "tenant-{tenantId}"
   const [submittedReviews, setSubmittedReviews] = useState<Set<string>>(new Set());
@@ -147,7 +146,7 @@ const ReceivedRequestsSection = () => {
 
         setSubmittedReviews(reviewed);
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "No se pudieron cargar las solicitudes",
@@ -177,7 +176,7 @@ const ReceivedRequestsSection = () => {
           description: "Se ha creado una transacción P2P. El estudiante puede proceder con el pago.",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "No se pudo aprobar la solicitud",
@@ -216,7 +215,7 @@ const ReceivedRequestsSection = () => {
         setRejectDialog({ open: false, requestId: null });
         setRejectReason('');
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "No se pudo rechazar la solicitud",
@@ -259,7 +258,7 @@ const ReceivedRequestsSection = () => {
           variant: "destructive"
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "No se pudo iniciar la conversación",
@@ -305,7 +304,7 @@ const ReceivedRequestsSection = () => {
           variant: "destructive"
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error enviando review:', error);
       toast({
         title: "Error",

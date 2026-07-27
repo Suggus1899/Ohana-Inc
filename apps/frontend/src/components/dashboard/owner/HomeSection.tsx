@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { api, Property, RentalRequest } from "@/services/api";
 import { UserReviewsModal } from "@/components/reviews";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 interface OwnerStats {

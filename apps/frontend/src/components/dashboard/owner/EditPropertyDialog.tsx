@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Loader2, CheckCircle, ChevronRight, ChevronLeft, X, GripVertical, ArrowUpDown } from 'lucide-react';
+import { Loader2, CheckCircle, ChevronRight, ChevronLeft, X, GripVertical } from 'lucide-react';
 import { PricePreviewField } from '@/components/common/PricePreviewField';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,13 +10,13 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogTitle,
 } from '@/components/ui/dialog';
 import { MapPicker, MapPickerValue } from '@/components/common/MapPicker';
 import { ImageUploader } from '@/components/common/ImageUploader';
 import { VideoUploader } from '@/components/common/VideoUploader';
 import { cn } from '@/lib/utils';
-import api, { Property } from '@/services/api';
+import { Property } from '@/services/api';
 
 const PROPERTY_TYPES = ['Residencia', 'Apartamento', 'Casa', 'Finca', 'Local', 'Terreno'];
 
@@ -105,7 +105,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
 
   const parseVideo = (p: Property | null): string | null => {
     if (!p) return null;
-    const v = (p as any).videoUrl;
+    const v = p.videoUrl;
     if (typeof v === 'string' && v.startsWith('"') && v.endsWith('"')) {
       try { return JSON.parse(v); } catch { return v; }
     }
@@ -163,20 +163,20 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
       listingType: property.listingType,
       price: Number(property.price),
       priceType: property.priceType || 'monthly',
-      priceRate: (property as any).priceRate || 'trm',
+      priceRate: property.priceRate || 'trm',
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
-      roomsWithBathroom: (property as any).roomsWithBathroom ?? 0,
-      outsideBathrooms: (property as any).outsideBathrooms ?? 0,
+      roomsWithBathroom: property.roomsWithBathroom ?? 0,
+      outsideBathrooms: property.outsideBathrooms ?? 0,
       area: property.area,
       areaUnknown: false,
-      floor: (property as any).floor ?? undefined,
+      floor: (property as Record<string, unknown>).floor as number | undefined ?? undefined,
       furnished: property.furnished,
       features: originalFeatures,
       zipCode: property.zipCode || '',
       neighborhood: property.neighborhood || '',
-      availableRooms: (property as any).availableRooms ?? 0,
-      occupiedRooms: (property as any).occupiedRooms ?? 0,
+      availableRooms: property.availableRooms ?? 0,
+      occupiedRooms: property.occupiedRooms ?? 0,
     } : undefined,
   });
 
@@ -212,19 +212,19 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
         priceType: property.priceType || 'monthly',
         bedrooms: property.bedrooms,
         bathrooms: property.bathrooms,
-        roomsWithBathroom: (property as any).roomsWithBathroom ?? 0,
-        outsideBathrooms: (property as any).outsideBathrooms ?? 0,
+        roomsWithBathroom: property.roomsWithBathroom ?? 0,
+        outsideBathrooms: property.outsideBathrooms ?? 0,
         area: property.area,
         areaUnknown: false,
-        floor: (property as any).floor ?? undefined,
+        floor: (property as Record<string, unknown>).floor as number | undefined ?? undefined,
         furnished: property.furnished,
         zipCode: property.zipCode || '',
         neighborhood: property.neighborhood || '',
-        availableRooms: (property as any).availableRooms ?? 0,
-        occupiedRooms: (property as any).occupiedRooms ?? 0,
+        availableRooms: property.availableRooms ?? 0,
+        occupiedRooms: property.occupiedRooms ?? 0,
       });
     }
-  }, [property, open]);
+  }, [property, open, reset]);
 
   const propertyType = watch('type');
   const areaUnknown = watch('areaUnknown');
@@ -510,7 +510,7 @@ export function EditPropertyDialog({ property, open, onOpenChange, onSuccess, in
                     </div>
                     <div>
                       <Label>Tasa de cambio</Label>
-                      <Select onValueChange={(v: 'trm') => setValue('priceRate', v)} defaultValue={((property as any)?.priceRate || 'trm') as 'trm'}>
+                      <Select onValueChange={(v: 'trm') => setValue('priceRate', v)} defaultValue={(property?.priceRate || 'trm') as 'trm'}>
                         <SelectTrigger className="mt-1">
                           <SelectValue />
                         </SelectTrigger>

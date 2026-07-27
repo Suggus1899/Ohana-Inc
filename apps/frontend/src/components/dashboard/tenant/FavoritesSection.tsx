@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Bed, HeartOff, ExternalLink, Loader2, Send } from "lucide-react";
@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { api, Favorite } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { usdToCop } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
 
 const FavoritesSection = () => {
@@ -16,11 +15,7 @@ const FavoritesSection = () => {
   const navigate = useNavigate();
   const { rate } = useExchangeRate();
 
-  useEffect(() => {
-    fetchFavorites();
-  }, []);
-
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     setIsLoading(true);
     const response = await api.getFavorites();
     if (response.success && response.data) {
@@ -33,7 +28,11 @@ const FavoritesSection = () => {
       });
     }
     setIsLoading(false);
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, [fetchFavorites]);
 
   const removeFavorite = async (propertyId: number) => {
     const response = await api.toggleFavorite(propertyId);

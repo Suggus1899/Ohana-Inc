@@ -29,7 +29,7 @@ import {
   Dumbbell,
   Waves
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import { exportToPDF } from "@/lib/pdf-export";
@@ -89,13 +89,7 @@ const StatisticsSection = () => {
 
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    fetchStatistics();
-    refreshRef.current = setInterval(fetchStatistics, 30000);
-    return () => { if (refreshRef.current) clearInterval(refreshRef.current); };
-  }, [timeRange]);
-
-  const fetchStatistics = async () => {
+  const fetchStatistics = useCallback(async () => {
     setIsLoading(true);
     try {
       const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
@@ -115,12 +109,18 @@ const StatisticsSection = () => {
         },
         propertyTypes: trendsRes.success && trendsRes.data ? trendsRes.data.propertyTypes : prev.propertyTypes,
       }));
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al cargar estadísticas");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    fetchStatistics();
+    refreshRef.current = setInterval(fetchStatistics, 30000);
+    return () => { if (refreshRef.current) clearInterval(refreshRef.current); };
+  }, [fetchStatistics]);
 
   const getTrendIcon = (growth: number) => {
     if (growth > 0) return <ArrowUp className="h-4 w-4 text-green-600" />;

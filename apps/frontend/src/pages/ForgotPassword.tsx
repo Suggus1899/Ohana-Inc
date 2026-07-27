@@ -12,7 +12,7 @@ type Step = "email" | "code" | "newPassword" | "success";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const { showSuccess, showError } = useToastNotification();
+  const { showSuccess, showError: _showError } = useToastNotification();
   const [step, setStep] = useState<Step>("email");
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");

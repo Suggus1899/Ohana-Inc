@@ -30,7 +30,7 @@ import {
 import { api } from '@/services/api';
 import { submitPayment, getTransactionDetails } from '@/services/transaction.service';
 import { useExchangeRate } from '@/contexts/ExchangeRateContext';
-import { formatDualPrice, formatCurrency, usdToCop } from '@/utils/formatPrice';
+import { formatDualPrice, usdToCop } from '@/utils/formatPrice';
 
 const PRIMARY_PAYMENT_METHODS = [
   { value: 'pse', label: 'PSE', icon: '🏦' },

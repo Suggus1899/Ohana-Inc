@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ import {
 import { Loader2, Search, AlertTriangle, CheckCircle, Clock, MessageSquare } from "lucide-react";
 import { api, SupportTicket } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 
 const statusBadge = (status: string) => {
   switch (status) {
@@ -40,25 +39,25 @@ const EscalatedTicketsSection = () => {
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { toast } = useToast();
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await api.getTickets({ status: "escalated", limit: 50 });
       if (res.success && res.data) {
-        setTickets((res.data as any).tickets ?? []);
+        setTickets((res.data as Record<string, unknown>).tickets as SupportTicket[] ?? []);
       }
     } catch {
       toast({ title: "Error", description: "No se pudieron cargar los tickets escalados", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchTickets();
     refreshRef.current = setInterval(fetchTickets, 30000);
     return () => { if (refreshRef.current) clearInterval(refreshRef.current); };
-  }, []);
+  }, [fetchTickets]);
 
   const handleResolve = async () => {
     if (!resolveModal.ticket) return;
@@ -137,10 +136,10 @@ const EscalatedTicketsSection = () => {
                         {statusBadge(ticket.status)}
                       </div>
                       <h4 className="font-medium">{ticket.subject}</h4>
-                      {(ticket as any).escalationReason && (
+                      {(ticket as Record<string, unknown>).escalationReason as string | undefined && (
                         <p className="text-sm text-red-700 mt-1 flex items-start gap-1">
                           <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
-                          {(ticket as any).escalationReason}
+                          {(ticket as Record<string, unknown>).escalationReason as string}
                         </p>
                       )}
                       <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">

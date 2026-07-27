@@ -12,15 +12,6 @@ import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@/contexts/AuthContext";
 import { getSocket } from "@/services/socket";
 import CompletedPropertyView from "./CompletedPropertyView";
-import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
-import { formatDualPrice, usdToCop } from "../../../utils/formatPrice";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { ReviewForm } from "@/components/reviews";
 
 interface RentRequest {
@@ -456,7 +447,7 @@ const RequestsSection = () => {
                 },
                 moveInDate: paymentRequest.moveInDate,
               }}
-              initialStep={paymentInitialStep as any}
+              initialStep={paymentInitialStep as 'details' | 'payment_info' | 'submit_proof' | 'waiting' | 'completed' | undefined}
               onComplete={() => {
                 setPaymentRequest(null);
                 setActiveTransactionId(null);
@@ -589,7 +580,7 @@ const RequestsSection = () => {
                           if (result) {
                             navigate('/estudiante', { state: { activeSection: 'messages', conversationId: result.id } });
                           }
-                        } catch (error) {
+                        } catch (_error) {
                           toast({ title: "Error", description: "Error al iniciar chat", variant: "destructive" });
                         }
                       }}

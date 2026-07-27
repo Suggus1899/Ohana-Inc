@@ -61,7 +61,7 @@ const SupportSection = () => {
   const [reportDetailsDialogOpen, setReportDetailsDialogOpen] = useState(false);
   
   // Shared state
-  const [stats, setStats] = useState<ModerationStats | null>(null);
+  const [_stats, setStats] = useState<ModerationStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [mainTab, setMainTab] = useState("tickets");
@@ -76,17 +76,17 @@ const SupportSection = () => {
       ]);
 
       if (ticketsRes.success && ticketsRes.data) {
-        const ticketData = Array.isArray(ticketsRes.data) ? ticketsRes.data : (ticketsRes.data as any).tickets || [];
+        const ticketData = Array.isArray(ticketsRes.data) ? ticketsRes.data : (ticketsRes.data as Record<string, unknown>).tickets as SupportTicket[] || [];
         setTickets(ticketData);
       }
       if (reportsRes.success && reportsRes.data) {
-        const reportData = Array.isArray(reportsRes.data) ? reportsRes.data : (reportsRes.data as any).reports || [];
+        const reportData = Array.isArray(reportsRes.data) ? reportsRes.data : (reportsRes.data as Record<string, unknown>).reports as UserReport[] || [];
         setReports(reportData);
       }
       if (statsRes.success && statsRes.data) {
         setStats(statsRes.data);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al cargar los datos");
     } finally {
       setIsLoading(false);
@@ -139,7 +139,7 @@ const SupportSection = () => {
           setSelectedTicket(null);
           fetchData();
         }
-      } catch (error) {
+      } catch (_error) {
         toast.error("Error al enviar la respuesta");
       }
     }
@@ -152,7 +152,7 @@ const SupportSection = () => {
         toast.success(`Ticket "${ticket.subject}" marcado como resuelto`);
         fetchData();
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al actualizar el ticket");
     }
   };
@@ -172,7 +172,7 @@ const SupportSection = () => {
           setSelectedTicket(null);
           fetchData();
         }
-      } catch (error) {
+      } catch (_error) {
         toast.error("Error al escalar el ticket");
       }
     }
@@ -210,7 +210,7 @@ const SupportSection = () => {
         setReportDetailsDialogOpen(false);
         fetchData();
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Error al actualizar el reporte");
     }
   };

@@ -78,7 +78,7 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
     setIsLoading(true);
 
     try {
-      const { confirmPassword, ...userData } = formData;
+      const { confirmPassword: _confirmPassword, ...userData } = formData;
 
       const response = await api.createUser(userData);
 
@@ -141,7 +141,7 @@ const CreateUserDialog = ({ open, onOpenChange, onUserCreated, defaultRole }: Cr
 
         showError(errorInfo.title, errorInfo.description);
       }
-    } catch (error) {
+    } catch (_error) {
       showError(
         "Error de conexión",
         "No se pudo conectar con el servidor. Verifica tu conexión e intenta nuevamente."

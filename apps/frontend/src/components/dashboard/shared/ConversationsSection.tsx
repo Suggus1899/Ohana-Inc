@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -7,21 +7,19 @@ import {
   Search, 
   Send, 
   User,
-  Clock,
   MoreVertical,
   Loader2,
   Building,
   BadgeCheck,
 } from "lucide-react";
-import { api } from "@/services/api";
-import { toast } from "sonner";
+import { api, Conversation, Message } from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ConversationsSection = () => {
   const { user: currentUser } = useAuth();
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [selectedChat, setSelectedChat] = useState<any>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -200,6 +198,6 @@ const ConversationsSection = () => {
   );
 };
 
-const cn = (...inputs: any[]) => inputs.filter(Boolean).join(' ');
+const cn = (...inputs: unknown[]) => inputs.filter(Boolean).join(' ');
 
 export default memo(ConversationsSection);

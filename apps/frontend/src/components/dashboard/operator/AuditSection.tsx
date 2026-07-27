@@ -1,19 +1,14 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { api, AuditLog } from "@/services/api";
-import { 
-  History, 
-  Search, 
-  Calendar, 
-  Terminal, 
-  User, 
-  Activity,
+import {
+  Search,
+  User,
   Globe,
   Monitor,
   Database,
-  ArrowUpDown,
   Filter,
   Loader2
 } from "lucide-react";
@@ -36,8 +31,10 @@ const AuditSection = () => {
     setIsLoading(false);
   };
 
+  // Fetch logs only once on mount; subsequent fetches are triggered by user actions (Enter key, button clicks)
   useEffect(() => {
     fetchLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getActionColor = (action: string) => {

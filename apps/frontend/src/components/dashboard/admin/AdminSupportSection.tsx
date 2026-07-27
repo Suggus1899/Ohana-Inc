@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   AlertTriangle, MessageSquare, Search, CheckCircle,
-  Clock, Loader2, History, Send, ArrowUpCircle,
+  Clock, Loader2, History, Send,
 } from "lucide-react";
 import { api, SupportTicket } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
@@ -60,14 +60,14 @@ const AdminSupportSection = () => {
       ]);
 
       if (escalatedRes.success && escalatedRes.data) {
-        setEscalated((escalatedRes.data as any).tickets ?? escalatedRes.data as unknown as SupportTicket[]);
+        setEscalated((escalatedRes.data as Record<string, unknown>).tickets as SupportTicket[] ?? escalatedRes.data as unknown as SupportTicket[]);
       }
       if (normalRes.success && normalRes.data) {
-        const all = (normalRes.data as any).tickets ?? normalRes.data as unknown as SupportTicket[];
+        const all = (normalRes.data as Record<string, unknown>).tickets as SupportTicket[] ?? normalRes.data as unknown as SupportTicket[];
         setNormal(all.filter((t: SupportTicket) => t.status !== "escalated" && t.status !== "resolved"));
       }
       if (historyRes.success && historyRes.data) {
-        setHistory((historyRes.data as any).tickets ?? historyRes.data as unknown as SupportTicket[]);
+        setHistory((historyRes.data as Record<string, unknown>).tickets as SupportTicket[] ?? historyRes.data as unknown as SupportTicket[]);
       }
     } catch {
       toast({ title: "Error", description: "No se pudieron cargar los tickets", variant: "destructive" });
@@ -132,10 +132,10 @@ const AdminSupportSection = () => {
             {priorityBadge(ticket.priority)}
           </div>
           <h4 className="font-medium truncate">{ticket.subject}</h4>
-          {ticket.status === "escalated" && (ticket as any).escalationReason && (
+          {ticket.status === "escalated" && (ticket as Record<string, unknown>).escalationReason as string | undefined && (
             <p className="text-sm text-red-700 mt-1 flex items-start gap-1">
               <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
-              {(ticket as any).escalationReason}
+              {(ticket as Record<string, unknown>).escalationReason as string}
             </p>
           )}
           <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

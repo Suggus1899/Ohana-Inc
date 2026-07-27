@@ -137,7 +137,7 @@ export const BehaviorTrackerProvider: React.FC<{ children: React.ReactNode }> = 
 
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [user, endCurrentSession]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user, endCurrentSession]);  
 
   // ── trackEvent ─────────────────────────────────────────────────────────────
   const trackEvent = useCallback((event: Omit<BehaviorEvent, 'userId' | 'sessionId'>) => {

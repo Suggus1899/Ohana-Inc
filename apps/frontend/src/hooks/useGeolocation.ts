@@ -22,8 +22,8 @@ export const useGeolocation = (options?: PositionOptions): UseGeolocationReturn 
     try {
       const pos = await geolocationService.getCurrentPosition(options);
       setPosition(pos);
-    } catch (err: any) {
-      setError(err.message || 'Error obtaining location');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error obtaining location');
     } finally {
       setLoading(false);
     }

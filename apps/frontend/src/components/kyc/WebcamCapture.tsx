@@ -57,7 +57,7 @@ export const WebcamCapture: React.FC<WebcamCaptureProps> = ({
         // Release the stream immediately - Webcam component will request it again
         stream.getTracks().forEach(track => track.stop());
         setCameraReady(true);
-      } catch (error) {
+      } catch (_error) {
         setPermissionDenied(true);
         onError('Permiso de cámara denegado. Por favor permite el acceso a la cámara para continuar.');
       }
@@ -68,9 +68,10 @@ export const WebcamCapture: React.FC<WebcamCaptureProps> = ({
 
   // Release camera stream when component unmounts or after capture
   useEffect(() => {
+    const webcam = webcamRef.current;
     return () => {
-      if (webcamRef.current?.stream) {
-        webcamRef.current.stream.getTracks().forEach(track => track.stop());
+      if (webcam?.stream) {
+        webcam.stream.getTracks().forEach(track => track.stop());
       }
     };
   }, []);

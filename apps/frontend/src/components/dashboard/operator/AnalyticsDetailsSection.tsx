@@ -1,34 +1,21 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
   Cell,
   PieChart,
   Pie
 } from 'recharts';
 import { api, AnalyticsDashboard, ConversionStats } from "@/services/api";
-import { 
-  TrendingUp, 
-  Users, 
-  Building, 
-  MousePointer2, 
+import {
+  TrendingUp,
+  Building,
+  MousePointer2,
   Search,
-  ArrowUpRight,
-  ArrowDownRight,
   Activity,
-  BarChart3,
   Loader2
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const COLORS = ['#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe'];
 
@@ -167,9 +154,5 @@ const AnalyticsDetailsSection = () => {
     </div>
   );
 };
-
-const cn = (...inputs: any[]) => inputs.filter(Boolean).join(' ');
-interface CardBodyProps { children: React.ReactNode; className?: string }
-const CardBody = ({ children, className }: CardBodyProps) => <div className={className}>{children}</div>;
 
 export default AnalyticsDetailsSection;

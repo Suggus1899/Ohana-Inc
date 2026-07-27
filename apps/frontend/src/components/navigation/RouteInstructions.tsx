@@ -1,8 +1,7 @@
 import { RouteStep } from '@/services/routingService';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  ArrowRight, 
+import {
   ArrowUpRight, 
   ArrowUpLeft, 
   MapPin, 

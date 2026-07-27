@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import api, { UserReview, Pagination } from '@/services/api';
+import api, { Pagination, UserReview, PropertyReview } from '@/services/api';
 import ReviewCard from './ReviewCard';
 
 interface UserReviewsModalProps {
@@ -23,7 +23,7 @@ const UserReviewsModal = ({
 }: UserReviewsModalProps) => {
   const isOwnerRole = userRole === 'propietario' || userRole === 'admin';
   const [activeTab, setActiveTab] = useState<'owner' | 'tenant' | 'properties'>('owner');
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<(UserReview | PropertyReview)[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -41,13 +41,13 @@ const UserReviewsModal = ({
       }
 
       if (response.success && response.data) {
-        const newReviews = (response.data as any).reviews || [];
+        const newReviews = (response.data as Record<string, unknown>).reviews as (UserReview | PropertyReview)[] || [];
         if (reset) {
           setReviews(newReviews);
         } else {
           setReviews((prev) => [...prev, ...newReviews]);
         }
-        setPagination((response.data as any).pagination || null);
+        setPagination((response.data as Record<string, unknown>).pagination as Pagination || null);
       }
     } catch (error) {
       console.error('Error fetching user reviews:', error);
@@ -57,6 +57,8 @@ const UserReviewsModal = ({
   };
 
   // Fetch when modal opens, tab changes, or page changes
+  // fetchReviews intentionally excluded: it reads 'page' from state and adding it would
+  // re-trigger this effect on page changes, breaking the load-more pagination logic
   useEffect(() => {
     if (isOpen) {
       setPage(1);
@@ -65,13 +67,17 @@ const UserReviewsModal = ({
       setReviews([]);
       setPagination(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, activeTab]);
 
+  // fetchReviews intentionally excluded: it depends on 'activeTab' and 'page'; adding it
+  // would cause a race condition on tab change (old page value triggers an extra fetch)
   useEffect(() => {
     if (isOpen && page > 1) {
       fetchReviews(false);
     }
-  }, [page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, isOpen]);
 
   const handleLoadMore = () => {
     if (pagination && page < pagination.pages) {

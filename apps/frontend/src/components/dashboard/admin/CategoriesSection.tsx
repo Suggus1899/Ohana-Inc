@@ -63,12 +63,12 @@ const CategoriesSection = () => {
       }
       if (typeCountsRes.success && typeCountsRes.data) {
         const map: Record<string, number> = {};
-        (typeCountsRes.data as any[]).forEach(r => { map[r.type?.toLowerCase()] = r.count; });
+        (typeCountsRes.data as Record<string, unknown>[]).forEach(r => { map[String(r.type)?.toLowerCase()] = r.count as number; });
         setTypeCounts(map);
       }
       if (serviceCountsRes.success && serviceCountsRes.data) {
         const map: Record<number, number> = {};
-        (serviceCountsRes.data as any[]).forEach(r => { map[r.serviceId] = r.count; });
+        (serviceCountsRes.data as Record<string, unknown>[]).forEach(r => { map[r.serviceId as number] = r.count as number; });
         setServiceCounts(map);
       }
 
@@ -81,8 +81,8 @@ const CategoriesSection = () => {
             api.getProperties({ listingType: "venta", limit: 1 }),
           ]);
           setListingCounts({
-            alquiler: (alqRes.data as any)?.pagination?.total ?? 0,
-            venta: (ventaRes.data as any)?.pagination?.total ?? 0,
+            alquiler: (alqRes.data as Record<string, unknown>)?.pagination ? ((alqRes.data as Record<string, unknown>).pagination as Record<string, number>).total : 0,
+            venta: (ventaRes.data as Record<string, unknown>)?.pagination ? ((ventaRes.data as Record<string, unknown>).pagination as Record<string, number>).total : 0,
           });
         }
       } catch { /* silent */ }
@@ -98,7 +98,7 @@ const CategoriesSection = () => {
   const handleToggleService = async (service: ServiceItem) => {
     setTogglingId(service.id);
     try {
-      const res = await api.updateService(service.id, { isActive: !service.isActive } as any);
+      const res = await api.updateService(service.id, { isActive: !service.isActive } as Record<string, unknown>);
       if (res.success) {
         setServices(prev => prev.map(s => s.id === service.id ? { ...s, isActive: !s.isActive } : s));
         toast({ title: service.isActive ? "Servicio desactivado" : "Servicio activado", description: `${service.name} — las propiedades existentes siguen siendo visibles` });
@@ -114,7 +114,7 @@ const CategoriesSection = () => {
     if (!newService.name.trim()) return;
     setIsSaving(true);
     try {
-      const res = await api.createService(newService as any);
+      const res = await api.createService(newService as unknown as Record<string, unknown>);
       if (res.success) {
         toast({ title: "Servicio creado", description: newService.name });
         setAddDialog(false);

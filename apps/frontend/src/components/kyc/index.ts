@@ -7,8 +7,9 @@
 export { WebcamCapture } from './WebcamCapture';
 export type { WebcamCaptureProps, DocumentType } from './WebcamCapture';
 
-export { KYCFlow, KYCStep } from './KYCFlow';
+export { KYCFlow } from './KYCFlow';
 export type { KYCFlowProps } from './KYCFlow';
+export { KYCStep } from './KYCStep';
 
 export { LivenessCapture } from './LivenessCapture';
 export type { LivenessCaptureProps } from './LivenessCapture';

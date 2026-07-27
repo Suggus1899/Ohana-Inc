@@ -34,7 +34,7 @@ const DashboardLayout = ({
 }: DashboardLayoutProps) => {
   const { isDemoMode } = useAuth();
   const dashboardTitle = title || getTitleByRole(role);
-  const permissions: RolePermissions = getPermissionsByRole(role);
+  const _permissions: RolePermissions = getPermissionsByRole(role);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Get real-time badges using hook

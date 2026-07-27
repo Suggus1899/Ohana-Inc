@@ -33,6 +33,8 @@ const NavigationMap = ({ currentPosition, destination, route, shouldCenter }: Na
     return () => {
       // Cleanup happens if component unmounts
     };
+    // Map is initialized once on mount; currentPosition updates are handled by the marker effect below
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update User Marker

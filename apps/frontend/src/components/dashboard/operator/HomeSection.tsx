@@ -1,22 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ClipboardList, 
-  CheckSquare, 
-  AlertCircle, 
-  MessageSquare, 
-  Clock, 
-  ArrowRight,
-  TrendingUp,
+import {
+  ClipboardList,
+  CheckSquare,
+  AlertCircle,
+  MessageSquare,
   ShieldCheck,
   Building,
   UserPlus,
   Loader2,
-  Check,
-  XCircle,
   BarChart3,
-  History,
   Search
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -32,7 +25,6 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-import { cn } from "@/lib/utils";
 
 interface RecentAction {
   id: string;
@@ -40,7 +32,7 @@ interface RecentAction {
   title: string;
   status: string;
   date: Date;
-  icon: any; // Using any for icon components to avoid type conflicts with LucideIcon/ElementType
+  icon: React.ComponentType<{ className?: string }>; // Using a generic component type for icon components to avoid type conflicts with LucideIcon/ElementType
 }
 
 interface HomeSectionProps {
@@ -51,7 +43,7 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => {
   const { user } = useAuth();
   const [stats, setStats] = useState<ModerationStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [recentActions, setRecentActions] = useState<RecentAction[]>([]);
+  const [_recentActions, setRecentActions] = useState<RecentAction[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsDashboard | null>(null);
   const [todayAnalytics, setTodayAnalytics] = useState<AnalyticsDashboard | null>(null);
   const [conversion, setConversion] = useState<ConversionStats | null>(null);
@@ -122,7 +114,7 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => {
     fetchData();
   }, []);
 
-  const hourlyData = (todayAnalytics?.hourlyActivity ?? analytics?.hourlyActivity ?? []).map((h: any) => ({
+  const hourlyData = (todayAnalytics?.hourlyActivity ?? analytics?.hourlyActivity ?? []).map((h: Record<string, unknown>) => ({
     name: `${h.hour}:00`,
     valor: Number(h.activity ?? h.count ?? 0),
     fill: '#8b5cf6'

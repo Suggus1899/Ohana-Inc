@@ -29,6 +29,32 @@ export interface ReverseGeocodeResult extends GeocodeResult {
   };
 }
 
+interface ApiResponse<T = unknown> {
+  success?: boolean;
+  error?: { message?: string };
+  data: T;
+}
+
+interface AutocompleteSuggestion {
+  coordinates?: { lat: number; lng: number };
+  lat?: number;
+  lng?: number;
+  displayName?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  type?: string;
+  importance?: number;
+}
+
+interface ReverseGeocodeData {
+  address: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  detailedAddress?: ReverseGeocodeResult['address'];
+}
+
 /**
  * Servicio de geocoding para Habitas
  * Usa el backend con servidores OSRM y geocoding local
@@ -46,9 +72,9 @@ export const geocodingService = {
       }
 
       return results[0];
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Geocoding error:', error);
-      throw new Error(`Error al geocodificar dirección: ${error.message}`);
+      throw new Error(`Error al geocodificar dirección: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 
@@ -58,7 +84,7 @@ export const geocodingService = {
   async coordsToAddress(lat: number, lng: number): Promise<ReverseGeocodeResult> {
     try {
       const response = await fetch(`${API_URL}/properties/search/reverse?lat=${lat}&lng=${lng}`);
-      const data = await response.json() as any;
+      const data = await response.json() as ApiResponse<ReverseGeocodeData>;
 
       if (!response.ok || !data.success) {
         throw new Error(data.error?.message || 'Error en reverse geocoding');
@@ -73,9 +99,9 @@ export const geocodingService = {
         country: data.data.country,
         address: data.data.detailedAddress
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Reverse geocoding error:', error);
-      throw new Error(`Error al convertir coordenadas en dirección: ${error.message}`);
+      throw new Error(`Error al convertir coordenadas en dirección: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 
@@ -85,13 +111,13 @@ export const geocodingService = {
   async autocomplete(query: string, limit = 5): Promise<GeocodeResult[]> {
     try {
       const response = await fetch(`${API_URL}/properties/search/autocomplete?query=${encodeURIComponent(query)}&limit=${limit}`);
-      const data = await response.json() as any;
+      const data = await response.json() as ApiResponse<{ suggestions: AutocompleteSuggestion[] }>;
 
       if (!response.ok || !data.success) {
         throw new Error(data.error?.message || 'Error en autocompletado');
       }
 
-      return (data.data.suggestions || []).map((s: any) => ({
+      return (data.data.suggestions || []).map((s) => ({
         lat: s.coordinates?.lat ?? s.lat,
         lng: s.coordinates?.lng ?? s.lng,
         displayName: s.displayName,
@@ -101,7 +127,7 @@ export const geocodingService = {
         type: s.type,
         importance: s.importance,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Autocomplete error:', error);
       return [];
     }
@@ -115,16 +141,16 @@ export const geocodingService = {
       const response = await fetch(
         `${API_URL}/properties/search/location?location=${encodeURIComponent(location)}&radius=${radiusKm}&page=${page}&limit=${limit}`
       );
-      const data = await response.json() as any;
+      const data = await response.json() as ApiResponse<unknown>;
 
       if (!response.ok || !data.success) {
         throw new Error(data.error?.message || 'Error buscando propiedades por ubicación');
       }
 
       return data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Search by location error:', error);
-      throw new Error(`Error buscando propiedades: ${error.message}`);
+      throw new Error(`Error buscando propiedades: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 
@@ -136,16 +162,16 @@ export const geocodingService = {
       const response = await fetch(
         `${API_URL}/properties/search/nearby?lat=${lat}&lng=${lng}&radius=${radiusKm}&page=${page}&limit=${limit}`
       );
-      const data = await response.json() as any;
+      const data = await response.json() as ApiResponse<unknown>;
 
       if (!response.ok || !data.success) {
         throw new Error(data.error?.message || 'Error buscando propiedades cercanas');
       }
 
       return data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Search nearby error:', error);
-      throw new Error(`Error buscando propiedades cercanas: ${error.message}`);
+      throw new Error(`Error buscando propiedades cercanas: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 

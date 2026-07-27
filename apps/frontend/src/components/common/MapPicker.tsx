@@ -8,7 +8,7 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({ iconUrl: markerIcon, iconRetinaUrl: markerIconRetina, shadowUrl: markerShadow });
 
 export interface MapPickerValue {
@@ -187,7 +187,7 @@ export function MapPicker({ value, onChange, className, height = 320 }: MapPicke
       try {
         const { latitude, longitude } = position.coords;
         setGeocoding(true);
-        let geo: any;
+        let geo: GeocodeResult | undefined;
         try {
           geo = await geocodingService.coordsToAddress(latitude, longitude);
         } catch {

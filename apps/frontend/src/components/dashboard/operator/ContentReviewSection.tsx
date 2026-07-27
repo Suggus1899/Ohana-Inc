@@ -15,18 +15,16 @@ import {
   Loader2,
   History,
   Info,
-  FileDown,
   Eye,
   Bed,
   Bath,
   Square,
-  User,
   Phone,
   Mail,
   Home,
   BadgeCheck,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -72,7 +70,7 @@ const ContentReviewSection = () => {
   const { rate } = useExchangeRate();
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [userRes, statsRes, pendingRes] = await Promise.all([
@@ -123,13 +121,13 @@ const ContentReviewSection = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchData();
     refreshRef.current = setInterval(fetchData, 30000);
     return () => { if (refreshRef.current) clearInterval(refreshRef.current); };
-  }, []);
+  }, [fetchData]);
 
   const handleApprove = async (property: PendingProperty) => {
     setIsProcessing(true);
@@ -140,12 +138,12 @@ const ContentReviewSection = () => {
         setProperties(prev => prev.filter(p => p.id !== property.id));
         fetchData();
       } else {
-        const msg = (response as any)?.error?.message || 'No se pudo aprobar la propiedad';
+        const msg = ((response as Record<string, unknown>)?.error as { message?: string } | undefined)?.message || 'No se pudo aprobar la propiedad';
         toast({ title: "Error", description: msg, variant: "destructive" });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[ContentReview] handleApprove error:', error);
-      toast({ title: "Error", description: error?.message || "Error de servidor", variant: "destructive" });
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Error de servidor", variant: "destructive" });
     } finally {
       setIsProcessing(false);
     }
@@ -168,12 +166,12 @@ const ContentReviewSection = () => {
         setSelectedProperty(null);
         fetchData();
       } else {
-        const msg = (response as any)?.error?.message || 'No se pudo rechazar la propiedad';
+        const msg = ((response as Record<string, unknown>)?.error as { message?: string } | undefined)?.message || 'No se pudo rechazar la propiedad';
         toast({ title: "Error", description: msg, variant: "destructive" });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[ContentReview] handleReject error:', error);
-      toast({ title: "Error", description: error?.message || "Error de servidor", variant: "destructive" });
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Error de servidor", variant: "destructive" });
     } finally {
       setIsProcessing(false);
     }

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { ChevronRight, ChevronLeft, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
-import { useExchangeRate } from '../../../contexts/ExchangeRateContext';
-import { formatDualPrice } from '../../../utils/formatPrice';
 import { ImageUploader } from '@/components/common/ImageUploader';
 import { VideoUploader } from '@/components/common/VideoUploader';
 import { MapPicker, MapPickerValue } from '@/components/common/MapPicker';
@@ -15,7 +13,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import api from '@/services/api';
 import { getMyTransactions } from '@/services/transaction.service';
@@ -222,7 +219,7 @@ export function CreatePropertyForm({ onSuccess, onCancel }: CreatePropertyFormPr
       const formData = new FormData();
 
       // Excluir areaUnknown y features del envío (features se agrega manualmente con JSON.stringify)
-      const { areaUnknown, features: _ignoredFeatures, ...submitData } = data;
+      const { areaUnknown: _areaUnknown, features: _ignoredFeatures, ...submitData } = data;
       Object.entries(submitData).forEach(([key, val]) => {
         if (val !== undefined && val !== null && val !== '') formData.append(key, String(val));
       });

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, BedDouble, Bath, Maximize, Heart, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { m, AnimatePresence } from "framer-motion";
+import { m } from "framer-motion";
 import { useState, useCallback, useEffect, memo } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useRouteCalculation } from "@/hooks/useRouteCalculation";
@@ -46,7 +46,7 @@ const PropertyCard = ({
   type,
   location,
   listingType = "Alquiler",
-  isFeatured,
+  _isFeatured,
   status,
   coordinates,
   index = 0,
@@ -83,7 +83,7 @@ const PropertyCard = ({
     setImageErrors((prev) => ({ ...prev, [index]: true }));
   };
 
-  const currentImage = imageErrors[currentImageIndex] ? fallbackImage : imageList[currentImageIndex];
+  const _currentImage = imageErrors[currentImageIndex] ? fallbackImage : imageList[currentImageIndex];
   
   // Calculate distance when position or coordinates change
   useEffect(() => {

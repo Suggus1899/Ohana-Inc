@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Building, Plus, Search, Eye, MoreVertical, MapPin, Bed, Bath, Maximize,
-  Loader2, AlertCircle, Pencil, Trash2, Video, ChevronLeft, ChevronRight, ArrowLeft,
-  Send, Filter, CheckCircle, ChevronsLeft, ChevronsRight
+  Loader2, AlertCircle, Pencil, Trash2, ChevronLeft, ChevronRight, ArrowLeft,
+  Send, ChevronsLeft, ChevronsRight
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -28,7 +28,6 @@ import {
 import { CreatePropertyForm } from "./CreatePropertyForm";
 import { EditPropertyDialog } from "./EditPropertyDialog";
 import api, { Property } from "@/services/api";
-import { cn } from "@/lib/utils";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { usdToCop, formatDualPrice } from "../../../utils/formatPrice";
 import { DualPrice } from "../../../components/common/DualPrice";
@@ -97,7 +96,7 @@ const OwnerPropertyCard = memo(({ property, publishingId, onViewDetails, onEdit,
           <div className="flex items-center gap-1.5 flex-wrap">
             <h4 className="font-medium text-sm sm:text-base truncate">{property.title}</h4>
             {getStatusBadgeInline(property.status)}
-            {property.type === 'Residencia' && (property as any).availableRooms === 0 && (
+            {property.type === 'Residencia' && property.availableRooms === 0 && (
               <Badge variant="destructive" className="text-[10px] sm:text-xs px-1.5 py-0 h-5">Ocupada</Badge>
             )}
           </div>
@@ -108,14 +107,14 @@ const OwnerPropertyCard = memo(({ property, publishingId, onViewDetails, onEdit,
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
             <span className="text-[10px] sm:text-xs font-medium text-muted-foreground/70 uppercase tracking-wide">{property.type}</span>
             <span className="flex items-center gap-1"><Bed className="h-3 w-3 shrink-0" /> {property.bedrooms} {property.type === 'Residencia' ? 'cuartos' : 'hab.'}</span>
-            <span className="flex items-center gap-1"><Eye className="h-3 w-3 shrink-0" /> {(property as any).views ?? 0} vistas</span>
+            <span className="flex items-center gap-1"><Eye className="h-3 w-3 shrink-0" /> {property.views ?? 0} vistas</span>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-4">
         {rate && !rateLoading
-          ? <DualPrice usd={Number(property.price)} copRate={rate.usdToCop} period={(property as any).priceType === 'daily' ? 'día' : 'mes'} variant="inline" />
-          : <span className="text-lg font-bold text-primary">${Number(property.price).toLocaleString()}/{ (property as any).priceType === 'daily' ? 'día' : 'mes'}</span>}
+          ? <DualPrice usd={Number(property.price)} copRate={rate.usdToCop} period={property.priceType === 'daily' ? 'día' : 'mes'} variant="inline" />
+          : <span className="text-lg font-bold text-primary">${Number(property.price).toLocaleString()}/{ property.priceType === 'daily' ? 'día' : 'mes'}</span>}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-7 w-7 md:h-9 md:w-9">
@@ -201,7 +200,7 @@ const PropertiesSection = () => {
     }
   };
 
-  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [activeFilter, _setActiveFilter] = useState<string>('all');
 
   const handlePublish = async (propertyId: number) => {
     setPublishingId(propertyId);
@@ -429,9 +428,9 @@ const PropertiesSection = () => {
             )}
 
             {/* Video */}
-            {(detailProperty as any).videoUrl && (
+            {detailProperty.videoUrl && (
               <div className="rounded-lg sm:rounded-xl overflow-hidden bg-black">
-                <video src={(detailProperty as any).videoUrl} controls className="w-full max-h-48 sm:max-h-64 object-contain" />
+                <video src={detailProperty.videoUrl} controls className="w-full max-h-48 sm:max-h-64 object-contain" />
               </div>
             )}
 

@@ -31,7 +31,7 @@ export function useDriver(steps: DriveStep[], options?: DriverOptions) {
 
   const safeDestroy = useCallback(() => {
     if (driverRef.current) {
-      try { driverRef.current.destroy(); } catch {}
+      try { driverRef.current.destroy(); } catch { /* driver already destroyed */ }
       driverRef.current = null;
     }
   }, []);

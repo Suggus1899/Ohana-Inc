@@ -42,7 +42,7 @@ const Hero = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 10000);
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, []);
 
   useEffect(() => {
     retryWithBackoff(

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { api } from '@/services/api';
 import { getSocket } from '@/services/socket';
 import { useAuth } from '@/contexts/AuthContext';
@@ -81,7 +81,7 @@ interface UseChatReturn {
 }
 
 export function useChat(): UseChatReturn {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated: _isAuthenticated } = useAuth();
   const [conversations, setConversations] = useState<ConversationData[]>([]);
   const [activeConversation, setActiveConversation] = useState<ConversationData | null>(null);
   // Keep a ref in sync so socket callbacks can access it without re-subscribing
@@ -90,7 +90,7 @@ export function useChat(): UseChatReturn {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([]);
   const [blockedMessages, setBlockedMessages] = useState<BlockedMessageInfo[]>([]);
-  const typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
+  const _typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
   const activeConversationRef = useRef<ConversationData | null>(null);
 
   // Socket listeners are managed centrally by ChatContext — no local socket handling here

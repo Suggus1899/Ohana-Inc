@@ -20,12 +20,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Users, Search, CheckCircle, ShieldCheck, Loader2, Info, Ban, Unlock,
-  AlertTriangle, Eye, MoreVertical, UserCog, Clock, Mail, FileText, XCircle,
+  Users, Search, ShieldCheck, Loader2, Ban, Unlock,
+  AlertTriangle, Eye, MoreVertical, UserCog, Mail, FileText, XCircle,
 } from "lucide-react";
 import { api, User as ApiUser, ApiResponse, Property } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface KYCVerification {
@@ -59,12 +58,12 @@ const VerificationsSection = () => {
   const [rejectModal, setRejectModal] = useState<{ open: boolean; kyc: KYCVerification | null }>({ open: false, kyc: null });
   const [rejectReason, setRejectReason] = useState("");
   const [docModal, setDocModal] = useState<{ open: boolean; kyc: KYCVerification | null; documents: KYCDocument[]; loading: boolean }>({ open: false, kyc: null, documents: [], loading: false });
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, _setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<ApiUser[]>([]);
   const [activeTab, setActiveTab] = useState("all");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, _setRoleFilter] = useState("all");
+  const [statusFilter, _setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<ApiUser | null>(null);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<'suspend' | 'activate' | 'block' | 'unblock' | 'changeRole' | null>(null);
@@ -89,7 +88,7 @@ const VerificationsSection = () => {
     refetchInterval: 15000,
   });
 
-  const verifications = pendingData || [];
+  const verifications = useMemo(() => pendingData || [], [pendingData]);
 
   const pendingCount = verifications.filter(v => v.status === 'pending_review' || v.status === 'documents_uploaded' || v.status === 'under_review').length;
   const approvedCount = verifications.filter(v => v.status === 'approved').length;
@@ -108,7 +107,7 @@ const VerificationsSection = () => {
     try {
       const res = await api.getUsers({ limit: 200 });
       if (res.success && res.data) {
-        setUsers((res.data as any).users ?? []);
+        setUsers((res.data as Record<string, unknown>).users as User[] ?? []);
       }
     } catch {
       toast({ title: "Error", description: "No se pudieron cargar los usuarios", variant: "destructive" });
@@ -131,7 +130,7 @@ const VerificationsSection = () => {
     return map;
   }, [verifications]);
 
-  const getKycLabel = (status?: string) => {
+  const _getKycLabel = (status?: string) => {
     switch (status) {
       case 'approved': return 'Verificado';
       case 'pending_review': return 'Pendiente Revisión';
@@ -173,10 +172,10 @@ const VerificationsSection = () => {
         toast({ title: "Cuenta verificada", description: `${user.name} ha sido verificado` });
         fetchUsers();
       } else {
-        toast({ title: "Error", description: (res as any)?.error?.message || "No se pudo verificar", variant: "destructive" });
+        toast({ title: "Error", description: ((res as Record<string, unknown>)?.error as { message?: string } | undefined)?.message || "No se pudo verificar", variant: "destructive" });
       }
-    } catch (error: any) {
-      toast({ title: "Error", description: error?.message || "Error de servidor", variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Error de servidor", variant: "destructive" });
     } finally {
       setIsProcessingAction(false);
     }
@@ -231,11 +230,11 @@ const VerificationsSection = () => {
         setActionSuspendedUntil("");
         fetchUsers();
       } else {
-        const msg = (response as any)?.error?.message || 'No se pudo completar la acción';
+        const msg = ((response as Record<string, unknown>)?.error as { message?: string } | undefined)?.message || 'No se pudo completar la acción';
         toast({ title: "Error", description: msg, variant: "destructive" });
       }
-    } catch (error: any) {
-      toast({ title: "Error", description: error?.message || "Error de servidor", variant: "destructive" });
+    } catch (error: unknown) {
+      toast({ title: "Error", description: error instanceof Error ? error.message : "Error de servidor", variant: "destructive" });
     } finally {
       setIsProcessingAction(false);
     }

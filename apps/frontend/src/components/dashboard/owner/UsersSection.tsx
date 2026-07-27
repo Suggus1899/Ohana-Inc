@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, Search, Loader2, UserIcon, Mail, Phone, MapPin, Building, FileText, ArrowLeft, Calendar, ShieldCheck, CreditCard } from "lucide-react";
+import { Users, Search, Loader2, UserIcon, Mail, Phone, Building, FileText, Calendar, ShieldCheck, CreditCard } from "lucide-react";
 import { api, StudentUser } from "@/services/api";
 
 const roleLabel: Record<string, string> = {

@@ -73,7 +73,7 @@ export const watchPosition = (
       PERMISSION_DENIED: 1,
       POSITION_UNAVAILABLE: 2,
       TIMEOUT: 3
-    } as any);
+    } as GeolocationError);
     return -1;
   }
 

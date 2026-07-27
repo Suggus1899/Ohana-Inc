@@ -24,7 +24,7 @@ const NotificationsSection = lazy(() => import("@/components/notifications/Notif
 const HelpSection = lazy(() => import("@/components/dashboard/tenant/HelpSection"));
 
 // Placeholder sections
-const PlaceholderSection = ({ title }: { title: string }) => (
+const _PlaceholderSection = ({ title }: { title: string }) => (
   <div className="flex items-center justify-center h-64 border-2 border-dashed rounded-lg">
     <p className="text-muted-foreground">Sección "{title}" en desarrollo</p>
   </div>
@@ -33,7 +33,7 @@ const PlaceholderSection = ({ title }: { title: string }) => (
 // Panel Cliente / Estudiante: Solo puede consumir información (reutiliza el mismo componente)
 const TenantDashboard = () => {
   const [activeSection, setActiveSection] = useState("home");
-  const { user, updateUser } = useAuth();
+  const { user, updateUser: _updateUser } = useAuth();
   const { toast } = useToast();
   const { messages: unreadMessages } = useUnreadBadges();
   const location = useLocation();
@@ -51,7 +51,7 @@ const TenantDashboard = () => {
         variant: 'destructive',
       });
     }
-  }, []);
+  }, [toast]);
 
   const handleTutorialDone = useCallback(async () => {
     setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
@@ -60,12 +60,12 @@ const TenantDashboard = () => {
       celebrationFired.current = true;
       fireCelebration();
     }
-  }, [updateUser, saveTutorialCompleted]);
+  }, [saveTutorialCompleted]);
 
   const handleTutorialSkip = useCallback(async () => {
     setUser((prev) => prev ? { ...prev, tutorialCompleted: true } : prev);
     await saveTutorialCompleted();
-  }, [updateUser, saveTutorialCompleted]);
+  }, [saveTutorialCompleted]);
 
   const steps = getTutorialSteps(user?.name || '', clientSidebarItems, user?.role);
   const { startTutorial } = useDriver(steps, {

@@ -1,5 +1,3 @@
-import { RouteCoordinates } from './routingService';
-
 export interface HistoryItem {
   id: string;
   address: string;

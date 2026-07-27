@@ -44,7 +44,7 @@ const AuthCallback = () => {
     }).catch(() => {
       setError("Error de conexión al verificar la sesión");
     });
-  }, [navigate, searchParams]);
+  }, [navigate, searchParams, completeAuth]);
 
   if (error) {
     return (

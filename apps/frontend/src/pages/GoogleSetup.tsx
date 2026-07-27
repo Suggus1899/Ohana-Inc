@@ -82,8 +82,8 @@ const GoogleSetup = () => {
         estudiante: "/estudiante",
       };
       navigate(paths[data.user.role] || "/cliente", { replace: true });
-    } catch (err: any) {
-      const msg = err?.message || "Error al completar el registro";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error al completar el registro";
 
       // Si el tempToken expiró o la sesión no es válida, redirigir a login
       if (msg.includes('expirado') || msg.includes('expired') || msg.includes('No autorizado') || msg.includes('autorizado') || msg.includes('Sesión')) {

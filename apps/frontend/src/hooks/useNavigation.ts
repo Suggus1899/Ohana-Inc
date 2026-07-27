@@ -127,7 +127,7 @@ export const useNavigation = ({ destination, mode = 'foot' }: UseNavigationProps
 
   // Sound utilities
   const playNotificationSound = () => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -144,7 +144,7 @@ export const useNavigation = ({ destination, mode = 'foot' }: UseNavigationProps
   };
 
   const playArrivalSound = () => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 

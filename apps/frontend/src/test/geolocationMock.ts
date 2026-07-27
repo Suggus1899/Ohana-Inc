@@ -1,5 +1,3 @@
-import { GeoPosition } from '../services/geolocationService';
-
 const SJ_COORDINATES: [number, number][] = [
   [9.4111, -67.3592],
   [9.4105, -67.3585],
@@ -13,11 +11,11 @@ const UPDATE_INTERVAL = Number(import.meta.env.VITE_NAVIGATION_UPDATE_INTERVAL) 
 
 class GeolocationMock {
   private currentIndex = 0;
-  private intervalId: any = null;
-  private watchCallbacks: Record<number, (pos: any) => void> = {};
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private watchCallbacks: Record<number, (pos: GeolocationPosition) => void> = {};
   private nextWatchId = 1;
 
-  getCurrentPosition(success: (pos: any) => void) {
+  getCurrentPosition(success: (pos: GeolocationPosition) => void) {
     const coord = SJ_COORDINATES[this.currentIndex];
     success({
       coords: {
@@ -29,7 +27,7 @@ class GeolocationMock {
     });
   }
 
-  watchPosition(success: (pos: any) => void) {
+  watchPosition(success: (pos: GeolocationPosition) => void) {
     const id = this.nextWatchId++;
     this.watchCallbacks[id] = success;
     

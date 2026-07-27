@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import PropertyCard from "@/components/common/PropertyCard";
 import Footer from "@/components/layout/Footer";
 import ProfileIcon from "@/components/common/ProfileIcon";
-import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import api, { User as UserType } from "@/services/api";
 import { UserReviewsModal } from "@/components/reviews";
@@ -17,7 +16,7 @@ const PublicProfile = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserType | null>(null);
-  const [userProperties, setUserProperties] = useState<any[]>([]);
+  const [userProperties, setUserProperties] = useState<Record<string, unknown>[]>([]);
   const [showReviewsModal, setShowReviewsModal] = useState(false);
   
   useEffect(() => {

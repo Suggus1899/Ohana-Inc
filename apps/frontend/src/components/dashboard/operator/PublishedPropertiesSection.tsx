@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Search, ExternalLink, Ban, Home, DollarSign, AlertTriangle } from "lucide-react";
+import { Loader2, Search, ExternalLink, Ban, Home, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import { useExchangeRate } from "../../../contexts/ExchangeRateContext";
 import { formatDualPriceShort, usdToCop } from "../../../utils/formatPrice";

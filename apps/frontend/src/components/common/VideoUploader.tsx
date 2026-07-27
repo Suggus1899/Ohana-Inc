@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, DragEvent, ChangeEvent } from 'react';
-import { Video, X, CheckCircle, AlertCircle, Upload } from 'lucide-react';
+import { Video, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VideoUploaderProps {

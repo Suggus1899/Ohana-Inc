@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, MapPin, Loader2, X } from 'lucide-react';
+import { Search, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { geocodingService } from '@/services/geocoding.service';
@@ -28,10 +28,10 @@ const AddressSearchBar = ({ onLocationSelected }: AddressSearchBarProps) => {
         title: "Ubicación encontrada",
         description: `Buscando propiedades en: ${result.displayName}`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error de búsqueda",
-        description: error.message || "No se pudo encontrar la ubicación",
+        description: error instanceof Error ? error.message : "No se pudo encontrar la ubicación",
         variant: "destructive",
       });
     } finally {

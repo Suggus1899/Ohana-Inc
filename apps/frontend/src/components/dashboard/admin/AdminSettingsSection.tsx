@@ -51,7 +51,7 @@ const AdminSettingsSection = () => {
     load();
   }, []);
 
-  const handleChange = (key: keyof PlatformSettings, value: any) => {
+  const handleChange = (key: keyof PlatformSettings, value: unknown) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
