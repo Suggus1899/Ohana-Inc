@@ -109,7 +109,7 @@ class _PropertyDetailPageState extends ConsumerState<PropertyDetailPage> {
                     itemBuilder: (context, i) => Image.network(
                       images[i],
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: colorScheme.surfaceContainerHighest,
                         child: Icon(Icons.broken_image_outlined,
                             size: 64, color: colorScheme.primary),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/services/api_client.dart';
 import '../providers/auth_provider.dart';
 
 /// Email verification page — user enters the token sent to their email.

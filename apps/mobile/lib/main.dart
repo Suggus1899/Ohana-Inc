@@ -33,7 +33,6 @@ class OhanaApp extends ConsumerStatefulWidget {
 
 class _OhanaAppState extends ConsumerState<OhanaApp> {
   bool _initialized = false;
-  bool _initFailed = false;
 
   @override
   void initState() {
@@ -49,12 +48,7 @@ class _OhanaAppState extends ConsumerState<OhanaApp> {
       debugPrint('Auth init failed: $e\n$stack');
       // Mark as initialized so user can proceed to login
       // rather than being stuck on a loading screen forever
-      if (mounted) {
-        setState(() {
-          _initialized = true;
-          _initFailed = true;
-        });
-      }
+      if (mounted) setState(() => _initialized = true);
     }
   }
 
