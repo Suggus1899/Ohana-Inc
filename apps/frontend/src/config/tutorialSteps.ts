@@ -148,7 +148,7 @@ export function getTutorialSteps(
     {
       element: '#driverjs-no-element',
       popover: {
-        title: '¡Bienvenido a Habitas!',
+        title: '¡Bienvenido a Ohana!',
         description: `Hola ${userName}, este breve tutorial te guiará por cada sección de tu panel para que conozcas todas las herramientas disponibles.`,
         side: 'center' as const,
         align: 'center' as const,
@@ -168,7 +168,7 @@ export function getTutorialSteps(
       element: '#driverjs-no-element',
       popover: {
         title: '¡Ya estás listo!',
-        description: `Ahora conoces todas las secciones disponibles. Explora cada una y saca el máximo provecho de Habitas. ¡Mucho éxito, ${userName}!`,
+        description: `Ahora conoces todas las secciones disponibles. Explora cada una y saca el máximo provecho de Ohana. ¡Mucho éxito, ${userName}!`,
         side: 'center' as const,
         align: 'center' as const,
       },

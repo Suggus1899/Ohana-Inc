@@ -27,8 +27,8 @@ export class NotificationService {
       }
     });
 
-    this.fromEmail = process.env.EMAIL_FROM || 'noreply@habitas.com';
-    this.panelUrl = process.env.PANEL_URL || 'https://habitas.com/panel/verificacion';
+    this.fromEmail = process.env.EMAIL_FROM || 'noreply@Ohana.com';
+    this.panelUrl = process.env.PANEL_URL || 'https://Ohana.com/panel/verificacion';
   }
 
   /**
@@ -57,7 +57,7 @@ export class NotificationService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    const subject = 'Verificación en Revisión - Habitas';
+    const subject = 'Verificación en Revisión - Ohana';
     const html = this.getPendingReviewTemplate(user.name);
 
     await this.sendEmail(user.email, subject, html);
@@ -73,7 +73,7 @@ export class NotificationService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    const subject = '¡Verificación Aprobada! - Habitas';
+    const subject = '¡Verificación Aprobada! - Ohana';
     const html = this.getApprovalTemplate(user.name);
 
     await this.sendEmail(user.email, subject, html);
@@ -89,7 +89,7 @@ export class NotificationService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    const subject = 'Verificación Rechazada - Habitas';
+    const subject = 'Verificación Rechazada - Ohana';
     const html = this.getRejectionTemplate(user.name, reason);
 
     await this.sendEmail(user.email, subject, html);
@@ -105,7 +105,7 @@ export class NotificationService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    const subject = 'Recordatorio: Tu Verificación Está por Expirar - Habitas';
+    const subject = 'Recordatorio: Tu Verificación Está por Expirar - Ohana';
     const html = this.getExpirationReminderTemplate(user.name, daysUntilExpiration);
 
     await this.sendEmail(user.email, subject, html);
@@ -121,7 +121,7 @@ export class NotificationService {
       throw new Error(`User with id ${userId} not found`);
     }
 
-    const subject = 'Tu Verificación ha Expirado - Habitas';
+    const subject = 'Tu Verificación ha Expirado - Ohana';
     const html = this.getExpiredTemplate(user.name);
 
     await this.sendEmail(user.email, subject, html);
@@ -212,7 +212,7 @@ export class NotificationService {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Habitas - Verificación de Identidad</title>
+  <title>Ohana - Verificación de Identidad</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -222,7 +222,7 @@ export class NotificationService {
           <!-- Header con logo -->
           <tr>
             <td style="padding: 40px 30px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Habitas</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Ohana</h1>
               <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 14px; opacity: 0.9;">Verificación de Identidad</p>
             </td>
           </tr>
@@ -238,7 +238,7 @@ export class NotificationService {
           <tr>
             <td style="padding: 30px; text-align: center; background-color: #f8f9fa; border-top: 1px solid #e9ecef;">
               <p style="margin: 0 0 10px 0; color: #6c757d; font-size: 14px;">
-                © ${new Date().getFullYear()} Habitas. Todos los derechos reservados.
+                © ${new Date().getFullYear()} Ohana. Todos los derechos reservados.
               </p>
               <p style="margin: 0; color: #6c757d; font-size: 12px;">
                 Este es un correo automático, por favor no responder.
@@ -347,7 +347,7 @@ export class NotificationService {
       <div style="margin: 30px 0; padding: 20px; background-color: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px;">
         <p style="margin: 0; color: #2e7d32; font-size: 14px; line-height: 1.6;">
           <strong>✓ Cuenta verificada</strong><br>
-          Ahora tienes acceso completo a todas las funcionalidades de Habitas.
+          Ahora tienes acceso completo a todas las funcionalidades de Ohana.
         </p>
       </div>
       
@@ -431,7 +431,7 @@ export class NotificationService {
       </div>
       
       <p style="margin: 0 0 15px 0; color: #555555; font-size: 16px; line-height: 1.6;">
-        Para mantener tu cuenta verificada y acceso completo a Habitas, necesitas renovar tu verificación antes de que expire.
+        Para mantener tu cuenta verificada y acceso completo a Ohana, necesitas renovar tu verificación antes de que expire.
       </p>
       
       <p style="margin: 0 0 15px 0; color: #555555; font-size: 16px; line-height: 1.6;">
@@ -468,7 +468,7 @@ export class NotificationService {
       </div>
       
       <p style="margin: 0 0 15px 0; color: #555555; font-size: 16px; line-height: 1.6;">
-        Para recuperar el acceso completo a todas las funcionalidades de Habitas, necesitas renovar tu verificación.
+        Para recuperar el acceso completo a todas las funcionalidades de Ohana, necesitas renovar tu verificación.
       </p>
       
       <p style="margin: 0 0 15px 0; color: #555555; font-size: 16px; line-height: 1.6;">

@@ -1,4 +1,4 @@
-# Dockerfile para el servidor de geocoding mejorado de Habitas
+# Dockerfile para el servidor de geocoding mejorado de Ohana
 FROM node:18-alpine
 
 WORKDIR /app

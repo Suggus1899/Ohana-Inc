@@ -139,7 +139,7 @@ export class AlertService {
   private async sendEmail(to: string, subject: string, html: string): Promise<void> {
     try {
       await this.transporter.sendMail({
-        from: process.env.EMAIL_FROM || 'noreply@habitas.com',
+        from: process.env.EMAIL_FROM || 'noreply@Ohana.com',
         to,
         subject,
         html: this.getBaseTemplate(html)
@@ -244,14 +244,14 @@ export class AlertService {
       </head>
       <body>
         <div class="header">
-          <div class="logo">🏠 Habitas</div>
+          <div class="logo">🏠 Ohana</div>
           <div>Sistema KYC - Alerta de Monitoreo</div>
         </div>
         <div class="content">
           ${content}
         </div>
         <div class="footer">
-          <p>Este es un mensaje automático del sistema de monitoreo KYC de Habitas.</p>
+          <p>Este es un mensaje automático del sistema de monitoreo KYC de Ohana.</p>
           <p>Por favor, no responda a este correo.</p>
         </div>
       </body>
@@ -293,7 +293,7 @@ export class AlertService {
         <li>Revisar si hay problemas técnicos que estén causando el retraso</li>
       </ul>
 
-      <a href="${process.env.PANEL_URL || 'https://habitas.com/panel/verificacion'}" class="button">
+      <a href="${process.env.PANEL_URL || 'https://Ohana.com/panel/verificacion'}" class="button">
         Ir al Panel de Revisión
       </a>
     `;
@@ -351,7 +351,7 @@ export class AlertService {
         <li>Evaluar si los umbrales de validación son apropiados</li>
       </ul>
 
-      <a href="${process.env.PANEL_URL || 'https://habitas.com/panel/verificacion'}" class="button">
+      <a href="${process.env.PANEL_URL || 'https://Ohana.com/panel/verificacion'}" class="button">
         Ver Dashboard de Métricas
       </a>
     `;

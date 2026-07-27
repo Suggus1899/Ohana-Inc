@@ -258,10 +258,10 @@ const PropertyDetail = () => {
   };
 
   const propertyUrl = `${window.location.origin}${location.pathname}`;
-  const propertyTitle = property?.title || 'Propiedad en Habitas';
+  const propertyTitle = property?.title || 'Propiedad en Ohana';
 
   const handleShare = (platform: string) => {
-    const text = `Mira esta propiedad en Habitas: ${propertyTitle} - ${propertyUrl}`;
+    const text = `Mira esta propiedad en Ohana: ${propertyTitle} - ${propertyUrl}`;
     switch (platform) {
       case 'whatsapp':
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
@@ -288,7 +288,7 @@ const PropertyDetail = () => {
       try {
         await navigator.share({
           title: propertyTitle,
-          text: `Mira esta propiedad en Habitas: ${propertyTitle}`,
+          text: `Mira esta propiedad en Ohana: ${propertyTitle}`,
           url: propertyUrl,
         });
       } catch {

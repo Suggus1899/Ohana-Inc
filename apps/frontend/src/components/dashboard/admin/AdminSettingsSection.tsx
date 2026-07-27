@@ -19,10 +19,10 @@ interface PlatformSettings {
 }
 
 const defaultSettings: PlatformSettings = {
-  site_name: 'Habitas',
+  site_name: 'Ohana',
   commission_percentage: 5,
   maintenance_mode: false,
-  contact_email: 'contacto@habitas.com',
+  contact_email: 'contacto@Ohana.com',
   max_properties_per_user: 10,
   currency: 'USD',
 };

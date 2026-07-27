@@ -631,7 +631,7 @@ const DiscoverSection = () => {
 
   // Mostrar diálogo de ubicación una sola vez al montar el componente
   useEffect(() => {
-    if (localStorage.getItem('habitas_location_prompt_shown') !== 'true') {
+    if (localStorage.getItem('Ohana_location_prompt_shown') !== 'true') {
       setShowLocationDialog(true);
     }
   }, []);
@@ -842,7 +842,7 @@ const DiscoverSection = () => {
 
   const dismissLocationDialog = useCallback(() => {
     setShowLocationDialog(false);
-    localStorage.setItem('habitas_location_prompt_shown', 'true');
+    localStorage.setItem('Ohana_location_prompt_shown', 'true');
   }, []);
 
   const requestLocation = useCallback(() => {

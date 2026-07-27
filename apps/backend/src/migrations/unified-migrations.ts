@@ -1,7 +1,7 @@
 import { QueryInterface, DataTypes } from 'sequelize';
 
 /**
- * MIGRACIONES UNIFICADAS - SISTEMA HABITAS
+ * MIGRACIONES UNIFICADAS - SISTEMA Ohana
  *
  * Crea todas las tablas si no existen y aplica columnas/índices adicionales
  * de forma idempotente (seguro de ejecutar múltiples veces).
@@ -692,10 +692,10 @@ export default {
           await queryInterface.addIndex('settings', ['key'], { name: 'settings_key_idx', unique: true });
         }
         const defaults = [
-          { key: 'site_name', value: 'Habitas', type: 'string', description: 'Nombre del sitio' },
+          { key: 'site_name', value: 'Ohana', type: 'string', description: 'Nombre del sitio' },
           { key: 'commission_percentage', value: '5', type: 'number', description: 'Comisión por transacción (%)' },
           { key: 'maintenance_mode', value: 'false', type: 'boolean', description: 'Modo mantenimiento' },
-          { key: 'contact_email', value: 'contacto@habitas.com', type: 'string', description: 'Email de contacto' },
+          { key: 'contact_email', value: 'contacto@Ohana.com', type: 'string', description: 'Email de contacto' },
           { key: 'max_properties_per_user', value: '10', type: 'number', description: 'Máximo de propiedades por usuario' },
           { key: 'currency', value: 'USD', type: 'string', description: 'Moneda por defecto' },
         ];

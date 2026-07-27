@@ -113,7 +113,7 @@ const Features = () => {
             Proceso de verificación de identidad
           </h2>
           <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-            En Habitas, la seguridad es nuestra prioridad. Por eso implementamos un proceso de verificación KYC 
+            En Ohana, la seguridad es nuestra prioridad. Por eso implementamos un proceso de verificación KYC 
             (Know Your Customer) para garantizar que todos los usuarios sean personas reales y confiables.
           </p>
         </m.div>
@@ -289,7 +289,7 @@ const Features = () => {
                 App móvil
               </DialogTitle>
               <DialogDescription className="text-center pt-2">
-                Habitas aún no cuenta con una aplicación móvil, pero estamos trabajando para que muy pronto esté disponible en todas las plataformas.
+                Ohana aún no cuenta con una aplicación móvil, pero estamos trabajando para que muy pronto esté disponible en todas las plataformas.
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-center">

@@ -20,7 +20,7 @@ export async function handleResendWebhook(req: Request, res: Response): Promise<
 
       await InboundEmail.create({
         from: data.from || data.sender || 'unknown',
-        to: data.to || data.recipient || 'soporte@habitasweb.me',
+        to: data.to || data.recipient || 'soporte@Ohanaweb.me',
         subject: data.subject || '(Sin asunto)',
         body: data.text || data.html || data.body || '',
         rawPayload: payload,

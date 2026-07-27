@@ -39,7 +39,7 @@ const Politicas = () => {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">7. Contacto</h2>
-            <p>Si tienes preguntas sobre esta política de privacidad, puedes contactarnos a través del sistema de tickets de la plataforma o enviando un correo a privacidad@habitas.com.</p>
+            <p>Si tienes preguntas sobre esta política de privacidad, puedes contactarnos a través del sistema de tickets de la plataforma o enviando un correo a privacidad@Ohana.com.</p>
           </section>
         </div>
       </div>

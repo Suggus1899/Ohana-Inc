@@ -125,7 +125,7 @@ const TasksSection = () => {
     exportToPDF({
       title: 'Reporte de Tareas Asignadas',
       subtitle: 'Listado global del flujo de trabajo actual',
-      operatorName: "Operador Habitas",
+      operatorName: "Operador Ohana",
       stats: {
         total: dataToExport.length,
         approved: tasks.completed.length,

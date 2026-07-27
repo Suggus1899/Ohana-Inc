@@ -170,7 +170,7 @@ const StatisticsSection = () => {
     exportToPDF({
       title: "Reporte de Estadísticas del Sistema",
       subtitle: `Período: ${timeRange === '7d' ? 'Últimos 7 días' : timeRange === '30d' ? 'Últimos 30 días' : 'Último año'}`,
-      operatorName: "Sistema Habitas",
+      operatorName: "Sistema Ohana",
       stats: {
         total: stats.users.total + stats.properties.total,
         approved: stats.properties.active,

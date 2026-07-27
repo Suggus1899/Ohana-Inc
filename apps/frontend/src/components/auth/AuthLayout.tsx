@@ -1,5 +1,6 @@
-import { Building, Shield, Home, Users, CheckCircle, ArrowLeft } from "lucide-react";
+import { Shield, Home, Users, CheckCircle, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Logo } from "../layout/Logo";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -30,10 +31,7 @@ const AuthLayout = ({ children, infoHeading, infoDescription, infoBadge, infoPos
       <div className={`hidden lg:flex w-[45%] xl:w-[42%] bg-gray-50/80 flex-col justify-center px-8 xl:px-12 py-10 ${infoPosition === "right" ? "border-l border-gray-100" : "border-r border-gray-100"}`}>
         <div className="space-y-6 max-w-md mx-auto w-full">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
-              <Building className="h-5 w-5 text-primary" />
-            </div>
-            <span className="text-lg font-bold text-gray-900">Habitas</span>
+            <Logo markClassName="h-5 w-5" wordmarkClassName="text-lg font-bold text-gray-900" />
             <ArrowLeft className="h-3 w-3 text-gray-400 group-hover:text-primary transition-colors" />
             <span className="text-[11px] text-gray-400 font-normal group-hover:text-primary transition-colors">Da click aqui para ir al inicio</span>
           </Link>

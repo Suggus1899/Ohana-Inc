@@ -178,7 +178,7 @@ export const ConsentScreen: React.FC<ConsentScreenProps> = ({ onAccept, onCancel
                 <p className="text-muted-foreground leading-relaxed">
                   Si tienes preguntas sobre este aviso de privacidad o sobre el tratamiento de tus datos, 
                   puedes contactarnos a través del sistema de tickets de la plataforma o enviando un correo 
-                  a privacidad@habitas.com
+                  a privacidad@Ohana.com
                 </p>
               </section>
             </div>

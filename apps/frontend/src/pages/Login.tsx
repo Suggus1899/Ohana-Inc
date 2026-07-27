@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToastNotification } from "@/contexts/ToastNotificationContext";
-import { Loader2, Building, Eye, EyeOff, LogIn, ArrowLeft, Sparkles, ChevronDown } from "lucide-react";
+import { Loader2, Eye, EyeOff, LogIn, ArrowLeft, Sparkles, ChevronDown } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 import { useAuth } from "@/contexts/AuthContext";
 import type { UserRole } from "@/contexts/AuthContext";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -94,19 +95,14 @@ const Login = () => {
     <AuthLayout
       infoPosition="left"
       infoBadge="Bienvenido de nuevo"
-      infoHeading="Inicia sesion en Habitas"
+      infoHeading="Inicia sesion en Ohana"
       infoDescription="Accede a tu cuenta y continua gestionando tus propiedades."
     >
       <div className="w-full max-w-sm">
         <Link to="/" className="inline-flex items-center gap-2 group mb-6 lg:hidden">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
-            <Building className="h-5 w-5 text-primary" />
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-lg font-bold text-gray-900">Habitas</span>
-            <ArrowLeft className="h-3 w-3 text-gray-400 group-hover:text-primary transition-colors" />
-            <span className="text-[11px] text-gray-400 font-normal group-hover:text-primary transition-colors">Da click aqui para ir al inicio</span>
-          </div>
+          <Logo markClassName="h-5 w-5" wordmarkClassName="text-lg font-bold text-gray-900" />
+          <ArrowLeft className="h-3 w-3 text-gray-400 group-hover:text-primary transition-colors" />
+          <span className="text-[11px] text-gray-400 font-normal group-hover:text-primary transition-colors">Da click aqui para ir al inicio</span>
         </Link>
 
         <div className="mb-5">

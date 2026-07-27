@@ -240,7 +240,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
     status: 'ok',
-    service: 'Habitas Nominatim-compatible Geocoder',
+    service: 'Ohana Nominatim-compatible Geocoder',
     version: '1.0',
     area: 'Colombia',
     locations_count: locations.length,
@@ -249,6 +249,6 @@ const server = http.createServer((req, res) => {
 
 const PORT = parseInt(process.env.GEOCODE_PORT || '8080', 10);
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`[Geocoder] Habitas Nominatim-compatible server running on port ${PORT}`);
+  console.log(`[Geocoder] Ohana Nominatim-compatible server running on port ${PORT}`);
   console.log(`[Geocoder] ${locations.length} locations loaded (Colombia)`);
 });

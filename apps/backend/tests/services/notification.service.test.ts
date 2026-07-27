@@ -28,8 +28,8 @@ describe('NotificationService', () => {
     process.env.SMTP_SECURE = 'false';
     process.env.SMTP_USER = 'test@test.com';
     process.env.SMTP_PASSWORD = 'testpass';
-    process.env.EMAIL_FROM = 'noreply@habitas.com';
-    process.env.PANEL_URL = 'https://habitas.com/panel/verificacion';
+    process.env.EMAIL_FROM = 'noreply@Ohana.com';
+    process.env.PANEL_URL = 'https://Ohana.com/panel/verificacion';
 
     notificationService = new NotificationService();
   });
@@ -53,7 +53,7 @@ describe('NotificationService', () => {
       expect(User.findByPk).toHaveBeenCalledWith(1);
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'noreply@habitas.com',
+          from: 'noreply@Ohana.com',
           to: 'juan@test.com',
           subject: 'Documentos Recibidos - Verificación de Identidad',
           html: expect.stringContaining('Juan Pérez')
@@ -84,7 +84,7 @@ describe('NotificationService', () => {
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'maria@test.com',
-          subject: 'Verificación en Revisión - Habitas',
+          subject: 'Verificación en Revisión - Ohana',
           html: expect.stringContaining('María García')
         })
       );
@@ -106,7 +106,7 @@ describe('NotificationService', () => {
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'carlos@test.com',
-          subject: '¡Verificación Aprobada! - Habitas',
+          subject: '¡Verificación Aprobada! - Ohana',
           html: expect.stringContaining('Carlos López')
         })
       );
@@ -133,7 +133,7 @@ describe('NotificationService', () => {
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'ana@test.com',
-          subject: 'Verificación Rechazada - Habitas',
+          subject: 'Verificación Rechazada - Ohana',
           html: expect.stringContaining(reason)
         })
       );
@@ -178,7 +178,7 @@ describe('NotificationService', () => {
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'pedro@test.com',
-          subject: 'Recordatorio: Tu Verificación Está por Expirar - Habitas',
+          subject: 'Recordatorio: Tu Verificación Está por Expirar - Ohana',
           html: expect.stringContaining('30 días')
         })
       );
@@ -200,7 +200,7 @@ describe('NotificationService', () => {
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'laura@test.com',
-          subject: 'Tu Verificación ha Expirado - Habitas',
+          subject: 'Tu Verificación ha Expirado - Ohana',
           html: expect.stringContaining('Laura Fernández')
         })
       );
@@ -208,7 +208,7 @@ describe('NotificationService', () => {
   });
 
   describe('Email templates', () => {
-    it('should include Habitas branding in all emails', async () => {
+    it('should include Ohana branding in all emails', async () => {
       const mockUser = {
         id: 1,
         name: 'Test User',
@@ -220,7 +220,7 @@ describe('NotificationService', () => {
       await notificationService.sendDocumentsReceivedEmail(1);
 
       const emailHtml = mockSendMail.mock.calls[0][0].html;
-      expect(emailHtml).toContain('Habitas');
+      expect(emailHtml).toContain('Ohana');
       expect(emailHtml).toContain('Verificación de Identidad');
     });
 
@@ -236,7 +236,7 @@ describe('NotificationService', () => {
       await notificationService.sendApprovalEmail(1);
 
       const emailHtml = mockSendMail.mock.calls[0][0].html;
-      expect(emailHtml).toContain('https://habitas.com/panel/verificacion');
+      expect(emailHtml).toContain('https://Ohana.com/panel/verificacion');
     });
 
     it('should use professional HTML styling', async () => {

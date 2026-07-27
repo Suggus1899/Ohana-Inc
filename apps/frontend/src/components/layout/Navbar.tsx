@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { ExchangeRateBadge, ExchangeRateBadgeMobile } from "../common/ExchangeRateBadge";
+import { Logo } from "./Logo";
 import { 
   Menu, 
   Home, 
@@ -139,8 +140,7 @@ const Navbar = ({
       <div className="container mx-auto px-4">
         <div className="flex h-14 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <Building className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg hidden sm:inline">Habitas</span>
+            <Logo wordmarkClassName="font-bold text-lg hidden sm:inline" />
           </Link>
 
           <div className="hidden md:flex items-center gap-6">

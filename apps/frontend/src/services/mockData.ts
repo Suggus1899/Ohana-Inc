@@ -369,7 +369,7 @@ export const demoFavorites: Favorite[] = [
 export const demoAnnouncements: Announcement[] = [
   {
     id: 1,
-    title: 'Bienvenido a Habitas',
+    title: 'Bienvenido a Ohana',
     content: 'Explora todas las funciones de la plataforma en este modo demo.',
     targetAudience: 'all',
     status: 'active',

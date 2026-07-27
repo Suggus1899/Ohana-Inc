@@ -11,7 +11,7 @@ if (!apiKey) {
 }
 const resend = new Resend(apiKey);
 
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Habitas <soporte@habitasweb.me>';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Ohana <soporte@Ohanaweb.me>';
 console.log(`[EmailService] From email: ${FROM_EMAIL}`);
 const DAILY_LIMIT = 3000;
 const RATE_LIMIT_KEY = 'resend:daily_count';

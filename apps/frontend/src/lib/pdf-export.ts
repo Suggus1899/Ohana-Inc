@@ -29,7 +29,7 @@ export const exportToPDF = ({
   const pageWidth = doc.internal.pageSize.getWidth();
 
   // Color Palette
-  const primaryColor = [16, 185, 129] as [number, number, number]; // Emerald 500 (Habitas primary)
+  const primaryColor = [16, 185, 129] as [number, number, number]; // Emerald 500 (Ohana primary)
   const secondaryColor = [71, 85, 105]; // Slate 600
   const lightGray = [241, 245, 249];
 
@@ -40,7 +40,7 @@ export const exportToPDF = ({
   doc.setFontSize(24);
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.text('Habitas', 14, 25);
+  doc.text('Ohana', 14, 25);
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
@@ -110,7 +110,7 @@ export const exportToPDF = ({
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.text(
-      `Página ${i} de ${pageCount} - Documento generado automáticamente por el sistema Habitas`,
+      `Página ${i} de ${pageCount} - Documento generado automáticamente por el sistema Ohana`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 10,
       { align: 'center' }

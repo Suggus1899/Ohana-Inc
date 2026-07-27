@@ -12,14 +12,14 @@ async function seedPendingVerifications() {
     const testUsers = [
       {
         name: 'Carlos Test',
-        email: 'carlos.test@habitas.com',
+        email: 'carlos.test@Ohana.com',
         role: 'propietario',
         cedula: 'TEST-001',
         isVerified: false
       },
       {
         name: 'Maria Test',
-        email: 'maria.test@habitas.com',
+        email: 'maria.test@Ohana.com',
         role: 'propietario',
         cedula: 'TEST-002',
         isVerified: false

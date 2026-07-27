@@ -506,7 +506,7 @@ export const getZones = async (req: Request, res: Response) => {
       try {
         const url = `${NOMINATIM_API_URL}/reverse?lat=${userLat}&lon=${userLng}&format=json&addressdetails=1`;
         const response = await fetchWithTimeout(url, {
-          headers: { 'User-Agent': 'Habitas/1.0', 'Accept-Language': 'es' },
+          headers: { 'User-Agent': 'Ohana/1.0', 'Accept-Language': 'es' },
         });
         if (response.ok) {
           const data = await response.json();

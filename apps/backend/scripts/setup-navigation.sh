@@ -4,7 +4,7 @@
 # SCRIPT DE CONFIGURACIÓN: NAVEGACIÓN LOCAL (AURA EDITION)
 # ==============================================================================
 # Este script automatiza la descarga y el procesamiento de mapas para el 
-# sistema de navegación autónomo de la plataforma Habitas.
+# sistema de navegación autónomo de la plataforma Ohana.
 #
 # REQUISITOS:
 #   - Docker y Docker Compose instalados.

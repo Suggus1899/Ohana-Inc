@@ -1,6 +1,6 @@
 const BRAND_COLOR = '#166534';
-const BRAND_NAME = 'Habitas';
-const LOGO_URL = 'https://habitasweb.me/perfil_correo.png';
+const BRAND_NAME = 'Ohana';
+const LOGO_URL = 'https://Ohanaweb.me/perfil_correo.png';
 
 function baseLayout(content: string, preheader?: string): string {
   return `<!DOCTYPE html>
@@ -34,7 +34,7 @@ function baseLayout(content: string, preheader?: string): string {
                 &copy; ${new Date().getFullYear()} ${BRAND_NAME}. Todos los derechos reservados.
               </p>
               <p style="margin:6px 0 0;color:#94a3b8;font-size:12px;">
-                <a href="https://habitasweb.me" style="color:${BRAND_COLOR};text-decoration:none;">habitasweb.me</a>
+                <a href="https://Ohanaweb.me" style="color:${BRAND_COLOR};text-decoration:none;">Ohanaweb.me</a>
               </p>
             </td>
           </tr>
@@ -121,7 +121,7 @@ export function unreadMessagesDigestTemplate(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;">
       ${senderList}
     </table>
-    ${ctaButton('https://habitasweb.me/dashboard', 'Ver mensajes')}
+    ${ctaButton('https://Ohanaweb.me/dashboard', 'Ver mensajes')}
     <p style="color:#94a3b8;font-size:12px;margin:16px 0 0;padding-top:12px;border-top:1px solid #e2e8f0;">
       Recibes este correo porque tienes mensajes sin leer en la plataforma.
     </p>
@@ -135,7 +135,7 @@ export function welcomeTemplate(userName: string): string {
     <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 4px;">
       Hola <strong>${userName}</strong>, tu correo ha sido verificado exitosamente. Ya tienes acceso completo a la plataforma.
     </p>
-    ${ctaButton('https://habitasweb.me', 'Explorar ' + BRAND_NAME)}
+    ${ctaButton('https://Ohanaweb.me', 'Explorar ' + BRAND_NAME)}
     <div style="margin:16px 0 0;padding:16px;background-color:#f0fdf4;border-radius:8px;">
       <p style="margin:0 0 6px;color:#1e293b;font-size:13px;font-weight:600;">¿Qué puedes hacer ahora?</p>
       <table role="presentation" cellpadding="0" cellspacing="0">
@@ -155,8 +155,8 @@ export function passwordChangedTemplate(userName: string): string {
     <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 4px;">
       Hola <strong>${userName}</strong>, tu contraseña ha sido restablecida exitosamente.
     </p>
-    ${infoBox('Si no realizaste este cambio, contacta a soporte@habitasweb.me inmediatamente.')}
-    ${ctaButton('https://habitasweb.me/login', 'Iniciar sesión')}
+    ${infoBox('Si no realizaste este cambio, contacta a soporte@Ohanaweb.me inmediatamente.')}
+    ${ctaButton('https://Ohanaweb.me/login', 'Iniciar sesión')}
   `;
   return baseLayout(content, 'Tu contraseña fue actualizada');
 }

@@ -308,8 +308,8 @@ export default function HelpSection() {
       <div className="py-6 border-t">
         <p className="text-sm text-gray-500 mb-4 text-center">Tambien puedes contactarnos directamente</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="mailto:soporte@habitasweb.me" className="flex items-center gap-2 text-sm text-primary hover:underline">
-            <Mail className="h-4 w-4" /> soporte@habitasweb.me
+          <a href="mailto:soporte@Ohanaweb.me" className="flex items-center gap-2 text-sm text-primary hover:underline">
+            <Mail className="h-4 w-4" /> soporte@Ohanaweb.me
           </a>
           <a href="tel:+573001234567" className="flex items-center gap-2 text-sm text-primary hover:underline">
             <Phone className="h-4 w-4" /> +57 300-123-4567

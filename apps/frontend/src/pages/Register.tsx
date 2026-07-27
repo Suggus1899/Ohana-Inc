@@ -122,7 +122,7 @@ const Register = () => {
             <Building className="h-5 w-5 text-primary" />
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-lg font-bold text-gray-900">Habitas</span>
+            <span className="text-lg font-bold text-gray-900">Ohana</span>
             <ArrowLeft className="h-3 w-3 text-gray-400 group-hover:text-primary transition-colors" />
             <span className="text-[11px] text-gray-400 font-normal group-hover:text-primary transition-colors">Da click aqui para ir al inicio</span>
           </div>

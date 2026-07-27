@@ -91,7 +91,7 @@ export const ReportsSection = () => {
   const handleExportFullReport = () => {
     if (!adminStats) return;
     const content = `
-      REPORTE COMPLETO - HABITAS\n
+      REPORTE COMPLETO - Ohana\n
       Fecha: ${new Date().toLocaleDateString()}\n\n
       USUARIOS\n
       Total: ${adminStats.totals.users}\n
@@ -112,7 +112,7 @@ export const ReportsSection = () => {
     if (!adminStats) return;
     const user = (window as unknown as { __AUTH_USER__?: { name?: string } }).__AUTH_USER__ || { name: "Administrador" };
     exportToPDF({
-      title: "Reporte General - Habitas",
+      title: "Reporte General - Ohana",
       subtitle: `Generado: ${new Date().toLocaleDateString()}`,
       operatorName: user.name || "Admin",
       stats: {

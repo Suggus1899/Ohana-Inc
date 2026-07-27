@@ -129,7 +129,7 @@ const ForgotPassword = () => {
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <Building className="h-6 w-6 text-primary" />
           </div>
-          <span className="text-xl font-bold text-gray-900">Habitas</span>
+          <span className="text-xl font-bold text-gray-900">Ohana</span>
         </Link>
 
         <div className="mb-5">

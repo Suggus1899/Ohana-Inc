@@ -6,7 +6,7 @@ export interface HistoryItem {
   timestamp: number;
 }
 
-const HISTORY_KEY = 'habitas_search_history';
+const HISTORY_KEY = 'Ohana_search_history';
 const MAX_HISTORY_ITEMS = 10;
 
 

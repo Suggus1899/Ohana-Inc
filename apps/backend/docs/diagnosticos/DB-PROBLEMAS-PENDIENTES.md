@@ -202,7 +202,7 @@ Este sistema bilateral crea un **Círculo de Confianza** real. Los estudiantes c
 
 Para ver cómo quedará la base de datos tras aplicar todas estas correcciones (incluyendo las nuevas tablas propuestas como `reviews` y `notifications`), consulta el esquema oficial depurado en DB Diagram:
 
-**👉 [Ver Diagrama de Base de Datos de Ohana](https://dbdiagram.io/d/Habitas_DB-69f3ceeaddb9320fdca4df6c)**
+**👉 [Ver Diagrama de Base de Datos de Ohana](https://dbdiagram.io/d/Ohana_DB-69f3ceeaddb9320fdca4df6c)**
 
 ---
 

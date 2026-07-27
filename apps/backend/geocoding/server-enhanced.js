@@ -296,7 +296,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200);
     res.end(JSON.stringify({
       status: 'healthy',
-      service: 'Habitas Geocoding Server',
+      service: 'Ohana Geocoding Server',
       version: '2.0',
       locations_count: locations.length,
       uptime: process.uptime(),
@@ -330,7 +330,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200);
   res.end(JSON.stringify({
     status: 'ok',
-    service: 'Habitas Geocoding Server v2.0',
+    service: 'Ohana Geocoding Server v2.0',
     description: 'Servidor de geocoding compatible con Nominatim para Colombia',
     endpoints: [
       { method: 'GET', path: '/search', description: 'Búsqueda de direcciones' },
@@ -360,7 +360,7 @@ const PORT = parseInt(process.env.GEOCODE_PORT || '8080', 10);
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
-  console.log(`[Geocoder v2.1] Servidor de geocoding Habitas ejecutándose en http://${HOST}:${PORT}`);
+  console.log(`[Geocoder v2.1] Servidor de geocoding Ohana ejecutándose en http://${HOST}:${PORT}`);
   console.log(`[Geocoder] ${locations.length} ubicaciones cargadas`);
   console.log(`[Geocoder] Foco: Colombia - Bogotá, Medellín, Cali, Barranquilla`);
   console.log(`[Geocoder] Ejemplos de búsqueda: "chapinero", "el poblado", "granada", "el prado", "uniandes", "eafit"`);

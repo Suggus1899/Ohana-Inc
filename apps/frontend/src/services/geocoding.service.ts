@@ -56,7 +56,7 @@ interface ReverseGeocodeData {
 }
 
 /**
- * Servicio de geocoding para Habitas
+ * Servicio de geocoding para Ohana
  * Usa el backend con servidores OSRM y geocoding local
  */
 export const geocodingService = {

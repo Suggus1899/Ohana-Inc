@@ -185,7 +185,7 @@ const ContentReviewSection = () => {
     exportToPDF({
       title: exportTitle,
       subtitle: exportSubtitle,
-      operatorName: currentUser?.name || "Operador Habitas",
+      operatorName: currentUser?.name || "Operador Ohana",
       stats: {
         total: dataToExport.length,
         approved: dataToExport.filter(p => p.status === 'approved').length,

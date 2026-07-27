@@ -92,7 +92,7 @@ interface ChatContextType {
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'habitas_active_conversation';
+const STORAGE_KEY = 'Ohana_active_conversation';
 
 // Crear sonido de notificación (usando Web Audio API)
 const _createNotificationSound = () => {
@@ -147,7 +147,7 @@ const showNotification = (title: string, body: string, icon?: string) => {
     body,
     icon: icon || '/logo.png',
     badge: '/logo.png',
-    tag: 'habitas-message',
+    tag: 'Ohana-message',
     requireInteraction: false,
   });
 };
@@ -228,7 +228,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   
   // Actualizar título de la pestaña con badge de mensajes no leídos
   useEffect(() => {
-    const baseTitle = 'Habitas - Residencias';
+    const baseTitle = 'Ohana - Residencias';
     if (totalUnread > 0) {
       document.title = `(${totalUnread}) ${baseTitle}`;
     } else {

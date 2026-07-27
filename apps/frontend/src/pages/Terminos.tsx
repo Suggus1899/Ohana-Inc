@@ -15,11 +15,11 @@ const Terminos = () => {
         <div className="prose prose-sm max-w-none space-y-6 text-muted-foreground">
           <section>
             <h2 className="text-xl font-semibold text-foreground">1. Aceptación de los Términos</h2>
-            <p>Al acceder y utilizar la plataforma Habitas, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con alguna parte, no debes usar nuestros servicios.</p>
+            <p>Al acceder y utilizar la plataforma Ohana, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con alguna parte, no debes usar nuestros servicios.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">2. Descripción del Servicio</h2>
-            <p>Habitas es una plataforma que conecta propietarios de inmuebles con potenciales inquilinos. Facilitamos la publicación, búsqueda y gestión de propiedades en alquiler.</p>
+            <p>Ohana es una plataforma que conecta propietarios de inmuebles con potenciales inquilinos. Facilitamos la publicación, búsqueda y gestión de propiedades en alquiler.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">3. Registro de Usuario</h2>
@@ -31,11 +31,11 @@ const Terminos = () => {
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">5. Propiedad Intelectual</h2>
-            <p>Todo el contenido de la plataforma, incluyendo diseño, logotipos y software, es propiedad de Habitas y está protegido por leyes de propiedad intelectual.</p>
+            <p>Todo el contenido de la plataforma, incluyendo diseño, logotipos y software, es propiedad de Ohana y está protegido por leyes de propiedad intelectual.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">6. Limitación de Responsabilidad</h2>
-            <p>Habitas actúa como intermediario y no se hace responsable por las transacciones entre usuarios. No garantizamos la exactitud de los anuncios publicados por terceros.</p>
+            <p>Ohana actúa como intermediario y no se hace responsable por las transacciones entre usuarios. No garantizamos la exactitud de los anuncios publicados por terceros.</p>
           </section>
           <section>
             <h2 className="text-xl font-semibold text-foreground">7. Modificaciones</h2>

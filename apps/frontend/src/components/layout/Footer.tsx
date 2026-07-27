@@ -1,5 +1,6 @@
-import { MapPin, Phone, Mail, Building, ChevronRight } from "lucide-react";
+import { MapPin, Phone, Mail, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Logo } from "./Logo";
 
 const Footer = () => {
   return (
@@ -9,10 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="p-6">
             <Link to="/" className="inline-flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Building className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-primary">Habitas</span>
+              <Logo markClassName="h-8 w-8" wordmarkClassName="text-xl" />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Tu mejor opción para encontrar el hogar perfecto en Bogotá y más allá.
@@ -75,7 +73,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Correo</p>
-                  <a href="mailto:soporte@habitasweb.me" className="text-foreground hover:text-primary transition-colors font-medium">soporte@habitasweb.me</a>
+                  <a href="mailto:soporte@Ohanaweb.me" className="text-foreground hover:text-primary transition-colors font-medium">soporte@Ohanaweb.me</a>
                 </div>
               </li>
               <li className="flex items-center gap-3 text-sm">
@@ -95,7 +93,7 @@ const Footer = () => {
       <div className="border-t border-gray-300">
         <div className="container mx-auto px-4 py-6">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Habitas. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Ohana. Todos los derechos reservados.
           </p>
         </div>
       </div>

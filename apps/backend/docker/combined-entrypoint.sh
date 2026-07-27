@@ -22,7 +22,7 @@ else
   echo "[Combined] WARNING: OSRM data not found at $OSRM_DATA"
 fi
 
-echo "[Combined] Starting Habitas Geocoder on port $GEOCODE_PORT..."
+echo "[Combined] Starting Ohana Geocoder on port $GEOCODE_PORT..."
 node /app/geocode-server.js &
 GEOCODE_PID=$!
 
