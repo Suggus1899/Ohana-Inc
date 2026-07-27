@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '@/services/api';
+import { demoUserByRole } from '@/services/mockData';
 
 export type UserRole = 'admin' | 'cliente' | 'operator' | 'propietario' | 'estudiante';
 
@@ -46,7 +47,9 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   sessionExpired: boolean;
+  isDemoMode: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; errorCode?: string; fieldErrors?: Record<string, string> }>;
+  loginAsDemo: (role: UserRole) => void;
   register: (userData: RegisterData) => Promise<{ success: boolean; error?: string; fieldErrors?: Record<string, string> }>;
   logout: () => void;
   getRedirectPath: () => string;
@@ -62,6 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [demoMode, setDemoMode] = useState<boolean>(localStorage.getItem('demoMode') === 'true');
 
   // Listen for global auth:expired events — auto-redirect to login
   useEffect(() => {
@@ -80,6 +84,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Restore session on mount
   useEffect(() => {
     const restoreSession = async () => {
+      // Demo mode: skip backend call, use stored demo user
+      if (localStorage.getItem('demoMode') === 'true') {
+        const role = (localStorage.getItem('demoRole') as UserRole) || 'cliente';
+        const demoUser = demoUserByRole[role];
+        if (demoUser) {
+          setUser(demoUser as unknown as User);
+          setToken('demo-token');
+          setDemoMode(true);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         api.setToken(storedToken);
@@ -142,6 +159,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  const loginAsDemo = useCallback((role: UserRole) => {
+    const demoUser = demoUserByRole[role];
+    if (!demoUser) return;
+    localStorage.setItem('demoMode', 'true');
+    localStorage.setItem('demoRole', role);
+    setDemoMode(true);
+    setUser(demoUser as unknown as User);
+    setToken('demo-token');
+  }, []);
+
   const register = useCallback(async (userData: RegisterData) => {
     try {
       const response = await api.register(userData);
@@ -171,10 +198,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      await api.logout();
-    } catch {
-      // Ignore backend errors, logout locally regardless
+    const wasDemo = localStorage.getItem('demoMode') === 'true';
+    if (wasDemo) {
+      localStorage.removeItem('demoMode');
+      localStorage.removeItem('demoRole');
+      setDemoMode(false);
+    } else {
+      try {
+        await api.logout();
+      } catch {
+        // Ignore backend errors, logout locally regardless
+      }
     }
     setUser(null);
     setToken(null);
@@ -225,7 +259,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user, 
         isLoading,
         sessionExpired,
+        isDemoMode: demoMode,
         login, 
+        loginAsDemo,
         register, 
         logout,
         getRedirectPath,

@@ -1,5 +1,13 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3026/api';
 
+// Demo mode helpers — when localStorage.demoMode === 'true', API calls are
+// intercepted and served from mock data (see services/mockApi.ts).
+export function isDemoMode(): boolean {
+  return localStorage.getItem('demoMode') === 'true';
+}
+
+import * as mockApi from './mockApi';
+
 function getSessionId(): string {
   let sessionId = localStorage.getItem('sessionId');
   if (!sessionId) {
@@ -433,10 +441,12 @@ class ApiService {
   }
 
   async getModerationStats() {
+    if (isDemoMode()) return mockApi.mockGetModerationStats();
     return this.request<ModerationStats>('/moderation/stats');
   }
 
   async getAdminStats() {
+    if (isDemoMode()) return mockApi.mockGetAdminStats();
     return this.request<AdminStats>('/moderation/admin/stats');
   }
 
@@ -452,6 +462,11 @@ class ApiService {
   }
 
   async login(email: string, password: string) {
+    if (isDemoMode()) {
+      // Demo login is handled by AuthContext.loginAsDemo; this path should
+      // not be reached, but return a friendly error just in case.
+      return { success: false, error: { code: 'DEMO_MODE', message: 'Usa el botón Modo Demo para entrar.' } };
+    }
     return this.request<{ user: User; token: string }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -466,10 +481,12 @@ class ApiService {
   }
 
   async getCurrentUser() {
+    if (isDemoMode()) return mockApi.mockGetCurrentUser();
     return this.request<{ user: User }>('/auth/me');
   }
 
   async logout() {
+    if (isDemoMode()) return mockApi.mockLogout();
     return this.request<{ message: string }>('/auth/logout', { method: 'POST' });
   }
 
@@ -525,6 +542,7 @@ class ApiService {
   }
 
   async getUsers(filters: Record<string, string | number | boolean | undefined> = {}) {
+    if (isDemoMode()) return mockApi.mockGetUsers(filters);
     const query = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) query.append(key, value.toString());
@@ -537,6 +555,7 @@ class ApiService {
   }
 
   async getStudentsList() {
+    if (isDemoMode()) return mockApi.mockGetStudentsList();
     return this.request<{ users: StudentUser[] }>('/users/students');
   }
 
@@ -604,12 +623,14 @@ class ApiService {
   }
 
   async getProperty(id: number | string) {
+    if (isDemoMode()) return mockApi.mockGetProperty(Number(id));
     return this.request<{ property: Property }>(`/properties/${id}`, {
       headers: { 'x-session-id': getSessionId() } as HeadersInit,
     });
   }
 
   async getProperties(filters: Record<string, string | number | boolean | undefined> = {}) {
+    if (isDemoMode()) return mockApi.mockGetProperties(filters);
     const query = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== 'all') {
@@ -653,6 +674,7 @@ class ApiService {
   }
 
   async getTickets(filters: Record<string, string | number | boolean | undefined> = {}) {
+    if (isDemoMode()) return mockApi.mockGetTickets(filters);
     const query = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== 'all') {
@@ -702,6 +724,7 @@ class ApiService {
 
   // Favorite methods
   async toggleFavorite(propertyId: number) {
+    if (isDemoMode()) return mockApi.mockToggleFavorite(propertyId);
     return this.request<{ isFavorite: boolean }>('/favorites/toggle', {
       method: 'POST',
       body: JSON.stringify({ propertyId }),
@@ -709,6 +732,7 @@ class ApiService {
   }
 
   async getFavorites() {
+    if (isDemoMode()) return mockApi.mockGetFavorites();
     return this.request<{ favorites: Favorite[] }>('/favorites');
   }
 
@@ -739,10 +763,12 @@ class ApiService {
   }
 
   async getUserRentRequests() {
+    if (isDemoMode()) return mockApi.mockGetUserRentRequests();
     return this.request<{ requests: RentalRequest[] }>('/rent-requests');
   }
 
   async getReceivedRentRequests() {
+    if (isDemoMode()) return mockApi.mockGetReceivedRentRequests();
     return this.request<{ requests: RentalRequest[] }>('/rent-requests/received');
   }
 
@@ -788,6 +814,7 @@ class ApiService {
   }
 
   async getPropertyTypeCounts() {
+    if (isDemoMode()) return mockApi.mockGetPropertyTypeCounts();
     return this.request<{ type: string; count: number }[]>('/statistics/property-type-counts');
   }
 
@@ -1223,6 +1250,7 @@ class ApiService {
   }
 
   async getMyProperties(page = 1, limit = 12) {
+    if (isDemoMode()) return mockApi.mockGetMyProperties(page, limit);
     const res = await this.request<{ properties: Property[]; total: number; page: number; pages: number }>(
       `/properties/my?page=${page}&limit=${limit}`
     );
@@ -1294,6 +1322,7 @@ class ApiService {
 
   // Announcements
   async getAnnouncements(params?: { status?: string; search?: string; page?: number; limit?: number }) {
+    if (isDemoMode()) return mockApi.mockGetAnnouncements(params as Record<string, unknown> | undefined);
     const q = new URLSearchParams();
     if (params?.status) q.set('status', params.status);
     if (params?.search) q.set('search', params.search);

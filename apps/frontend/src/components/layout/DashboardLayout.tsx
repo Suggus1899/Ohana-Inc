@@ -8,6 +8,8 @@ import {
   RolePermissions 
 } from "@/config/sidebarConfig";
 import { useSidebarBadges } from "@/hooks/useSidebarBadges";
+import { useAuth } from "@/contexts/AuthContext";
+import { Sparkles } from "lucide-react";
 
 export type { UserRole };
 
@@ -30,6 +32,7 @@ const DashboardLayout = ({
   role = "client",
   sidebarBadges: propSidebarBadges,
 }: DashboardLayoutProps) => {
+  const { isDemoMode } = useAuth();
   const dashboardTitle = title || getTitleByRole(role);
   const permissions: RolePermissions = getPermissionsByRole(role);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -75,6 +78,15 @@ const DashboardLayout = ({
             "p-6 md:p-8"
           )}
         >
+          {isDemoMode && (
+            <div className="flex items-center gap-2 p-2.5 mb-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800">
+              <Sparkles className="h-4 w-4 shrink-0" />
+              <p className="text-xs font-medium">
+                Modo demo — estas viendo datos de demostracion. Ningun cambio se guarda.
+                Cierra sesion para volver al modo normal.
+              </p>
+            </div>
+          )}
           {children}
         </main>
       </div>

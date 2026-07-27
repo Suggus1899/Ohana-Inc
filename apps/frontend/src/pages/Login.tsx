@@ -4,20 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToastNotification } from "@/contexts/ToastNotificationContext";
-import { Loader2, Building, Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
+import { Loader2, Building, Eye, EyeOff, LogIn, ArrowLeft, Sparkles, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import type { UserRole } from "@/contexts/AuthContext";
 import AuthLayout from "@/components/auth/AuthLayout";
+
+const DEMO_ROLES: { value: UserRole; label: string }[] = [
+  { value: "admin", label: "Administrador" },
+  { value: "operator", label: "Operador" },
+  { value: "propietario", label: "Propietario" },
+  { value: "cliente", label: "Cliente" },
+  { value: "estudiante", label: "Estudiante" },
+];
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showError } = useToastNotification();
-  const { login, getRedirectPath, isAuthenticated, googleLogin } = useAuth();
+  const { login, getRedirectPath, isAuthenticated, googleLogin, loginAsDemo } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState("");
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showDemoSelector, setShowDemoSelector] = useState(false);
+  const [selectedDemoRole, setSelectedDemoRole] = useState<UserRole>("cliente");
 
   const redirectTargetRef = useRef<string | null>(null);
 
@@ -69,6 +80,11 @@ const Login = () => {
     setFormData((p) => ({ ...p, [name]: value }));
     if (fieldErrors[name]) setFieldErrors((p) => { const n = { ...p }; delete n[name]; return n; });
     if (generalError) setGeneralError("");
+  };
+
+  const handleDemoLogin = () => {
+    loginAsDemo(selectedDemoRole);
+    // Navigation is handled by the isAuthenticated effect below
   };
 
   const inputCls = "h-10 bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all duration-200 rounded-lg";
@@ -154,6 +170,56 @@ const Login = () => {
             No tienes cuenta?{" "}
             <Link to="/registro" className="text-primary hover:text-primary/80 font-medium underline underline-offset-2 transition-colors">Registrate aqui</Link>
           </p>
+
+          <div className="pt-3 mt-3 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={() => setShowDemoSelector((v) => !v)}
+              className="w-full flex items-center justify-center gap-2 text-xs text-amber-700 hover:text-amber-800 font-medium transition-colors py-1.5"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Probar en modo demo
+              <ChevronDown className={`h-3 w-3 transition-transform ${showDemoSelector ? "rotate-180" : ""}`} />
+            </button>
+
+            {showDemoSelector && (
+              <div className="mt-2 p-3 rounded-lg bg-amber-50 border border-amber-200 space-y-2.5">
+                <p className="text-[11px] text-amber-800 text-center leading-relaxed">
+                  Explora la app con datos de demostracion. No se conecta al backend.
+                </p>
+                <div className="grid grid-cols-1 gap-1.5">
+                  {DEMO_ROLES.map((r) => (
+                    <label
+                      key={r.value}
+                      className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs cursor-pointer transition-colors ${
+                        selectedDemoRole === r.value
+                          ? "bg-amber-200/70 text-amber-900 font-semibold"
+                          : "bg-white/60 text-amber-800 hover:bg-amber-100/70"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="demoRole"
+                        value={r.value}
+                        checked={selectedDemoRole === r.value}
+                        onChange={() => setSelectedDemoRole(r.value)}
+                        className="h-3 w-3 accent-amber-600"
+                      />
+                      {r.label}
+                    </label>
+                  ))}
+                </div>
+                <Button
+                  type="button"
+                  onClick={handleDemoLogin}
+                  className="w-full h-9 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  Entrar en modo demo
+                </Button>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </AuthLayout>
