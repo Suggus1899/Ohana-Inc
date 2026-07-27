@@ -28,9 +28,16 @@ describe('User Controller - Verification Level', () => {
     mockUserFindByPk.mockResolvedValue({
       id: 10,
       verificationLevel: 2,
-      kycStatus: 'approved',
       isVerified: true,
       role: 'estudiante',
+      toJSON() {
+        return {
+          id: 10,
+          verificationLevel: 2,
+          isVerified: true,
+          role: 'estudiante',
+        };
+      },
     } as any);
 
     const res = await request(app).get('/users/me/verification-level');
@@ -39,7 +46,6 @@ describe('User Controller - Verification Level', () => {
     expect(res.body.success).toBe(true);
     expect(res.body.data).toEqual({
       verificationLevel: 2,
-      kycStatus: 'approved',
       isVerified: true,
       canRequestProperty: true,
     });
@@ -49,9 +55,16 @@ describe('User Controller - Verification Level', () => {
     mockUserFindByPk.mockResolvedValue({
       id: 10,
       verificationLevel: 1,
-      kycStatus: 'pending',
       isVerified: false,
       role: 'estudiante',
+      toJSON() {
+        return {
+          id: 10,
+          verificationLevel: 1,
+          isVerified: false,
+          role: 'estudiante',
+        };
+      },
     } as any);
 
     const res = await request(app).get('/users/me/verification-level');
@@ -64,14 +77,19 @@ describe('User Controller - Verification Level', () => {
     mockUserFindByPk.mockResolvedValue({
       id: 10,
       verificationLevel: null,
-      kycStatus: null,
       isVerified: null,
+      toJSON() {
+        return {
+          id: 10,
+          verificationLevel: null,
+          isVerified: null,
+        };
+      },
     } as any);
 
     const res = await request(app).get('/users/me/verification-level');
 
     expect(res.body.data.verificationLevel).toBe(0);
-    expect(res.body.data.kycStatus).toBe('none');
     expect(res.body.data.isVerified).toBe(false);
     expect(res.body.data.canRequestProperty).toBe(false);
   });

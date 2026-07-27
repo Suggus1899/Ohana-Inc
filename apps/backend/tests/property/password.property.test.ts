@@ -1,5 +1,5 @@
 import * as fc from 'fast-check';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { User } from '../../src/models';
 import { sequelize } from '../../src/config/database';
 

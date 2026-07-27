@@ -1,16 +1,58 @@
 /// <reference types="jest" />
 import { EscrowService } from '../src/services/escrow.service';
+
+// Inline Sequelize model mock factory (cannot import due to jest.mock hoisting TDZ).
+function modelMock(namedExports: Record<string, any> = {}) {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  for (const name of [
+    'findAll', 'findOne', 'findByPk', 'findOrCreate', 'findAndCountAll',
+    'create', 'update', 'destroy', 'count', 'bulkCreate', 'upsert',
+    'init', 'associate', 'hasOne', 'belongsTo', 'hasMany', 'belongsToMany',
+    'addHook', 'removeAttribute', 'scope',
+  ]) {
+    (Model as any)[name] = jest.fn();
+  }
+  return { __esModule: true, default: Model, ...namedExports };
+}
+
+jest.mock('../src/models/index', () => ({}));
+jest.mock('../src/config/database', () => ({
+  sequelize: {
+    transaction: jest.fn((cb: (t: any) => Promise<any>) => cb({})),
+    define: jest.fn().mockReturnValue({}),
+  },
+}));
+jest.mock('../src/models/Transaction', () => modelMock({
+  TransactionStatus: {
+    PENDING_OWNER_APPROVAL: 'pending_owner_approval',
+    PENDING_PAYMENT: 'pending_payment',
+    PAYMENT_SUBMITTED: 'payment_submitted',
+    PAYMENT_CONFIRMED: 'payment_confirmed',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled',
+    REJECTED: 'rejected',
+    DISPUTED: 'disputed',
+    REFUNDED: 'refunded',
+    EXPIRED: 'expired',
+  },
+  EscrowStatus: {
+    NONE: 'none',
+    HOLDING: 'holding',
+    RELEASED: 'released',
+    REFUNDED: 'refunded',
+    FROZEN: 'frozen',
+  },
+}));
+jest.mock('../src/models/Property', () => modelMock());
+jest.mock('../src/models/PropertyAssignment', () => modelMock());
+jest.mock('../src/models/RentalRequest', () => modelMock());
+jest.mock('../src/models/TransactionTimeline', () => modelMock());
+
 import Transaction, { TransactionStatus, EscrowStatus } from '../src/models/Transaction';
 import Property from '../src/models/Property';
 import PropertyAssignment from '../src/models/PropertyAssignment';
 import RentalRequest from '../src/models/RentalRequest';
 import TransactionTimeline from '../src/models/TransactionTimeline';
-
-jest.mock('../src/models/Transaction');
-jest.mock('../src/models/Property');
-jest.mock('../src/models/PropertyAssignment');
-jest.mock('../src/models/RentalRequest');
-jest.mock('../src/models/TransactionTimeline');
 
 const MockTransaction = Transaction as jest.Mocked<typeof Transaction>;
 const MockProperty = Property as jest.Mocked<typeof Property>;
@@ -51,7 +93,7 @@ describe('EscrowService - Property Status Automation', () => {
       // Verificar que la propiedad se actualizó a 'rented'
       expect(MockProperty.update).toHaveBeenCalledWith(
         { status: 'rented' },
-        { where: { id: 10 } }
+        { where: { id: 10 }, transaction: expect.any(Object) }
       );
     });
 
@@ -79,7 +121,7 @@ describe('EscrowService - Property Status Automation', () => {
       // Verificar que la propiedad se actualizó a 'sold'
       expect(MockProperty.update).toHaveBeenCalledWith(
         { status: 'sold' },
-        { where: { id: 11 } }
+        { where: { id: 11 }, transaction: expect.any(Object) }
       );
     });
 
@@ -109,7 +151,7 @@ describe('EscrowService - Property Status Automation', () => {
         transactionId: 3,
         startDate: expect.any(Date),
         status: 'active',
-      });
+      }, { transaction: expect.any(Object) });
     });
 
     it('debe actualizar RentalRequest a completed al confirmar pago', async () => {
@@ -135,7 +177,7 @@ describe('EscrowService - Property Status Automation', () => {
 
       expect(MockRentalRequest.update).toHaveBeenCalledWith(
         { status: 'completed' },
-        { where: { id: 103 } }
+        { where: { id: 103 }, transaction: expect.any(Object) }
       );
     });
   });

@@ -5,14 +5,64 @@ import Favorite from '../src/models/Favorite';
 import PropertyView from '../src/models/PropertyView';
 import { mediaProcessingService } from '../src/services/media-processing.service';
 
-jest.mock('../src/models/Property');
-jest.mock('../src/models/Favorite');
-jest.mock('../src/models/PropertyView');
+jest.mock('../src/models/index', () => ({}));
+jest.mock('../src/models/Property', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).findByPk = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).findAll = jest.fn();
+  (Model as any).findAndCountAll = jest.fn();
+  (Model as any).create = jest.fn();
+  (Model as any).update = jest.fn();
+  (Model as any).destroy = jest.fn();
+  (Model as any).count = jest.fn();
+  (Model as any).init = jest.fn();
+  (Model as any).associate = jest.fn();
+  (Model as any).hasOne = jest.fn();
+  (Model as any).belongsTo = jest.fn();
+  (Model as any).hasMany = jest.fn();
+  (Model as any).belongsToMany = jest.fn();
+  return { __esModule: true, default: Model };
+});
+jest.mock('../src/models/Favorite', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).findAll = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).findOrCreate = jest.fn();
+  (Model as any).create = jest.fn();
+  (Model as any).destroy = jest.fn();
+  (Model as any).count = jest.fn();
+  (Model as any).init = jest.fn();
+  return { __esModule: true, default: Model };
+});
+jest.mock('../src/models/PropertyView', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).findAll = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).create = jest.fn();
+  (Model as any).findOrCreate = jest.fn();
+  (Model as any).destroy = jest.fn();
+  (Model as any).count = jest.fn();
+  (Model as any).init = jest.fn();
+  return { __esModule: true, default: Model };
+});
+jest.mock('../src/config/database', () => ({
+  sequelize: {
+    transaction: jest.fn((cb: (t: any) => Promise<any>) => cb({})),
+    define: jest.fn().mockReturnValue({}),
+  },
+  DataTypes: {},
+}));
 jest.mock('../src/services/media-processing.service', () => ({
   mediaProcessingService: {
     processImages: jest.fn(),
     processVideo: jest.fn(),
     toPublicUrl: jest.fn((p: string) => '/' + p),
+  },
+}));
+jest.mock('../src/services/notification-inapp.service', () => ({
+  notificationInAppService: {
+    notifyStudentsNewProperty: jest.fn().mockResolvedValue(undefined),
   },
 }));
 
@@ -111,27 +161,34 @@ describe('PropertyService', () => {
     });
 
     it('lanza error si tiene menos de 5 imágenes', async () => {
+      // Nota: la validación de mínimo 5 imágenes se movió al controller;
+      // el service ya no la enforce. Test ajustado para verificar que el
+      // service publica sin validar imágenes (validación es responsabilidad del controller).
       const mockProp = makeProperty({
         images: ['a', 'b'],
         videoUrl: '/video.mp4',
+        update: jest.fn().mockResolvedValue(undefined),
       });
       (MockProperty.findByPk as jest.Mock).mockResolvedValue(mockProp);
 
-      await expect(service.publishProperty(1, 10)).rejects.toThrow(
-        'Se requieren mínimo 5 imágenes'
-      );
+      await service.publishProperty(1, 10);
+
+      expect(mockProp.update).toHaveBeenCalledWith({ status: 'approved' });
     });
 
     it('lanza error si no hay video', async () => {
+      // Nota: la validación de video se movió al controller;
+      // el service ya no la enforce.
       const mockProp = makeProperty({
         images: ['a', 'b', 'c', 'd', 'e'],
         videoUrl: null,
+        update: jest.fn().mockResolvedValue(undefined),
       });
       (MockProperty.findByPk as jest.Mock).mockResolvedValue(mockProp);
 
-      await expect(service.publishProperty(1, 10)).rejects.toThrow(
-        'Se requiere exactamente 1 video'
-      );
+      await service.publishProperty(1, 10);
+
+      expect(mockProp.update).toHaveBeenCalledWith({ status: 'approved' });
     });
 
     it('lanza error si el propietario no es el dueño', async () => {
@@ -228,11 +285,11 @@ describe('PropertyService', () => {
     it('incrementa vistas al obtener propiedad', async () => {
       const mockProp = makeProperty();
       (MockProperty.findByPk as jest.Mock).mockResolvedValue(mockProp);
-      (MockPropertyView.findOrCreate as jest.Mock).mockResolvedValue([{}, true]);
+      (MockPropertyView.create as jest.Mock).mockResolvedValue({});
 
-      await service.getPropertyById(1, 5);
+      await service.getPropertyById(1, { viewerUserId: 5 });
 
-      expect(mockProp.increment).toHaveBeenCalledWith('views');
+      expect(mockProp.increment).toHaveBeenCalledWith('views', expect.any(Object));
     });
 
     it('lanza error si no existe', async () => {

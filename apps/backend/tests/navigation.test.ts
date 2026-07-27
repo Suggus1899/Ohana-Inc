@@ -1,6 +1,16 @@
 import request from 'supertest';
 import app from '../src/app';
 
+// Mock OSRM service to avoid real network calls
+jest.mock('../src/services/osrmService', () => ({
+  getRoute: jest.fn().mockResolvedValue({
+    geometry: { coordinates: [[-67.3592, 9.4111], [-67.3570, 9.4092]] },
+    distance: 250.5,
+    duration: 180,
+    steps: [{ instruction: 'Head south', distance: 100, duration: 60 }],
+  }),
+}));
+
 describe('Navigation API', () => {
   it('should calculate a route between two points', async () => {
     const response = await request(app)

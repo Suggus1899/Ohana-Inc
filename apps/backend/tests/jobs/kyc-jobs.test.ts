@@ -6,8 +6,43 @@
  */
 
 // Mock de los modelos y servicios ANTES de importar
-jest.mock('../../src/models/KYCVerification');
-jest.mock('../../src/models/KYCDocument');
+// Los modelos deben mockearse preservando la estructura de clase Sequelize.Model
+// para que las asociaciones en models/index.ts no fallen.
+jest.mock('../../src/models/index', () => ({}));
+
+jest.mock('../../src/models/KYCVerification', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  // Sequelize.Model-like static methods
+  (Model as any).findAll = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).findByPk = jest.fn();
+  (Model as any).create = jest.fn();
+  (Model as any).update = jest.fn();
+  (Model as any).destroy = jest.fn();
+  (Model as any).count = jest.fn();
+  (Model as any).hasOne = jest.fn();
+  (Model as any).belongsTo = jest.fn();
+  (Model as any).hasMany = jest.fn();
+  (Model as any).belongsToMany = jest.fn();
+  return { __esModule: true, default: Model, VerificationStatus: {} };
+});
+
+jest.mock('../../src/models/KYCDocument', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).findAll = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).findByPk = jest.fn();
+  (Model as any).create = jest.fn();
+  (Model as any).update = jest.fn();
+  (Model as any).destroy = jest.fn();
+  (Model as any).count = jest.fn();
+  (Model as any).hasOne = jest.fn();
+  (Model as any).belongsTo = jest.fn();
+  (Model as any).hasMany = jest.fn();
+  (Model as any).belongsToMany = jest.fn();
+  return { __esModule: true, default: Model, DocumentType: {} };
+});
+
 jest.mock('../../src/services/notification.service');
 jest.mock('../../src/services/storage.service');
 jest.mock('../../src/services/kyc.service');
@@ -107,7 +142,7 @@ describe('KYC Scheduled Jobs', () => {
       // Verify logging is present
       expect(content).toContain('console.log');
       expect(content).toContain('console.error');
-      expect(content).toContain('[KYC Job]');
+      expect(content).toContain('[KYC Jobs]');
     });
   });
 

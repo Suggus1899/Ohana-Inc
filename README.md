@@ -4,7 +4,7 @@
 
 ### Plataforma de Alquileres, Arrendamientos y Residencias — Encuentra tu lugar en Colombia
 
-Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y encontrá departamentos, casas, cuartos, residencias estudiantiles y más, con verificación biométrica de identidad (KYC), transacciones P2P seguras, chat en tiempo real y navegación GPS hacia las propiedades.
+Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y encontrá departamentos, casas, cuartos, residencias estudiantiles y más, con verificación biométrica de identidad (KYC), transacciones P2P seguras, chat en tiempo real y navegación GPS hacia las propiedades. Disponible como **web app** (React SPA) y **app móvil** (Flutter, Android/iOS).
 
 </div>
 
@@ -72,6 +72,63 @@ Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y e
 <a href="https://socket.io/" target="_blank"><img src="https://cdn.simpleicons.org/socketdotio/010101" width="48" height="48" alt="Socket.IO" /></a>
 <br><sub><b><a href="https://socket.io/" target="_blank">Socket.IO Client</a></b></sub>
 <br><sub>Real-time</sub>
+</td>
+</tr>
+<tr>
+<th colspan="5" align="center" width="600"><sub><b>Mobile</b></sub></th>
+</tr>
+<tr>
+<td align="center" width="120">
+<a href="https://flutter.dev/" target="_blank"><img src="https://cdn.simpleicons.org/flutter/02569B" width="48" height="48" alt="Flutter" /></a>
+<br><sub><b><a href="https://flutter.dev/" target="_blank">Flutter 3</a></b></sub>
+<br><sub>Android + iOS</sub>
+</td>
+<td align="center" width="120">
+<a href="https://dart.dev/" target="_blank"><img src="https://cdn.simpleicons.org/dart/0175C2" width="48" height="48" alt="Dart" /></a>
+<br><sub><b><a href="https://dart.dev/" target="_blank">Dart 3</a></b></sub>
+<br><sub>Language</sub>
+</td>
+<td align="center" width="120">
+<a href="https://riverpod.dev/" target="_blank"><img src="https://cdn.simpleicons.org/riverpod/4CA5F0" width="48" height="48" alt="Riverpod" /></a>
+<br><sub><b><a href="https://riverpod.dev/" target="_blank">Riverpod 2</a></b></sub>
+<br><sub>State management</sub>
+</td>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/go_router" target="_blank"><img src="https://cdn.simpleicons.org/flutter/02569B" width="48" height="48" alt="go_router" /></a>
+<br><sub><b><a href="https://pub.dev/packages/go_router" target="_blank">go_router</a></b></sub>
+<br><sub>Declarative routing</sub>
+</td>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/dio" target="_blank"><img src="https://cdn.simpleicons.org/dart/0175C2" width="48" height="48" alt="dio" /></a>
+<br><sub><b><a href="https://pub.dev/packages/dio" target="_blank">dio</a></b></sub>
+<br><sub>HTTP client</sub>
+</td>
+</tr>
+<tr>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/flutter_map" target="_blank"><img src="https://cdn.simpleicons.org/flutter/02569B" width="48" height="48" alt="flutter_map" /></a>
+<br><sub><b><a href="https://pub.dev/packages/flutter_map" target="_blank">flutter_map</a></b></sub>
+<br><sub>Maps + routing</sub>
+</td>
+<td align="center" width="120">
+<a href="https://socket.io/" target="_blank"><img src="https://cdn.simpleicons.org/socketdotio/010101" width="48" height="48" alt="Socket.IO" /></a>
+<br><sub><b><a href="https://socket.io/" target="_blank">Socket.IO Client</a></b></sub>
+<br><sub>Real-time chat</sub>
+</td>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/freezed" target="_blank"><img src="https://cdn.simpleicons.org/dart/0175C2" width="48" height="48" alt="freezed" /></a>
+<br><sub><b><a href="https://pub.dev/packages/freezed" target="_blank">freezed</a></b></sub>
+<br><sub>Immutable models</sub>
+</td>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/flutter_secure_storage" target="_blank"><img src="https://cdn.simpleicons.org/flutter/02569B" width="48" height="48" alt="secure_storage" /></a>
+<br><sub><b><a href="https://pub.dev/packages/flutter_secure_storage" target="_blank">Secure Storage</a></b></sub>
+<br><sub>JWT + secrets</sub>
+</td>
+<td align="center" width="120">
+<a href="https://pub.dev/packages/fl_chart" target="_blank"><img src="https://cdn.simpleicons.org/flutter/02569B" width="48" height="48" alt="fl_chart" /></a>
+<br><sub><b><a href="https://pub.dev/packages/fl_chart" target="_blank">fl_chart</a></b></sub>
+<br><sub>Charts (metrics)</sub>
 </td>
 </tr>
 <tr>
@@ -168,17 +225,19 @@ Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y e
 ## 📐 Arquitectura
 
 ```
-                    ┌─────────────────────────────────────────────────┐
-                    │              Cliente (Navegador)                 │
-                    │         React SPA · Vite · Tailwind              │
-                    └──────┬──────────────────┬────────────────────────┘
-                           │                  │
-            ┌──────────────▼──────────┐  ┌────▼──────────────────────┐
-            │  Backend Express        │  │  Frontend Vite            │
-            │  (port 3026)            │  │  (port 8080)              │
-            │  Sequelize · JWT        │  │  React 18 · TanStack      │
-            │  Passport · Socket.IO   │  │  shadcn/ui · Leaflet      │
-            └──┬──────┬──────┬────────┘  └───────────────────────────┘
+   ┌──────────────────────────┐    ┌──────────────────────────┐
+   │  Cliente Web (Navegador) │    │  Cliente Móvil (App)     │
+   │  React SPA · Vite        │    │  Flutter · Android/iOS   │
+   │  Tailwind · TanStack     │    │  Riverpod · go_router    │
+   └───────────┬──────────────┘    └──────────────┬───────────┘
+               │                                  │
+               │         HTTP / WebSocket         │
+               │                                  │
+            ┌──▼──────────────────────────────────▼──┐
+            │  Backend Express (port 3026)            │
+            │  Sequelize · JWT · Passport             │
+            │  Socket.IO · Tesseract · face-api       │
+            └──┬──────┬──────┬────────────────────────┘
                │      │      │
    ┌───────────▼┐  ┌──▼───┐  ┌▼──────────────┐
    │ PostgreSQL │  │ Redis│  │ S3 / MinIO    │
@@ -199,6 +258,7 @@ Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y e
 |-----|-------------|--------|-------|
 | **apps/backend** | API REST + WebSocket — auth, KYC biométrico, CRUD propiedades, transacciones P2P, chat, moderación, métricas | 3026 | Express + Sequelize + PostgreSQL + Redis + Socket.IO |
 | **apps/frontend** | SPA — landing, dashboards por rol, KYC con webcam, mapas con routing, chat en tiempo real, navegación GPS | 8080 | Vite + React 18 + Tailwind + shadcn/ui + TanStack Query |
+| **apps/mobile** | App nativa Android/iOS — auth, dashboards por rol, detalle de propiedades, chat en tiempo real, mapas, navegación GPS | — | Flutter 3 + Dart 3 + Riverpod + go_router + dio + flutter_map |
 
 ## 🚀 Quick Start
 
@@ -208,6 +268,8 @@ Plataforma integral de **alquileres y arrendamientos** en Colombia. Publicá y e
 |-------------|---------|-------------|
 | Node.js | 20+ | [nodejs.org](https://nodejs.org/) |
 | pnpm | 9+ | `npm install -g pnpm` |
+| Flutter | 3.24+ (stable) | [flutter.dev](https://docs.flutter.dev/get-started/install) |
+| Dart | 3.11+ (incluido con Flutter) | — |
 | PostgreSQL | 16+ | [postgresql.org](https://www.postgresql.org/download/) |
 | Redis | 7+ | [redis.io](https://redis.io/docs/getting-started/) |
 | Docker | 24+ (opcional) | [docker.com](https://www.docker.com/) |
@@ -239,7 +301,28 @@ pnpm dev:backend        # → http://localhost:3026
 pnpm dev:frontend       # → http://localhost:8080
 ```
 
-### 4. Build de producción
+### 4. App móvil (Flutter)
+
+> Requiere el backend corriendo en `localhost:3026` (ver paso 3).
+> El emulador de Android usa `10.0.2.2` para reach el host; en dispositivo físico usar la IP de la LAN o tunel (ngrok).
+
+```bash
+cd apps/mobile
+flutter pub get
+flutter run                   # dispositivo seleccionado
+# flutter run -d chrome       # web (debug)
+# flutter run --dart-define=API_BASE_URL=http://192.168.x.x:3026/api
+```
+
+Build de release:
+
+```bash
+flutter build apk            # Android (apk)
+flutter build appbundle      # Android (aab, Play Store)
+flutter build ios            # iOS (requiere macOS + Xcode)
+```
+
+### 5. Build de producción (web + backend)
 
 ```bash
 pnpm build              # todas las apps
@@ -247,7 +330,7 @@ pnpm build:backend      # solo backend (tsc → dist/)
 pnpm build:frontend     # solo frontend (vite build → dist/)
 ```
 
-### 5. Docker (solo producción)
+### 6. Docker (solo producción)
 
 ```bash
 cd apps/backend
@@ -350,21 +433,40 @@ Flujo de alquiler peer-to-peer:
 | **Soporte** | Tickets de soporte y reportes de usuarios |
 | **GDPR** | Endpoints de exportación y eliminación de datos personales |
 
+## 📱 Features del Mobile (Flutter)
+
+| Feature | Descripción |
+|---------|-------------|
+| **Auth** | Login, registro, recuperar contraseña, verificación de email, Google OAuth (deep link callback) |
+| **Dashboards por rol** | 4 dashboards: admin, operator, owner (propietario), tenant (cliente/estudiante) |
+| **Detalle de propiedad** | Galería, amenidades, ubicación, contacto con el propietario |
+| **Mapas** | flutter_map (Leaflet) — mapa interactivo, marcadores, default center Bogotá |
+| **Chat en tiempo real** | Socket.IO Client — conversaciones, estado online |
+| **Perfil** | Edición de perfil, perfil público de usuario |
+| **Legal** | Términos y condiciones, política de privacidad |
+| **Arquitectura** | Clean Architecture (core / data / presentation), Riverpod providers, go_router (routing declarativo), freezed (modelos inmutables), dio (HTTP interceptors), flutter_secure_storage (JWT) |
+
 ## 🧪 Testing & CI
 
 ```bash
-# Test todas las apps
+# Test todas las apps (web + backend)
 pnpm test
 
 # Test individual
 pnpm test:backend        # Jest + supertest + fast-check
 pnpm test:frontend       # Vitest + @testing-library/react + msw
 
+# Test mobile (Flutter)
+cd apps/mobile
+flutter test             # widget tests
+flutter test --coverage  # con coverage
+
 # Lint
-pnpm lint                # ESLint todas las apps
+pnpm lint                # ESLint todas las apps (web)
+cd apps/mobile && flutter analyze   # Dart analyzer (mobile)
 
 # Build
-pnpm build               # todas las apps
+pnpm build               # todas las apps (web + backend)
 ```
 
 ### CI Pipeline (GitHub Actions)

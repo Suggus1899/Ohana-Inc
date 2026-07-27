@@ -4,6 +4,14 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
+  // DB-dependent suites are excluded from the default `test` run.
+  // Run them with `pnpm test:integration` when PostgreSQL is available.
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/models/',
+    '/tests/integration/',
+    '/tests/property/',
+  ],
   moduleFileExtensions: ['ts', 'js', 'json'],
   collectCoverageFrom: [
     'src/**/*.ts',

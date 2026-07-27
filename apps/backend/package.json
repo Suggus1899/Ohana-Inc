@@ -29,6 +29,8 @@
     "seed:force-lease": "ts-node src/scripts/force-completed-rental.ts",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
+    "test:integration": "jest --coverage --testPathIgnorePatterns=[\"/node_modules/\"]",
+    "test:unit": "jest --coverage",
     "docker:prod:up": "docker-compose -f docker-compose.prod.yml --env-file .env.docker up --build -d",
     "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
     "docker:prod:logs": "docker-compose -f docker-compose.prod.yml logs -f backend",

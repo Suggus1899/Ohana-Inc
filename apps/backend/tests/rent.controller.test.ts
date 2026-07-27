@@ -7,15 +7,21 @@ import { RentalRequest, Property } from '../src/models';
 // Simple mock implementations
 const mockRentalRequestFindOne = jest.fn();
 const mockRentalRequestCreate = jest.fn();
+const mockRentalRequestCount = jest.fn();
 const mockPropertyFindByPk = jest.fn();
+const mockTransactionFindOne = jest.fn();
 
 jest.mock('../src/models', () => ({
   RentalRequest: {
     findOne: (...args: any[]) => mockRentalRequestFindOne(...args),
     create: (...args: any[]) => mockRentalRequestCreate(...args),
+    count: (...args: any[]) => mockRentalRequestCount(...args),
   },
   Property: {
     findByPk: (...args: any[]) => mockPropertyFindByPk(...args),
+  },
+  Transaction: {
+    findOne: (...args: any[]) => mockTransactionFindOne(...args),
   },
 }));
 

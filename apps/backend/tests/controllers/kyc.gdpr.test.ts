@@ -46,6 +46,7 @@ describe('GDPR Endpoints', () => {
 
     mockRequest = {
       user: {
+        id: 1,
         userId: 1,
         email: 'test@example.com',
         role: 'cliente'

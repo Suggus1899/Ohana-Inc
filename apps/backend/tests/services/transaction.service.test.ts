@@ -170,16 +170,16 @@ describe('TransactionStateMachine', () => {
   });
 
   describe('isTerminalState', () => {
-    it('should return true for COMPLETED', () => {
-      expect(TransactionStateMachine.isTerminalState(TransactionStatus.COMPLETED)).toBe(true);
+    it('should return false for COMPLETED (can be refunded)', () => {
+      expect(TransactionStateMachine.isTerminalState(TransactionStatus.COMPLETED)).toBe(false);
     });
 
     it('should return true for CANCELLED', () => {
       expect(TransactionStateMachine.isTerminalState(TransactionStatus.CANCELLED)).toBe(true);
     });
 
-    it('should return true for REJECTED', () => {
-      expect(TransactionStateMachine.isTerminalState(TransactionStatus.REJECTED)).toBe(true);
+    it('should return false for REJECTED (can re-submit payment)', () => {
+      expect(TransactionStateMachine.isTerminalState(TransactionStatus.REJECTED)).toBe(false);
     });
 
     it('should return true for REFUNDED', () => {
@@ -210,8 +210,9 @@ describe('TransactionStateMachine', () => {
     });
 
     it('should return empty array for terminal states', () => {
-      expect(TransactionStateMachine.getAllowedTransitions(TransactionStatus.COMPLETED)).toHaveLength(0);
       expect(TransactionStateMachine.getAllowedTransitions(TransactionStatus.CANCELLED)).toHaveLength(0);
+      expect(TransactionStateMachine.getAllowedTransitions(TransactionStatus.REFUNDED)).toHaveLength(0);
+      expect(TransactionStateMachine.getAllowedTransitions(TransactionStatus.EXPIRED)).toHaveLength(0);
     });
   });
 });

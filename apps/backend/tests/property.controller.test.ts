@@ -27,6 +27,21 @@ jest.mock('../src/services/media-processing.service', () => ({
   },
 }));
 
+// Mock UserSession.findOne so authenticate middleware doesn't hit the DB.
+// We mock only the methods used by the middleware, preserving the class
+// structure so Sequelize associations (User.hasMany(UserSession)) still work.
+jest.mock('../src/models/UserSession', () => {
+  const actual = jest.requireActual('../src/models/UserSession');
+  const Mock = actual.default || actual;
+  Mock.findOne = jest.fn().mockResolvedValue({ userId: 10, endedAt: null });
+  return { __esModule: true, default: Mock };
+});
+
+// Spy on Transaction.findOne (used by publishProperty to check for disputes)
+// without replacing the class, so associations still work.
+import { Transaction } from '../src/models';
+const transactionFindOneSpy = jest.spyOn(Transaction, 'findOne').mockResolvedValue(null as any);
+
 const MockPropertyService = propertyService as jest.Mocked<typeof propertyService>;
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'test-secret-key';

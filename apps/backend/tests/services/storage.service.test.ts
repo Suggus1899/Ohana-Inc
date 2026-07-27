@@ -50,9 +50,9 @@ describe('StorageService', () => {
       const testData = Buffer.from('test');
       const savedPath = await newService.save('test.txt', testData);
 
-      // Normalize path for cross-platform compatibility
-      const normalizedPath = savedPath.replace(/\\/g, '/');
-      expect(normalizedPath).toContain('storage/kyc');
+      // Service returns relative path; file is stored under default storage path
+      const fullPath = path.join('./storage/kyc', savedPath);
+      expect(await fs.pathExists(fullPath)).toBe(true);
 
       // Cleanup
       await fs.remove('./storage');
@@ -65,17 +65,18 @@ describe('StorageService', () => {
   });
 
   describe('save', () => {
+    // Helper: service.save() returns a relative path; join with storage root for fs checks
+    const fullPath = (relativePath: string) => path.join(testStoragePath, relativePath);
+
     it('should save file to local filesystem', async () => {
       const data = Buffer.from('test file content');
       const filePath = 'documents/test.txt';
 
       const savedPath = await service.save(filePath, data);
 
-      // Normalize path for cross-platform compatibility
-      const normalizedPath = savedPath.replace(/\\/g, '/');
-      expect(normalizedPath).toContain('test-storage');
-      expect(normalizedPath).toContain('test.txt');
-      expect(await fs.pathExists(savedPath)).toBe(true);
+      // savedPath is relative; verify the file exists at the full storage path
+      expect(savedPath).toContain('test.txt');
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
     });
 
     it('should create directories automatically if they do not exist', async () => {
@@ -84,8 +85,8 @@ describe('StorageService', () => {
 
       const savedPath = await service.save(filePath, data);
 
-      expect(await fs.pathExists(savedPath)).toBe(true);
-      const content = await fs.readFile(savedPath);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
+      const content = await fs.readFile(fullPath(savedPath));
       expect(content.toString()).toBe('nested file');
     });
 
@@ -103,10 +104,10 @@ describe('StorageService', () => {
       const savedPath = await service.save(filePath, data, metadata);
 
       // Check file exists
-      expect(await fs.pathExists(savedPath)).toBe(true);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
 
       // Check metadata file exists
-      const metaPath = `${savedPath}.meta`;
+      const metaPath = `${fullPath(savedPath)}.meta`;
       expect(await fs.pathExists(metaPath)).toBe(true);
 
       // Verify metadata content
@@ -120,8 +121,8 @@ describe('StorageService', () => {
 
       const savedPath = await service.save(filePath, data);
 
-      expect(await fs.pathExists(savedPath)).toBe(true);
-      const content = await fs.readFile(savedPath);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
+      const content = await fs.readFile(fullPath(savedPath));
       expect(content.length).toBe(0);
     });
 
@@ -132,8 +133,8 @@ describe('StorageService', () => {
 
       const savedPath = await service.save(filePath, data);
 
-      expect(await fs.pathExists(savedPath)).toBe(true);
-      const content = await fs.readFile(savedPath);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
+      const content = await fs.readFile(fullPath(savedPath));
       expect(content.length).toBe(1024 * 1024);
     });
 
@@ -145,7 +146,7 @@ describe('StorageService', () => {
       await service.save(filePath, data1);
       const savedPath = await service.save(filePath, data2);
 
-      const content = await fs.readFile(savedPath);
+      const content = await fs.readFile(fullPath(savedPath));
       expect(content.toString()).toBe('second content');
     });
 
@@ -155,7 +156,7 @@ describe('StorageService', () => {
 
       const savedPath = await service.save(filePath, data);
 
-      expect(await fs.pathExists(savedPath)).toBe(true);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
     });
   });
 
@@ -208,16 +209,19 @@ describe('StorageService', () => {
   });
 
   describe('delete', () => {
+    // Helper: service.save() returns a relative path; join with storage root for fs checks
+    const fullPath = (relativePath: string) => path.join(testStoragePath, relativePath);
+
     it('should delete file from local filesystem', async () => {
       const data = Buffer.from('to be deleted');
       const filePath = 'documents/delete-test.txt';
 
       const savedPath = await service.save(filePath, data);
-      expect(await fs.pathExists(savedPath)).toBe(true);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
 
       await service.delete(filePath);
 
-      expect(await fs.pathExists(savedPath)).toBe(false);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(false);
     });
 
     it('should delete metadata file if it exists', async () => {
@@ -229,14 +233,14 @@ describe('StorageService', () => {
       };
 
       const savedPath = await service.save(filePath, data, metadata);
-      const metaPath = `${savedPath}.meta`;
+      const metaPath = `${fullPath(savedPath)}.meta`;
 
-      expect(await fs.pathExists(savedPath)).toBe(true);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(true);
       expect(await fs.pathExists(metaPath)).toBe(true);
 
       await service.delete(filePath);
 
-      expect(await fs.pathExists(savedPath)).toBe(false);
+      expect(await fs.pathExists(fullPath(savedPath))).toBe(false);
       expect(await fs.pathExists(metaPath)).toBe(false);
     });
 

@@ -85,7 +85,7 @@ describe("Property 5: Header title matches role", () => {
 
         // Verify correct title for each role
         if (role === "cliente") {
-          expect(title).toBe("Panel Estudiante");
+          expect(title).toBe("Panel Cliente");
         } else if (role === "operator") {
           expect(title).toBe("Panel Operador");
         } else if (role === "admin") {

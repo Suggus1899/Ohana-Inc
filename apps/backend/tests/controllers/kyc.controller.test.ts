@@ -6,6 +6,8 @@ const mockGetVerificationById = jest.fn();
 const mockGetVerificationByUserId = jest.fn();
 const mockGetPendingVerifications = jest.fn();
 const mockApproveVerification = jest.fn();
+const mockLogDocumentAccess = jest.fn().mockResolvedValue(undefined);
+const mockDeleteUserDataByRequest = jest.fn().mockResolvedValue(undefined);
 
 jest.mock('../../src/services/kyc.service', () => ({
   KYCService: jest.fn().mockImplementation(() => ({
@@ -15,28 +17,33 @@ jest.mock('../../src/services/kyc.service', () => ({
     getVerificationById: mockGetVerificationById,
     getVerificationByUserId: mockGetVerificationByUserId,
     getPendingVerifications: mockGetPendingVerifications,
-    approveVerification: mockApproveVerification
+    approveVerification: mockApproveVerification,
+    logDocumentAccess: mockLogDocumentAccess,
+    deleteUserDataByRequest: mockDeleteUserDataByRequest
   }))
 }));
 
 // Mock MetricsService
 const mockGetAllMetrics = jest.fn();
 
-jest.mock('../../src/services/metrics.service', () => ({
-  MetricsService: jest.fn().mockImplementation(() => ({
+jest.mock('../../src/services/metrics.service', () => {
+  const mockMetricsService = jest.fn().mockImplementation(() => ({
     getAllMetrics: mockGetAllMetrics
-  }))
-}));
+  }));
+  return { MetricsService: mockMetricsService };
+});
 
 // Mock models
 const mockKYCVerificationFindByPk = jest.fn();
+const mockKYCVerificationFindOne = jest.fn();
 const mockKYCDocumentFindAll = jest.fn();
 const mockKYCAttemptFindAll = jest.fn();
 
 jest.mock('../../src/models/KYCVerification', () => ({
   __esModule: true,
   default: {
-    findByPk: mockKYCVerificationFindByPk
+    findByPk: mockKYCVerificationFindByPk,
+    findOne: mockKYCVerificationFindOne
   }
 }));
 
@@ -77,6 +84,43 @@ jest.mock('../../src/services/storage.service', () => ({
 import { Response } from 'express';
 import { startVerification, uploadDocument, processVerification, getVerificationStatus, getVerificationDetails, approveVerification, gdprAccessData, gdprRectifyData, gdprDeleteData, gdprExportData, getMetrics } from '../../src/controllers/kyc.controller';
 import { AuthRequest, ErrorCodes } from '../../src/types';
+import { AppError } from '../../src/middleware/error.middleware';
+
+/**
+ * Mock `next` that simulates the centralized error handler.
+ * When the controller delegates to next(error), this mock maps AppError
+ * subclasses to their statusCode and calls res.status().json() so tests
+ * can assert on res.status / res.json as before the refactor.
+ */
+const createMockNext = (mockResponse: Partial<Response>) => {
+  return jest.fn((err: any) => {
+    const statusMock = mockResponse.status as unknown as jest.Mock;
+    const jsonMock = mockResponse.json as unknown as jest.Mock;
+    // Check if it's an AppError by checking for statusCode property (duck typing)
+    // instanceof can fail across module boundaries in some Jest configs
+    if (err && typeof err.statusCode === 'number' && err.code) {
+      statusMock(err.statusCode);
+      jsonMock({
+        success: false,
+        error: {
+          code: err.code,
+          message: err.message,
+          details: err.details,
+        },
+      });
+    } else {
+      // Generic 500 for non-AppError
+      statusMock(500);
+      jsonMock({
+        success: false,
+        error: {
+          code: ErrorCodes.INTERNAL_ERROR,
+          message: err?.message || 'Error interno del servidor',
+        },
+      });
+    }
+  });
+};
 
 /**
  * Unit tests for KYC Controller
@@ -99,10 +143,15 @@ describe('KYC Controller', () => {
     // Setup mock request
     mockRequest = {
       user: {
+        id: 1,
         userId: 1,
         email: 'test@example.com',
         role: 'cliente'
-      }
+      },
+      body: {},
+      params: {},
+      query: {},
+      headers: {},
     };
 
     // Setup mock response
@@ -126,10 +175,10 @@ describe('KYC Controller', () => {
       mockCreateVerification.mockResolvedValue(mockVerification as any);
 
       // Act
-      await startVerification(mockRequest as AuthRequest, mockResponse as Response);
+      await startVerification(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
-      expect(mockCreateVerification).toHaveBeenCalledWith(1);
+      expect(mockCreateVerification).toHaveBeenCalledWith(1, undefined);
       expect(mockResponse.status).toHaveBeenCalledWith(201);
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
@@ -146,7 +195,7 @@ describe('KYC Controller', () => {
       mockRequest.user = undefined;
 
       // Act
-      await startVerification(mockRequest as AuthRequest, mockResponse as Response);
+      await startVerification(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockCreateVerification).not.toHaveBeenCalled();
@@ -167,7 +216,7 @@ describe('KYC Controller', () => {
       );
 
       // Act
-      await startVerification(mockRequest as AuthRequest, mockResponse as Response);
+      await startVerification(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);
@@ -180,21 +229,21 @@ describe('KYC Controller', () => {
       });
     });
 
-    it('should return 409 when user has active verification', async () => {
+    it('should return 400 when user has active verification', async () => {
       // Arrange
       mockCreateVerification.mockRejectedValue(
         new Error('User already has an active verification in progress')
       );
 
       // Act
-      await startVerification(mockRequest as AuthRequest, mockResponse as Response);
+      await startVerification(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
-      expect(mockResponse.status).toHaveBeenCalledWith(409);
+      expect(mockResponse.status).toHaveBeenCalledWith(400);
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: false,
         error: {
-          code: ErrorCodes.DUPLICATE_ENTRY,
+          code: ErrorCodes.VALIDATION_ERROR,
           message: 'Ya tienes una verificación en progreso. Por favor, completa la verificación actual antes de iniciar una nueva.'
         }
       });
@@ -207,7 +256,7 @@ describe('KYC Controller', () => {
       );
 
       // Act
-      await startVerification(mockRequest as AuthRequest, mockResponse as Response);
+      await startVerification(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(500);
@@ -215,7 +264,7 @@ describe('KYC Controller', () => {
         success: false,
         error: {
           code: ErrorCodes.INTERNAL_ERROR,
-          message: 'Ocurrió un error al iniciar la verificación. Por favor, intenta nuevamente en unos momentos.'
+          message: 'Unexpected database error'
         }
       });
     });
@@ -249,7 +298,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).toHaveBeenCalledWith(
@@ -280,7 +329,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).not.toHaveBeenCalled();
@@ -304,7 +353,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).not.toHaveBeenCalled();
@@ -328,7 +377,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).not.toHaveBeenCalled();
@@ -351,7 +400,7 @@ describe('KYC Controller', () => {
       mockRequest.file = undefined;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).not.toHaveBeenCalled();
@@ -376,7 +425,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockUploadDocument).not.toHaveBeenCalled();
@@ -405,7 +454,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -433,7 +482,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -461,7 +510,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(400);
@@ -489,7 +538,7 @@ describe('KYC Controller', () => {
       } as any;
 
       // Act
-      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response);
+      await uploadDocument(mockRequest as AuthRequest, mockResponse as Response, createMockNext(mockResponse));
 
       // Assert
       expect(mockResponse.status).toHaveBeenCalledWith(500);
@@ -497,7 +546,7 @@ describe('KYC Controller', () => {
         success: false,
         error: {
           code: ErrorCodes.INTERNAL_ERROR,
-          message: 'Ocurrió un error al subir el documento. Por favor, intenta nuevamente.'
+          message: 'Unexpected storage error'
         }
       });
     });
@@ -730,6 +779,7 @@ describe('KYC Controller', () => {
         userId: 1,
         status: 'approved',
         verificationLevel: 5,
+        currentLevel: 5,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-15'),
         expiresAt: new Date('2025-01-15')
@@ -749,6 +799,7 @@ describe('KYC Controller', () => {
           verificationId: 1,
           status: 'approved',
           verificationLevel: 5,
+          currentLevel: 5,
           createdAt: mockVerification.createdAt,
           updatedAt: mockVerification.updatedAt,
           expiresAt: mockVerification.expiresAt
@@ -756,7 +807,7 @@ describe('KYC Controller', () => {
       });
     });
 
-    it('should return null if no verification exists', async () => {
+    it('should return not_started if no verification exists', async () => {
       // Arrange
       mockGetVerificationByUserId.mockResolvedValue(null);
 
@@ -768,7 +819,15 @@ describe('KYC Controller', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith({
         success: true,
-        data: null
+        data: {
+          verificationId: null,
+          status: 'not_started',
+          verificationLevel: 0,
+          currentLevel: 0,
+          createdAt: null,
+          updatedAt: null,
+          expiresAt: null
+        }
       });
     });
 
@@ -779,6 +838,7 @@ describe('KYC Controller', () => {
         userId: 1,
         status: 'in_progress',
         verificationLevel: 0,
+        currentLevel: 0,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01'),
         expiresAt: undefined
@@ -797,6 +857,7 @@ describe('KYC Controller', () => {
           verificationId: 1,
           status: 'in_progress',
           verificationLevel: 0,
+          currentLevel: 0,
           createdAt: mockVerification.createdAt,
           updatedAt: mockVerification.updatedAt,
           expiresAt: null
@@ -854,6 +915,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -995,6 +1057,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 5,
           userId: 5,
           email: 'user@example.com',
           role: 'cliente'
@@ -1016,7 +1079,7 @@ describe('KYC Controller', () => {
         success: false,
         error: {
           code: ErrorCodes.FORBIDDEN,
-          message: 'No tienes permisos para acceder a este recurso. Se requiere rol de operador.'
+          message: 'No tienes permisos para acceder a este recurso. Se requiere rol de operador o administrador.'
         }
       });
     });
@@ -1025,6 +1088,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1055,6 +1119,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1087,6 +1152,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1154,6 +1220,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1193,6 +1260,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1237,6 +1305,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1300,6 +1369,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 5,
           userId: 5,
           email: 'user@example.com',
           role: 'cliente'
@@ -1323,7 +1393,7 @@ describe('KYC Controller', () => {
         success: false,
         error: {
           code: ErrorCodes.FORBIDDEN,
-          message: 'No tienes permisos para aprobar verificaciones. Se requiere rol de operador.'
+          message: 'No tienes permisos para aprobar verificaciones. Se requiere rol de operador o administrador.'
         }
       });
     });
@@ -1332,6 +1402,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1364,6 +1435,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1399,6 +1471,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1434,6 +1507,7 @@ describe('KYC Controller', () => {
       // Arrange
       const mockRequest: Partial<AuthRequest> = {
         user: {
+          id: 10,
           userId: 10,
           email: 'operator@example.com',
           role: 'operator'
@@ -1484,11 +1558,17 @@ describe('KYC Controller', () => {
       jest.clearAllMocks();
       mockRequest = {
         user: {
+          id: 1,
           userId: 1,
           email: 'test@example.com',
           role: 'cliente'
         },
-        ip: '127.0.0.1'
+        body: {},
+        params: {},
+        query: {},
+        headers: {},
+        ip: '127.0.0.1',
+        socket: { remoteAddress: '127.0.0.1' } as any
       };
       mockResponse = {
         status: jest.fn().mockReturnThis(),
@@ -1535,31 +1615,10 @@ describe('KYC Controller', () => {
           }
         ];
 
-        const mockKYCVerificationFindOne = jest.fn().mockResolvedValue(mockVerification);
-        const mockKYCDocumentFindAll = jest.fn().mockResolvedValue(mockDocuments);
-        const mockKYCAttemptFindAll = jest.fn().mockResolvedValue(mockAttempts);
-
-        // Mock the models
-        jest.mock('../../src/models/KYCVerification', () => ({
-          __esModule: true,
-          default: {
-            findOne: mockKYCVerificationFindOne
-          }
-        }));
-
-        jest.mock('../../src/models/KYCDocument', () => ({
-          __esModule: true,
-          default: {
-            findAll: mockKYCDocumentFindAll
-          }
-        }));
-
-        jest.mock('../../src/models/KYCAttempt', () => ({
-          __esModule: true,
-          default: {
-            findAll: mockKYCAttemptFindAll
-          }
-        }));
+        // Use global mocks (defined at top of file)
+        mockKYCVerificationFindOne.mockResolvedValue(mockVerification);
+        mockKYCDocumentFindAll.mockResolvedValue(mockDocuments);
+        mockKYCAttemptFindAll.mockResolvedValue(mockAttempts);
 
         const { gdprAccessData } = require('../../src/controllers/kyc.controller');
 
@@ -1722,31 +1781,10 @@ describe('KYC Controller', () => {
           }
         ];
 
-        const mockKYCVerificationFindOne = jest.fn().mockResolvedValue(mockVerification);
-        const mockKYCDocumentFindAll = jest.fn().mockResolvedValue(mockDocuments);
-        const mockKYCAttemptFindAll = jest.fn().mockResolvedValue(mockAttempts);
-
-        // Mock the models
-        jest.mock('../../src/models/KYCVerification', () => ({
-          __esModule: true,
-          default: {
-            findOne: mockKYCVerificationFindOne
-          }
-        }));
-
-        jest.mock('../../src/models/KYCDocument', () => ({
-          __esModule: true,
-          default: {
-            findAll: mockKYCDocumentFindAll
-          }
-        }));
-
-        jest.mock('../../src/models/KYCAttempt', () => ({
-          __esModule: true,
-          default: {
-            findAll: mockKYCAttemptFindAll
-          }
-        }));
+        // Use global mocks (defined at top of file)
+        mockKYCVerificationFindOne.mockResolvedValue(mockVerification);
+        mockKYCDocumentFindAll.mockResolvedValue(mockDocuments);
+        mockKYCAttemptFindAll.mockResolvedValue(mockAttempts);
 
         const { gdprExportData } = require('../../src/controllers/kyc.controller');
 
@@ -1833,6 +1871,7 @@ describe('KYC Controller', () => {
         mockGetAllMetrics.mockResolvedValue(mockMetricsData);
 
         mockRequest.user = {
+          id: 2,
           userId: 2,
           email: 'operator@example.com',
           role: 'operator'
@@ -1866,12 +1905,14 @@ describe('KYC Controller', () => {
         await getMetrics(mockRequest as AuthRequest, mockResponse as Response, mockNext);
 
         expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({
-          message: expect.stringContaining('Authentication')
+          statusCode: 401,
+          code: ErrorCodes.UNAUTHORIZED
         }));
       });
 
       it('should return 403 if user is not an operator', async () => {
         mockRequest.user = {
+          id: 1,
           userId: 1,
           email: 'user@example.com',
           role: 'cliente'

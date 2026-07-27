@@ -255,6 +255,7 @@ describe('MetricsService', () => {
       (KYCVerification.findOne as jest.Mock).mockResolvedValue({ avgHours: '24.0' });
       (KYCVerification.findAll as jest.Mock).mockResolvedValue([]);
       (KYCAttempt.count as jest.Mock).mockResolvedValue(0);
+      (KYCAttempt.findAll as jest.Mock).mockResolvedValue([]);
 
       const result = await metricsService.getAllMetrics();
 
