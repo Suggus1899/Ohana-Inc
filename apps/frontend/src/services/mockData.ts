@@ -16,6 +16,8 @@ import type {
   User,
 } from './api';
 
+const now = new Date().toISOString();
+
 // ─── Users ────────────────────────────────────────────────────────────────
 
 export const demoUsers: User[] = [
@@ -134,7 +136,6 @@ export const demoUserByRole: Record<User['role'], User> = {
 
 // ─── Properties ───────────────────────────────────────────────────────────
 
-const now = new Date().toISOString();
 
 export const demoProperties: Property[] = [
   {
