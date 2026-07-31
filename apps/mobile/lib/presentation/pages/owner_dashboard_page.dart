@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/responsive.dart';
 import '../../data/services/api_client.dart';
+import '../widgets/demo_mode_banner.dart';
+import '../widgets/ohana_logo.dart';
 
 /// Dashboard for owner role (propietario).
 ///
@@ -21,14 +24,30 @@ class _OwnerDashboardPageState extends ConsumerState<OwnerDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titleForIndex(_currentIndex))),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          _HomeTab(),
-          _PropertiesTab(),
-          _RequestsTab(),
-          _ProfileTab(),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const OhanaLogo(size: 22, showWordmark: false),
+            const SizedBox(width: 8),
+            Text(_titleForIndex(_currentIndex)),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          const DemoModeBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: const [
+                _HomeTab(),
+                _PropertiesTab(),
+                _RequestsTab(),
+                _ProfileTab(),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: _currentIndex == 1
@@ -129,8 +148,8 @@ class _HomeTabState extends ConsumerState<_HomeTab> {
     return RefreshIndicator(
       onRefresh: _loadStats,
       child: GridView.count(
-        padding: const EdgeInsets.all(16),
-        crossAxisCount: 2,
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
+        crossAxisCount: ResponsiveBreakpoint.of(context).gridColumns,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         childAspectRatio: 1.4,
@@ -267,7 +286,7 @@ class _PropertiesTabState extends ConsumerState<_PropertiesTab> {
     return RefreshIndicator(
       onRefresh: _loadProperties,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _properties.length,
         itemBuilder: (context, index) {
           final p = _properties[index] as Map<String, dynamic>;
@@ -382,7 +401,7 @@ class _RequestsTabState extends ConsumerState<_RequestsTab> {
     return RefreshIndicator(
       onRefresh: _loadRequests,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _requests.length,
         itemBuilder: (context, index) {
           final r = _requests[index] as Map<String, dynamic>;

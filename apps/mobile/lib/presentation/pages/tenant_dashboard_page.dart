@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/responsive.dart';
 import '../../data/services/api_client.dart';
+import '../widgets/demo_mode_banner.dart';
+import '../widgets/ohana_logo.dart';
 
 /// Dashboard for tenant roles (estudiante / cliente).
 ///
@@ -24,15 +27,29 @@ class _TenantDashboardPageState extends ConsumerState<TenantDashboardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titleForIndex(_currentIndex, name)),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const OhanaLogo(size: 22, showWordmark: false),
+            const SizedBox(width: 8),
+            Text(_titleForIndex(_currentIndex, name)),
+          ],
+        ),
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          _DiscoverTab(),
-          _FavoritesTab(),
-          _RequestsTab(),
-          _ProfileTab(),
+      body: Column(
+        children: [
+          const DemoModeBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: const [
+                _DiscoverTab(),
+                _FavoritesTab(),
+                _RequestsTab(),
+                _ProfileTab(),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -146,9 +163,9 @@ class _DiscoverTabState extends ConsumerState<_DiscoverTab> {
     return RefreshIndicator(
       onRefresh: _loadProperties,
       child: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: ResponsiveBreakpoint.of(context).gridColumns,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
           childAspectRatio: 0.72,
@@ -314,7 +331,7 @@ class _FavoritesTabState extends ConsumerState<_FavoritesTab> {
     return RefreshIndicator(
       onRefresh: _loadFavorites,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _favorites.length,
         itemBuilder: (context, index) {
           final f = _favorites[index] as Map<String, dynamic>;
@@ -396,7 +413,7 @@ class _RequestsTabState extends ConsumerState<_RequestsTab> {
     return RefreshIndicator(
       onRefresh: _loadRequests,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _requests.length,
         itemBuilder: (context, index) {
           final r = _requests[index] as Map<String, dynamic>;

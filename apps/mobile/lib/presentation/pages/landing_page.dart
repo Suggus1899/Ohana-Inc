@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../widgets/ohana_logo.dart';
+
 /// Public landing page for the Ohana rental platform.
 class LandingPage extends ConsumerWidget {
   const LandingPage({super.key});
@@ -58,12 +60,14 @@ class _HeroSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Ohana',
-            style: TextStyle(
+          OhanaLogo(
+            size: 48,
+            color: colorScheme.onPrimary,
+            wordmarkStyle: TextStyle(
               color: colorScheme.onPrimary,
               fontSize: 40,
               fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 8),

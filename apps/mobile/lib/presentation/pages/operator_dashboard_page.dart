@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/responsive.dart';
 import '../../data/services/api_client.dart';
+import '../widgets/demo_mode_banner.dart';
+import '../widgets/ohana_logo.dart';
 
 /// Dashboard for operator role.
 ///
@@ -21,14 +24,30 @@ class _OperatorDashboardPageState extends ConsumerState<OperatorDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titleForIndex(_currentIndex))),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          _VerificationsTab(),
-          _ContentReviewTab(),
-          _UserManagementTab(),
-          _AuditTab(),
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const OhanaLogo(size: 22, showWordmark: false),
+            const SizedBox(width: 8),
+            Text(_titleForIndex(_currentIndex)),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          const DemoModeBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: const [
+                _VerificationsTab(),
+                _ContentReviewTab(),
+                _UserManagementTab(),
+                _AuditTab(),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -166,7 +185,7 @@ class _VerificationsTabState extends ConsumerState<_VerificationsTab> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _queue.length,
         itemBuilder: (context, index) {
           final v = _queue[index] as Map<String, dynamic>;
@@ -289,7 +308,7 @@ class _ContentReviewTabState extends ConsumerState<_ContentReviewTab> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _items.length,
         itemBuilder: (context, index) {
           final p = _items[index] as Map<String, dynamic>;
@@ -409,7 +428,7 @@ class _UserManagementTabState extends ConsumerState<_UserManagementTab> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _reports.length,
         itemBuilder: (context, index) {
           final r = _reports[index] as Map<String, dynamic>;
@@ -501,7 +520,7 @@ class _AuditTabState extends ConsumerState<_AuditTab> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
         itemCount: _logs.length,
         itemBuilder: (context, index) {
           final log = _logs[index] as Map<String, dynamic>;

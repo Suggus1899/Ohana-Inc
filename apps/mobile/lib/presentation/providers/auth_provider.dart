@@ -3,18 +3,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../core/constants/app_constants.dart';
 import '../../data/services/api_client.dart';
+import '../../data/services/demo_data.dart';
+import '../../data/services/demo_api_client.dart';
 
 /// Auth service that handles token persistence and user session.
 ///
 /// Uses flutter_secure_storage for JWT token and user data.
+/// Supports Demo Mode: when enabled, skips backend calls and uses mock data.
 class AuthService {
   AuthService(this._ref);
 
   final Ref _ref;
   static const _storage = FlutterSecureStorage();
 
-  /// Initialize auth state from stored token.
+  static const _keyDemoMode = 'demo_mode';
+  static const _keyDemoRole = 'demo_role';
+
+  /// Initialize auth state from stored token or demo mode.
   Future<void> init() async {
+    // Demo mode: bypass backend, restore demo user
+    final demoFlag = await _storage.read(key: _keyDemoMode);
+    if (demoFlag == 'true') {
+      final role = await _storage.read(key: _keyDemoRole) ?? 'cliente';
+      final demoUser = demoUserByRole(role);
+      if (demoUser != null) {
+        setDemoModeEnabled(true);
+        _ref.read(demoRoleProvider.notifier).state = role;
+        _ref
+            .read(authStateProvider.notifier)
+            .setAuthenticated('demo-token', demoUser.toMap());
+        return;
+      }
+    }
+
     final token = await _storage.read(key: AppConstants.keyToken);
     final userJson = await _storage.read(key: AppConstants.keyUser);
 
@@ -34,7 +55,7 @@ class AuthService {
     _ref.read(sessionIdProvider.notifier).state = sessionId;
   }
 
-  /// Login with email and password.
+  /// Login with email and password (real backend).
   Future<void> login(String email, String password) async {
     final response = await _ref.read(apiClientProvider).login(email, password);
     final data = response.data as Map<String, dynamic>;
@@ -44,6 +65,19 @@ class AuthService {
     await _storage.write(key: AppConstants.keyToken, value: token);
     await _storage.write(key: AppConstants.keyUser, value: jsonEncode(user));
     _ref.read(authStateProvider.notifier).setAuthenticated(token, user);
+  }
+
+  /// Login as a demo user with a predefined role. No backend call.
+  Future<void> loginAsDemo(String role) async {
+    final demoUser = demoUserByRole(role);
+    if (demoUser == null) return;
+
+    await _storage.write(key: _keyDemoMode, value: 'true');
+    await _storage.write(key: _keyDemoRole, value: role);
+    enableDemoMode(_ref, role);
+    _ref
+        .read(authStateProvider.notifier)
+        .setAuthenticated('demo-token', demoUser.toMap());
   }
 
   /// Register a new user.
@@ -69,19 +103,33 @@ class AuthService {
 
   /// Logout and clear stored data.
   Future<void> logout() async {
-    await _storage.delete(key: AppConstants.keyToken);
-    await _storage.delete(key: AppConstants.keyUser);
+    final wasDemo = isDemoModeEnabled();
+    if (wasDemo) {
+      await _storage.delete(key: _keyDemoMode);
+      await _storage.delete(key: _keyDemoRole);
+      disableDemoMode(_ref);
+    } else {
+      await _storage.delete(key: AppConstants.keyToken);
+      await _storage.delete(key: AppConstants.keyUser);
+    }
     _ref.read(authStateProvider.notifier).logout();
   }
 
   /// Update stored user data after profile changes.
   Future<void> updateStoredUser(Map<String, dynamic> user) async {
+    if (isDemoModeEnabled()) {
+      _ref.read(authStateProvider.notifier).setAuthenticated('demo-token', user);
+      return;
+    }
     await _storage.write(key: AppConstants.keyUser, value: jsonEncode(user));
     final token = await _storage.read(key: AppConstants.keyToken);
     if (token != null) {
       _ref.read(authStateProvider.notifier).setAuthenticated(token, user);
     }
   }
+
+  /// Whether demo mode is currently active.
+  bool get isDemoMode => isDemoModeEnabled();
 }
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref));

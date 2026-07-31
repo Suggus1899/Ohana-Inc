@@ -19,8 +19,8 @@ logs/
 npm-debug.log*
 pnpm-debug.log*
 
-# Runtime data
-data/
+# Runtime data (backend Docker volumes only — do not ignore source `data/` dirs like apps/mobile/lib/data)
+/apps/backend/data/
 temp/
 uploads/
 storage/
