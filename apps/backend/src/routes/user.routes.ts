@@ -22,6 +22,8 @@ import {
   getStudents,
 } from '../controllers/user.controller';
 import { authenticate, requireRole } from '../middleware/auth.middleware';
+import { validate } from '../middleware/validate.middleware';
+import { createUserSchema, suspendUserSchema, rejectUserSchema, changePasswordSchema } from '../schemas/user.schema';
 
 const router = Router();
 
@@ -31,7 +33,7 @@ router.use(authenticate);
 // Current user routes (must be before /:id to avoid param capture)
 router.get('/me/verification-level', getMyVerificationLevel);
 router.put('/me/profile', updateProfile);
-router.put('/me/password', changePassword);
+router.put('/me/password', validate(changePasswordSchema), changePassword);
 router.put('/me/preferences', updatePreferences);
 router.put('/me/tutorial-completed', markTutorialCompleted);
 router.patch('/me/payment-info', updatePaymentInfo);
@@ -49,12 +51,12 @@ router.patch('/:id/status', requireRole(['admin', 'operator']), updateUserStatus
 
 // User status management (admin and operator)
 router.patch('/:id/approve', requireRole(['admin', 'operator']), approveUser);
-router.patch('/:id/reject', requireRole(['admin', 'operator']), rejectUser);
-router.patch('/:id/suspend', requireRole(['admin', 'operator']), suspendUser);
+router.patch('/:id/reject', requireRole(['admin', 'operator']), validate(rejectUserSchema), rejectUser);
+router.patch('/:id/suspend', requireRole(['admin', 'operator']), validate(suspendUserSchema), suspendUser);
 router.patch('/:id/reactivate', requireRole(['admin', 'operator']), reactivateUser);
 
 // Admin ONLY routes
-router.post('/', requireRole(['admin']), createUser);
+router.post('/', requireRole(['admin']), validate(createUserSchema), createUser);
 router.put('/:id', requireRole(['admin']), updateUser);
 router.delete('/:id', requireRole(['admin']), deleteUser);
 router.patch('/:id/role', requireRole(['admin']), updateUserRole);
