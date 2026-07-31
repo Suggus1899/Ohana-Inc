@@ -31,9 +31,10 @@ export async function register(req: Request, res: Response): Promise<void> {
     // Normalizar email a minúsculas para evitar duplicados con Google (que siempre da minúsculas)
     const email = rawEmail ? rawEmail.toLowerCase().trim() : rawEmail;
 
-    // TODO: En producción, quitar 'admin' y 'operator' de ALLOWED_ROLES
-    // Validate role - allow all roles for development
-    const ALLOWED_ROLES = ['cliente', 'operator', 'admin', 'estudiante', 'propietario'];
+    // Self-registration is restricted to end-user roles only.
+    // 'admin' and 'operator' accounts must be created by an existing admin
+    // via the authenticated user creation endpoint (POST /users).
+    const ALLOWED_ROLES = ['cliente', 'estudiante', 'propietario'];
     let userRole = 'cliente'; // Default role
     
     if (role && ALLOWED_ROLES.includes(role)) {

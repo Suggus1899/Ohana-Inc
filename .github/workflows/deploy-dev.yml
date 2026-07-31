@@ -13,7 +13,16 @@ permissions:
   pull-requests: write
 
 jobs:
+  # Gate: require CI (lint, typecheck, test, analyze) to pass before deploying
+  ci:
+    name: CI gate
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
   deploy:
+    name: Deploy Dev Environment to VPS
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código

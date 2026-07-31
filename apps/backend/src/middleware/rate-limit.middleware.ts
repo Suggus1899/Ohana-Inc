@@ -46,3 +46,22 @@ export const metricsRateLimit = rateLimit({
     },
   },
 });
+
+// Generic API rate limiter: 100 requests per minute per IP.
+// Applied globally to all /api/* routes to protect public endpoints
+// (property search, user listings, navigation, etc.) from scraping/DoS.
+// Stricter limiters (authRateLimit, passwordResetRateLimit) override this
+// on the routes where they are mounted.
+export const apiRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many requests. Please slow down and try again later.',
+    },
+  },
+});

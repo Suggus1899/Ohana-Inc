@@ -23,6 +23,7 @@ import metricsRouter from './routes/metrics.routes';
 import { ApiResponse, ErrorCodes } from './types';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import auditMiddleware from './middleware/audit.middleware';
+import { apiRateLimit } from './middleware/rate-limit.middleware';
 import serviceRoutes from './routes/service.routes';
 import analyticsRoutes from './routes/analytics.routes';
 import statisticsRoutes from './routes/statistics.routes';
@@ -98,6 +99,10 @@ app.use(express.json({
 }));
 
 app.use(auditMiddleware);
+
+// Global API rate limiting — protects all /api/* endpoints (100 req/min per IP).
+// Stricter limiters on auth/password-reset routes take precedence where mounted.
+app.use('/api', apiRateLimit);
 
 // Serve uploaded files (images, videos)
 app.use('/uploads', express.static('uploads'));

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User, RentalRequest, Property, PropertyAssignment, UserSession } from '../models';
-import { Op, literal } from 'sequelize';
+import { Op } from 'sequelize';
 import { AuthRequest, ApiResponse, ErrorCodes, UserRole, AccountStatus } from '../types';
 
 export const getUsers = async (req: Request, res: Response) => {
@@ -107,13 +107,34 @@ export const getStudents = async (req: AuthRequest, res: Response) => {
       return res.json({ success: true, data: { users: [] } });
     }
 
+    // Fetch related user IDs via parameterized queries (safe against injection)
+    const tenantRows = await RentalRequest.findAll({
+      where: { propertyId: { [Op.in]: propertyIds } },
+      attributes: ['tenantId'],
+      group: ['tenantId'],
+      raw: true,
+    });
+    const clientRows = await PropertyAssignment.findAll({
+      where: { propertyId: { [Op.in]: propertyIds } },
+      attributes: ['clientId'],
+      group: ['clientId'],
+      raw: true,
+    });
+    const relatedUserIds = [
+      ...new Set([
+        ...tenantRows.map((r) => r.tenantId),
+        ...clientRows.map((r) => r.clientId),
+      ]),
+    ];
+
+    if (relatedUserIds.length === 0) {
+      return res.json({ success: true, data: { users: [] } });
+    }
+
     const users = await User.findAll({
       where: {
         role: { [Op.in]: ['estudiante', 'cliente'] },
-        [Op.or]: [
-          { id: { [Op.in]: literal(`(SELECT DISTINCT "tenantId" FROM "rental_requests" WHERE "propertyId" IN (${propertyIds.join(',')}))`) } },
-          { id: { [Op.in]: literal(`(SELECT DISTINCT "clientId" FROM "property_assignments" WHERE "propertyId" IN (${propertyIds.join(',')}))`) } },
-        ],
+        id: { [Op.in]: relatedUserIds },
       },
       attributes: { exclude: ['password'] },
       include: [

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev, develop]
+  push:
+    branches: [main, dev, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---- Web + Backend (pnpm workspaces) ----
+  web:
+    name: Backend & Frontend (lint, typecheck, test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint (frontend)
+        run: pnpm --filter @ohana/frontend lint
+
+      - name: Typecheck (backend)
+        run: pnpm --filter @ohana/backend exec tsc --noEmit
+
+      - name: Typecheck (frontend)
+        run: pnpm --filter @ohana/frontend exec tsc --noEmit
+
+      - name: Test (backend + frontend)
+        run: pnpm test
+
+  # ---- Mobile (Flutter) ----
+  mobile:
+    name: Mobile (analyze, test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
