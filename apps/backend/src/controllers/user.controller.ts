@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { User, RentalRequest, Property, PropertyAssignment, UserSession } from '../models';
 import { Op } from 'sequelize';
 import { AuthRequest, ApiResponse, ErrorCodes, UserRole, AccountStatus } from '../types';
+import { userService, UserValidationError, UserNotFoundError, DuplicateUserError, UserForbiddenError } from '../services/user.service';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -227,346 +228,99 @@ export const getUserById = async (req: AuthRequest, res: Response) => {
 
 export async function createUser(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const {
-      name,
-      email,
-      phonePrefix,
-      phone,
-      cedulaType,
-      cedula,
-      password,
-      role
-    } = req.body;
-
-    // Validaciones básicas
-    if (!name || !email || !phone || !cedula || !password || !role) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.VALIDATION_ERROR,
-          message: 'All fields are required'
-        }
-      };
-      res.status(400).json(response);
-      return;
-    }
-
-    // Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.VALIDATION_ERROR,
-          message: 'Invalid email format'
-        }
-      };
-      res.status(400).json(response);
-      return;
-    }
-
-    // Validar rol
-    const validRoles: UserRole[] = ['admin', 'cliente', 'operator', 'propietario', 'estudiante'];
-    if (!validRoles.includes(role)) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.VALIDATION_ERROR,
-          message: 'Invalid role'
-        }
-      };
-      res.status(400).json(response);
-      return;
-    }
-
-    // Verificar si el email ya existe
-    const existingEmail = await User.findOne({ where: { email } });
-    if (existingEmail) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.DUPLICATE_ENTRY,
-          message: 'Email already exists'
-        }
-      };
-      res.status(409).json(response);
-      return;
-    }
-
-    // Verificar si la cédula ya existe
-    const fullCedula = `${cedulaType}-${cedula}`;
-    const existingCedula = await User.findOne({ where: { cedula: fullCedula } });
-    if (existingCedula) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.DUPLICATE_ENTRY,
-          message: 'Cedula already exists'
-        }
-      };
-      res.status(409).json(response);
-      return;
-    }
-
-    // Validar longitud de contraseña
-    if (password.length < 6) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.VALIDATION_ERROR,
-          message: 'Password must be at least 6 characters'
-        }
-      };
-      res.status(400).json(response);
-      return;
-    }
-
-    // Crear usuario (el hook beforeCreate hasheará la contraseña automáticamente)
-    // El email se marca como verificado automáticamente porque el admin lo está creando
-    const newUser = await User.create({
-      name,
-      email,
-      phonePrefix: phonePrefix || '+57',
-      phone,
-      cedula: fullCedula,
-      cedulaType,
-      password, // ← Contraseña en texto plano, el hook la hasheará
-      role,
-      isVerified: false,
-      emailVerified: true
-    });
-
-    // Remover password de la respuesta (toJSON() ya lo hace automáticamente)
-    const userResponse = newUser.toJSON();
-
-    const response: ApiResponse = {
+    const user = await userService.createUser(req.body as any);
+    res.status(201).json({
       success: true,
-      data: {
-        user: userResponse,
-        message: 'User created successfully'
-      }
-    };
-    res.status(201).json(response);
+      data: { user: user.toJSON(), message: 'User created successfully' },
+    });
   } catch (error) {
+    if (error instanceof DuplicateUserError) {
+      res.status(409).json({ success: false, error: { code: ErrorCodes.DUPLICATE_ENTRY, message: error.message } });
+      return;
+    }
+    if (error instanceof UserValidationError) {
+      res.status(400).json({ success: false, error: { code: ErrorCodes.VALIDATION_ERROR, message: error.message } });
+      return;
+    }
     console.error('Create user error:', error);
-    const response: ApiResponse = {
-      success: false,
-      error: {
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'An error occurred while creating user'
-      }
-    };
-    res.status(500).json(response);
+    res.status(500).json({ success: false, error: { code: ErrorCodes.INTERNAL_ERROR, message: 'An error occurred while creating user' } });
   }
 }
 
-// Aprobar usuario (cambiar estado a 'active')
+// Approve user (set status to 'active')
 export async function approveUser(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.NOT_FOUND,
-          message: 'User not found'
-        }
-      };
-      res.status(404).json(response);
+    const user = await userService.approveUser(req.params.id);
+    res.status(200).json({ success: true, data: { user: user.toJSON(), message: 'User approved successfully' } });
+  } catch (error) {
+    if (error instanceof UserNotFoundError) {
+      res.status(404).json({ success: false, error: { code: ErrorCodes.NOT_FOUND, message: error.message } });
       return;
     }
-
-    // Actualizar estado y verificación
-    user.accountStatus = 'active';
-    user.isVerified = true;
-    await user.save();
-
-    const response: ApiResponse = {
-      success: true,
-      data: {
-        user: user.toJSON(),
-        message: 'User approved successfully'
-      }
-    };
-    res.status(200).json(response);
-  } catch (error) {
     console.error('Approve user error:', error);
-    const response: ApiResponse = {
-      success: false,
-      error: {
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'An error occurred while approving user'
-      }
-    };
-    res.status(500).json(response);
+    res.status(500).json({ success: false, error: { code: ErrorCodes.INTERNAL_ERROR, message: 'An error occurred while approving user' } });
   }
 }
 
-// Rechazar usuario (cambiar estado a 'rejected')
+// Reject user (set status to 'rejected')
 export async function rejectUser(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
-    const { reason } = req.body; // Opcional: razón del rechazo
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.NOT_FOUND,
-          message: 'User not found'
-        }
-      };
-      res.status(404).json(response);
+    const { reason } = req.body;
+    const user = await userService.rejectUser(req.params.id, reason);
+    res.status(200).json({
+      success: true,
+      data: { user: user.toJSON(), message: 'User rejected successfully', reason: reason || 'No reason provided' },
+    });
+  } catch (error) {
+    if (error instanceof UserNotFoundError) {
+      res.status(404).json({ success: false, error: { code: ErrorCodes.NOT_FOUND, message: error.message } });
       return;
     }
-
-    // Actualizar estado
-    user.accountStatus = 'rejected';
-    user.isVerified = false;
-    if (reason) user.statusReason = reason;
-    await user.save();
-
-    const response: ApiResponse = {
-      success: true,
-      data: {
-        user: user.toJSON(),
-        message: 'User rejected successfully',
-        reason: reason || 'No reason provided'
-      }
-    };
-    res.status(200).json(response);
-  } catch (error) {
     console.error('Reject user error:', error);
-    const response: ApiResponse = {
-      success: false,
-      error: {
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'An error occurred while rejecting user'
-      }
-    };
-    res.status(500).json(response);
+    res.status(500).json({ success: false, error: { code: ErrorCodes.INTERNAL_ERROR, message: 'An error occurred while rejecting user' } });
   }
 }
 
-// Suspender usuario (cambiar estado a 'suspended')
+// Suspend user (set status to 'suspended')
 export async function suspendUser(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
     const { reason, suspendedUntil } = req.body;
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.NOT_FOUND,
-          message: 'User not found'
-        }
-      };
-      res.status(404).json(response);
-      return;
-    }
-
-    // Prevenir que el admin se suspenda a sí mismo
-    if (req.user?.userId === user.id) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.FORBIDDEN,
-          message: 'Cannot suspend your own account'
-        }
-      };
-      res.status(403).json(response);
-      return;
-    }
-
-    // Actualizar estado
-    user.accountStatus = 'suspended';
-    if (reason) user.statusReason = reason;
-    if (suspendedUntil) user.suspendedUntil = new Date(suspendedUntil);
-    await user.save();
-
-    const response: ApiResponse = {
+    const user = await userService.suspendUser(req.params.id, req.user!.userId, reason, suspendedUntil);
+    res.status(200).json({
       success: true,
-      data: {
-        user: user.toJSON(),
-        message: 'User suspended successfully',
-        reason: reason || 'No reason provided'
-      }
-    };
-    res.status(200).json(response);
+      data: { user: user.toJSON(), message: 'User suspended successfully', reason: reason || 'No reason provided' },
+    });
   } catch (error) {
+    if (error instanceof UserNotFoundError) {
+      res.status(404).json({ success: false, error: { code: ErrorCodes.NOT_FOUND, message: error.message } });
+      return;
+    }
+    if (error instanceof UserForbiddenError) {
+      res.status(403).json({ success: false, error: { code: ErrorCodes.FORBIDDEN, message: error.message } });
+      return;
+    }
     console.error('Suspend user error:', error);
-    const response: ApiResponse = {
-      success: false,
-      error: {
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'An error occurred while suspending user'
-      }
-    };
-    res.status(500).json(response);
+    res.status(500).json({ success: false, error: { code: ErrorCodes.INTERNAL_ERROR, message: 'An error occurred while suspending user' } });
   }
 }
 
-// Reactivar usuario suspendido (cambiar estado a 'active')
+// Reactivate suspended/rejected user (set status to 'active')
 export async function reactivateUser(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
-
-    const user = await User.findByPk(id);
-    if (!user) {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.NOT_FOUND,
-          message: 'User not found'
-        }
-      };
-      res.status(404).json(response);
-      return;
-    }
-
-    if (user.accountStatus !== 'suspended' && user.accountStatus !== 'rejected') {
-      const response: ApiResponse = {
-        success: false,
-        error: {
-          code: ErrorCodes.VALIDATION_ERROR,
-          message: 'User is not suspended or blocked'
-        }
-      };
-      res.status(400).json(response);
-      return;
-    }
-
     const { reason } = req.body;
-
-    // Reactivar usuario
-    user.accountStatus = 'active';
-    user.isVerified = true;
-    user.statusReason = reason || null;
-    await user.save();
-
-    const response: ApiResponse = {
-      success: true,
-      data: {
-        user: user.toJSON(),
-        message: 'User reactivated successfully'
-      }
-    };
-    res.status(200).json(response);
+    const user = await userService.reactivateUser(req.params.id, reason);
+    res.status(200).json({ success: true, data: { user: user.toJSON(), message: 'User reactivated successfully' } });
   } catch (error) {
+    if (error instanceof UserNotFoundError) {
+      res.status(404).json({ success: false, error: { code: ErrorCodes.NOT_FOUND, message: error.message } });
+      return;
+    }
+    if (error instanceof UserValidationError) {
+      res.status(400).json({ success: false, error: { code: ErrorCodes.VALIDATION_ERROR, message: error.message } });
+      return;
+    }
     console.error('Reactivate user error:', error);
-    const response: ApiResponse = {
-      success: false,
-      error: {
-        code: ErrorCodes.INTERNAL_ERROR,
-        message: 'An error occurred while reactivating user'
-      }
-    };
-    res.status(500).json(response);
+    res.status(500).json({ success: false, error: { code: ErrorCodes.INTERNAL_ERROR, message: 'An error occurred while reactivating user' } });
   }
 }
 
