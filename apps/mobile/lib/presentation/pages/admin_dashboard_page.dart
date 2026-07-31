@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/responsive.dart';
 import '../../data/services/api_client.dart';
+import '../../presentation/providers/dashboard_providers.dart';
 import '../widgets/demo_mode_banner.dart';
 import '../widgets/ohana_logo.dart';
 
@@ -107,67 +108,49 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
 
 // ── Home tab: platform stats ─────────────────────────────────────────────────
 
-class _HomeTab extends ConsumerStatefulWidget {
+class _HomeTab extends ConsumerWidget {
   const _HomeTab();
 
   @override
-  ConsumerState<_HomeTab> createState() => _HomeTabState();
-}
-
-class _HomeTabState extends ConsumerState<_HomeTab> {
-  Map<String, dynamic>? _stats;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
-
-  Future<void> _loadStats() async {
-    setState(() => _loading = true);
-    try {
-      final res = await ref.read(apiClientProvider).getStatistics();
-      setState(() {
-        _stats = res.data as Map<String, dynamic>?;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-    final s = _stats ?? {};
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(adminStatsProvider);
     final bp = ResponsiveBreakpoint.of(context);
+
     return RefreshIndicator(
-      onRefresh: _loadStats,
-      child: GridView.count(
-        padding: EdgeInsets.all(bp.horizontalPadding),
-        crossAxisCount: bp.gridColumns,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.4,
-        children: [
-          _StatCard(
-              icon: Icons.people_outline,
-              label: 'Usuarios',
-              value: '${s['totalUsers'] ?? 0}'),
-          _StatCard(
-              icon: Icons.home_work_outlined,
-              label: 'Propiedades',
-              value: '${s['totalProperties'] ?? 0}'),
-          _StatCard(
-              icon: Icons.attach_money,
-              label: 'Ingresos',
-              value: '\$${s['revenue'] ?? 0}'),
-          _StatCard(
-              icon: Icons.visibility_outlined,
-              label: 'Anuncios activos',
-              value: '${s['activeListings'] ?? 0}'),
-        ],
+      onRefresh: () => ref.refresh(adminStatsProvider.future),
+      child: statsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => ListView(
+          children: const [
+            SizedBox(height: 200),
+            Center(child: Text('No se pudieron cargar las estadísticas')),
+          ],
+        ),
+        data: (s) => GridView.count(
+          padding: EdgeInsets.all(bp.horizontalPadding),
+          crossAxisCount: bp.gridColumns,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 1.4,
+          children: [
+            _StatCard(
+                icon: Icons.people_outline,
+                label: 'Usuarios',
+                value: '${s['totalUsers'] ?? 0}'),
+            _StatCard(
+                icon: Icons.home_work_outlined,
+                label: 'Propiedades',
+                value: '${s['totalProperties'] ?? 0}'),
+            _StatCard(
+                icon: Icons.attach_money,
+                label: 'Ingresos',
+                value: '\$${s['revenue'] ?? 0}'),
+            _StatCard(
+                icon: Icons.visibility_outlined,
+                label: 'Anuncios activos',
+                value: '${s['activeListings'] ?? 0}'),
+          ],
+        ),
       ),
     );
   }
@@ -206,102 +189,68 @@ class _StatCard extends StatelessWidget {
 
 // ── Users tab ────────────────────────────────────────────────────────────────
 
-class _UsersTab extends ConsumerStatefulWidget {
+class _UsersTab extends ConsumerWidget {
   const _UsersTab();
 
-  @override
-  ConsumerState<_UsersTab> createState() => _UsersTabState();
-}
-
-class _UsersTabState extends ConsumerState<_UsersTab> {
-  List<dynamic> _users = [];
-  bool _loading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUsers();
-  }
-
-  Future<void> _loadUsers() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final res = await ref.read(apiClientProvider).getUsers();
-      final data = res.data['data'] as List?;
-      setState(() {
-        _users = data ?? [];
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'No se pudieron cargar los usuarios';
-        _loading = false;
-      });
-    }
-  }
-
-  Future<void> _setStatus(int id, String status) async {
+  Future<void> _setStatus(WidgetRef ref, int id, String status) async {
     try {
       await ref.read(apiClientProvider).updateUserStatus(id, status);
-      _loadUsers();
+      ref.invalidate(usersListProvider);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo actualizar el estado')),
-        );
-      }
+      // Error is silent — user can retry via pull-to-refresh
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(_error!),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: _loadUsers, child: const Text('Reintentar')),
-          ],
-        ),
-      );
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final usersAsync = ref.watch(usersListProvider);
+
     return RefreshIndicator(
-      onRefresh: _loadUsers,
-      child: ListView.builder(
-        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
-        itemCount: _users.length,
-        itemBuilder: (context, index) {
-          final u = _users[index] as Map<String, dynamic>;
-          final id = u['id'] as int;
-          final status = (u['accountStatus'] as String?) ?? 'pending';
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Card(
-              child: ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                title: Text((u['name'] as String?) ?? '',
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text((u['email'] as String?) ?? ''),
-                trailing: PopupMenuButton<String>(
-                  onSelected: (v) => _setStatus(id, v),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'active', child: Text('Activar')),
-                    const PopupMenuItem(value: 'suspended', child: Text('Suspender')),
-                  ],
-                  child: _StatusChip(status: status),
-                ),
+      onRefresh: () => ref.refresh(usersListProvider.future),
+      child: usersAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => ListView(
+          children: [
+            const SizedBox(height: 200),
+            const Center(child: Text('No se pudieron cargar los usuarios')),
+            const SizedBox(height: 12),
+            Center(
+              child: ElevatedButton(
+                onPressed: () => ref.invalidate(usersListProvider),
+                child: const Text('Reintentar'),
               ),
             ),
-          );
-        },
+          ],
+        ),
+        data: (users) => ListView.builder(
+          padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
+          itemCount: users.length,
+          itemBuilder: (context, index) {
+            final u = users[index];
+            final id = u['id'] as int;
+            final status = (u['accountStatus'] as String?) ?? 'pending';
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Card(
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  title: Text((u['name'] as String?) ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text((u['email'] as String?) ?? ''),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (v) => _setStatus(ref, id, v),
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(value: 'active', child: Text('Activar')),
+                      const PopupMenuItem(value: 'suspended', child: Text('Suspender')),
+                    ],
+                    child: _StatusChip(status: status),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -443,81 +392,58 @@ class _KycTabState extends ConsumerState<_KycTab> {
 
 // ── Reports tab ──────────────────────────────────────────────────────────────
 
-class _ReportsTab extends ConsumerStatefulWidget {
+class _ReportsTab extends ConsumerWidget {
   const _ReportsTab();
 
   @override
-  ConsumerState<_ReportsTab> createState() => _ReportsTabState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reportsAsync = ref.watch(reportsListProvider);
 
-class _ReportsTabState extends ConsumerState<_ReportsTab> {
-  List<dynamic> _reports = [];
-  bool _loading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadReports();
-  }
-
-  Future<void> _loadReports() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    try {
-      final res = await ref.read(apiClientProvider).getReports();
-      final data = res.data['data'] as List?;
-      setState(() {
-        _reports = data ?? [];
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'No se pudieron cargar los reportes';
-        _loading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-    if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(_error!),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: _loadReports, child: const Text('Reintentar')),
-          ],
-        ),
-      );
-    }
-    if (_reports.isEmpty) {
-      return const Center(child: Text('No hay reportes'));
-    }
     return RefreshIndicator(
-      onRefresh: _loadReports,
-      child: ListView.builder(
-        padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
-        itemCount: _reports.length,
-        itemBuilder: (context, index) {
-          final r = _reports[index] as Map<String, dynamic>;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Card(
-              child: ListTile(
-                title: Text((r['reason'] as String?) ?? 'Reporte',
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text((r['description'] as String?) ?? ''),
-                trailing: const Icon(Icons.chevron_right,
-                    color: AppColors.mutedForeground),
-                onTap: () {},
+      onRefresh: () => ref.refresh(reportsListProvider.future),
+      child: reportsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => ListView(
+          children: [
+            const SizedBox(height: 200),
+            const Center(child: Text('No se pudieron cargar los reportes')),
+            const SizedBox(height: 12),
+            Center(
+              child: ElevatedButton(
+                onPressed: () => ref.invalidate(reportsListProvider),
+                child: const Text('Reintentar'),
               ),
             ),
+          ],
+        ),
+        data: (reports) {
+          if (reports.isEmpty) {
+            return ListView(
+              children: const [
+                SizedBox(height: 200),
+                Center(child: Text('No hay reportes')),
+              ],
+            );
+          }
+          return ListView.builder(
+            padding: EdgeInsets.all(ResponsiveBreakpoint.of(context).horizontalPadding),
+            itemCount: reports.length,
+            itemBuilder: (context, index) {
+              final r = reports[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Card(
+                  child: ListTile(
+                    title: Text((r['reason'] as String?) ?? 'Reporte',
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text((r['description'] as String?) ?? ''),
+                    trailing: const Icon(Icons.chevron_right,
+                        color: AppColors.mutedForeground),
+                    onTap: () {},
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
@@ -535,61 +461,49 @@ class _SettingsTab extends ConsumerStatefulWidget {
 }
 
 class _SettingsTabState extends ConsumerState<_SettingsTab> {
-  Map<String, dynamic>? _settings;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    setState(() => _loading = true);
-    try {
-      final res = await ref.read(apiClientProvider).getSettings();
-      setState(() {
-        _settings = res.data as Map<String, dynamic>?;
-        _loading = false;
-      });
-    } catch (e) {
-      setState(() => _loading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: const Text('Mi perfil'),
-            trailing: const Icon(Icons.chevron_right,
-                color: AppColors.mutedForeground),
-            onTap: () => context.push('/perfil'),
+    final settingsAsync = ref.watch(appSettingsProvider);
+
+    return settingsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => ListView(
+        children: const [
+          SizedBox(height: 200),
+          Center(child: Text('No se pudieron cargar la configuración')),
+        ],
+      ),
+      data: (settings) => ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Mi perfil'),
+              trailing: const Icon(Icons.chevron_right,
+                  color: AppColors.mutedForeground),
+              onTap: () => context.push('/perfil'),
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: Column(
-            children: [
-              SwitchListTile(
-                title: const Text('Notificaciones'),
-                value: (_settings?['notifications'] as bool?) ?? true,
-                onChanged: (v) => setState(() => _settings?['notifications'] = v),
-              ),
-              SwitchListTile(
-                title: const Text('Modo mantenimiento'),
-                value: (_settings?['maintenance'] as bool?) ?? false,
-                onChanged: (v) => setState(() => _settings?['maintenance'] = v),
-              ),
-            ],
+          const SizedBox(height: 12),
+          Card(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: const Text('Notificaciones'),
+                  value: (settings['notifications'] as bool?) ?? true,
+                  onChanged: (v) => setState(() => settings['notifications'] = v),
+                ),
+                SwitchListTile(
+                  title: const Text('Modo mantenimiento'),
+                  value: (settings['maintenance'] as bool?) ?? false,
+                  onChanged: (v) => setState(() => settings['maintenance'] = v),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
