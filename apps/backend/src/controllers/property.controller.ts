@@ -33,289 +33,37 @@ function parseFeatures(f: unknown): string[] {
 
 export const getProperties = async (req: Request, res: Response) => {
   try {
-    const { 
-      search, type, listingType, minPrice, maxPrice, 
-      bedrooms, bathrooms, furnished, location, status,
-      isFeatured, moderatorId, features, services, page = 1, limit = 12,
-      lat, lng, radius // Nuevos parámetros para filtro por distancia
-    } = req.query;
-
-    const where: any = {};
-
-    // Base filters - only show approved by default
-    const includeUnavailable = req.query.includeUnavailable === 'true';
-    if (status) {
-      where.status = status;
-    } else if (!includeUnavailable) {
-      where.status = 'approved';
-    }
-
-    if (isFeatured !== undefined) where.isFeatured = isFeatured === 'true';
-    if (moderatorId) where.moderatorId = Number(moderatorId);
-
-    // Text search
-    if (search) {
-      where[Op.or] = [
-        { title: { [Op.iLike]: `%${search}%` } },
-        { location: { [Op.iLike]: `%${search}%` } },
-        { address: { [Op.iLike]: `%${search}%` } }
-      ];
-    }
-
-    // Property characteristics
-    if (type && type !== 'all') where.type = type;
-    if (listingType && listingType !== 'all') where.listingType = listingType;
-    
-    if (minPrice || maxPrice) {
-      where.price = {};
-      if (minPrice) where.price[Op.gte] = Number(minPrice);
-      if (maxPrice) where.price[Op.lte] = Number(maxPrice);
-    }
-
-    if (bedrooms && bedrooms !== 'all') {
-      const bedroomsStr = String(bedrooms);
-      if (bedroomsStr === '4+') {
-        where.bedrooms = { [Op.gte]: 4 };
-      } else {
-        where.bedrooms = Number(bedrooms);
-      }
-    }
-    if (bathrooms && bathrooms !== 'all') where.bathrooms = Number(bathrooms);
-    if (furnished !== undefined && furnished !== 'all') where.furnished = furnished === 'true';
-    if (location) where.location = { [Op.iLike]: `%${location}%` };
-
-    // Integración con geocoding: Si se proporciona ubicación como texto, intentar convertir a coordenadas
-    let geoLat: number | undefined;
-    let geoLng: number | undefined;
-    let geoRadius: number | undefined;
-    let searchLocation: string | undefined;
-    
-    if (location && typeof location === 'string' && location.trim()) {
-      try {
-        // Intentar obtener coordenadas de la ubicación
-        const coords = await geocodingService.getCoordinatesForLocation(location.trim());
-        if (coords) {
-          geoLat = coords.lat;
-          geoLng = coords.lng;
-          geoRadius = radius ? Number(radius) : 10; // Radio por defecto de 10km
-          searchLocation = location;
-        }
-      } catch (error) {
-        console.log('Geocoding falló para:', location, error);
-      }
-    }
-
-    // Si se proporcionaron lat/lng explícitos, usar esos
-    if (lat && lng && !geoLat && !geoLng) {
-      geoLat = Number(lat);
-      geoLng = Number(lng);
-      geoRadius = radius ? Number(radius) : 10;
-    }
-
-    // No aplicar filtro de features en la query SQL, lo haremos en memoria
-    // JSON Features filter
-    if (features) {
-      const featuresArray = Array.isArray(features) ? features : (features as string).split(',');
-      where.features = { [Op.contains]: featuresArray };
-    }
-
-    // Geographic Search (Haversine)
-    let attributes: any = undefined;
-    let order: any = undefined;
-    
-    // Usar coordenadas de geocoding si están disponibles
-    if (geoLat && geoLng && geoRadius) {
-      const distanceLiteral = Sequelize.literal(
-        `6371 * acos(cos(radians(${geoLat})) * cos(radians(lat)) * cos(radians(lng) - radians(${geoLng})) + sin(radians(${geoLat})) * sin(radians(lat)))`
-      );
-      
-      attributes = { 
-        include: [[distanceLiteral, 'distance']] 
-      };
-      
-      // Ordenar por distancia si hay búsqueda geográfica
-      order = [[distanceLiteral, 'ASC']];
-      
-      if (!where[Op.and]) where[Op.and] = [];
-      where[Op.and].push(Sequelize.where(distanceLiteral, { [Op.lte]: geoRadius }));
-    } 
-    // Si no hay geocoding, usar lat/lng/radius explícitos si están presentes
-    else if (lat && lng && radius) {
-      const latitude = Number(lat);
-      const longitude = Number(lng);
-      const radiusKm = Number(radius);
-      
-      const distanceLiteral = Sequelize.literal(
-        `6371 * acos(cos(radians(${latitude})) * cos(radians(lat)) * cos(radians(lng) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(lat)))`
-      );
-      
-      attributes = { 
-        include: [[distanceLiteral, 'distance']] 
-      };
-      
-      order = [[distanceLiteral, 'ASC']];
-
-      if (!where[Op.and]) where[Op.and] = [];
-      where[Op.and].push(Sequelize.where(distanceLiteral, { [Op.lte]: radiusKm }));
-    } else {
-      // Ordenar por featured y fecha si no hay búsqueda geográfica
-      order = [['isFeatured', 'DESC'], ['createdAt', 'DESC']];
-    }
-
-    // Services Filter (via Include)
-    const include: any[] = [
-      {
-        model: (User as any),
-        as: 'author',
-        attributes: ['id', 'name', 'profilePhotoUrl', 'isVerified']
-      }
-    ];
-
-    if (services) {
-      const servicesArray = (Array.isArray(services) ? services : (services as string).split(',')).map(Number);
-      include.push({
-        model: (Service as any),
-        as: 'services',
-        where: { id: { [Op.in]: servicesArray } },
-        through: { attributes: [] },
-        required: true
-      });
-    } else {
-      include.push({
-        model: (Service as any),
-        as: 'services',
-        through: { attributes: [] },
-        required: false
-      });
-    }
-
-    const offset = (Number(page) - 1) * Number(limit);
-
-    // Obtener todas las propiedades que cumplan con los filtros básicos (sin paginación para filtros en memoria)
-    const queryOptions: any = {
-      where,
-      include,
-      order: order || [['createdAt', 'DESC']],
-    };
-
-    // Manejo especial para cuando tenemos cálculo de distancia (ya sea de geocoding o explícito)
-    if (geoLat && geoLng && geoRadius) {
-      // Cuando hay cálculo de distancia desde geocoding
-      const distanceLiteral = Sequelize.literal(
-        `6371 * acos(cos(radians(${geoLat})) * cos(radians(lat)) * cos(radians(lng) - radians(${geoLng})) + sin(radians(${geoLat})) * sin(radians(lat)))`
-      );
-      
-      // Para incluir el campo calculado 'distance' necesitamos usar attributes: { include: [...] }
-      queryOptions.attributes = {
-        include: [
-          [distanceLiteral, 'distance']
-        ]
-      };
-    } else if (lat && lng && radius) {
-      // Cuando hay cálculo de distancia explícito
-      const latitude = Number(lat);
-      const longitude = Number(lng);
-      const distanceLiteral = Sequelize.literal(
-        `6371 * acos(cos(radians(${latitude})) * cos(radians(lat)) * cos(radians(lng) - radians(${longitude})) + sin(radians(${latitude})) * sin(radians(lat)))`
-      );
-      
-      queryOptions.attributes = {
-        include: [
-          [distanceLiteral, 'distance']
-        ]
-      };
-    } else {
-      // Cuando NO hay cálculo de distancia, NO especificamos attributes para que Sequelize
-      // incluya TODOS los campos del modelo, incluyendo avgRating y reviewCount
-      queryOptions.attributes = { exclude: [] }; // Esto fuerza a incluir todos los campos
-    }
-
-    const allProperties = await (Property as any).findAll(queryOptions);
-
-    // Aplicar filtros adicionales en memoria
-    let filteredProperties: any[] = allProperties;
-
-    // Filtrar por features si se especificaron
-    if (features) {
-      const featuresArray = (Array.isArray(features) ? (features as string[]) : String(features).split(',')).map(f => String(f).trim());
-      filteredProperties = filteredProperties.filter((property: any) => {
-        const propertyFeatures = (property.features as string[]) || [];
-        return featuresArray.every(feature => propertyFeatures.includes(feature));
-      });
-    }
-
-    // Filtrar por distancia si se proporcionó ubicación
-    if (lat && lng && radius) {
-      const userLat = Number(lat);
-      const userLng = Number(lng);
-      const radiusKm = Number(radius);
-
-      // Función para calcular distancia usando fórmula de Haversine
-      const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-        const R = 6371; // Radio de la Tierra en km
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = 
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-      };
-
-      filteredProperties = filteredProperties.filter((property: any) => {
-        const distance = calculateDistance(userLat, userLng, property.lat, property.lng);
-        return distance <= radiusKm;
-      });
-    }
-
-    // Ordenamiento por prioridad para estudiantes (Residencias Universitarias primero)
     const authReq = req as AuthRequest;
-    const userRole = authReq.user?.role;
-    if (userRole === 'estudiante') {
-      filteredProperties.sort((a: any, b: any) => {
-        const isUniversityA = /residencia|universidad|universitario/i.test(a.title + ' ' + a.description);
-        const isUniversityB = /residencia|universidad|universitario/i.test(b.title + ' ' + b.description);
-        if (isUniversityA && !isUniversityB) return -1;
-        if (!isUniversityA && isUniversityB) return 1;
-        return 0;
-      });
-    }
+    const result = await propertyService.searchProperties({
+      search: req.query.search as string | undefined,
+      type: req.query.type as string | undefined,
+      listingType: req.query.listingType as string | undefined,
+      minPrice: req.query.minPrice as string | undefined,
+      maxPrice: req.query.maxPrice as string | undefined,
+      bedrooms: req.query.bedrooms as string | undefined,
+      bathrooms: req.query.bathrooms as string | undefined,
+      furnished: req.query.furnished as string | undefined,
+      location: req.query.location as string | undefined,
+      status: req.query.status as string | undefined,
+      isFeatured: req.query.isFeatured as string | undefined,
+      moderatorId: req.query.moderatorId as string | undefined,
+      features: req.query.features as string | string[] | undefined,
+      services: req.query.services as string | string[] | undefined,
+      page: req.query.page as string | undefined,
+      limit: req.query.limit as string | undefined,
+      lat: req.query.lat as string | undefined,
+      lng: req.query.lng as string | undefined,
+      radius: req.query.radius as string | undefined,
+      includeUnavailable: req.query.includeUnavailable === 'true',
+      userRole: authReq.user?.role,
+    });
 
-    const totalCount = filteredProperties.length;
-    const paginatedProperties = filteredProperties.slice(offset, offset + Number(limit));
-
-    // Construir respuesta base
-    const response: any = {
-      success: true,
-      data: {
-        properties: paginatedProperties,
-        pagination: {
-          total: totalCount,
-          page: Number(page),
-          limit: Number(limit),
-          totalPages: Math.ceil(totalCount / Number(limit))
-        }
-      }
-    };
-
-    // Agregar información de geocoding si se usó
-    if (searchLocation && geoLat && geoLng) {
-      response.data.geocoding = {
-        searchLocation,
-        coordinates: { lat: geoLat, lng: geoLng },
-        radiusKm: geoRadius || 10,
-        foundProperties: totalCount
-      };
-    }
-
-    res.json(response);
-
+    res.json({ success: true, data: result });
   } catch (error: any) {
     console.error('Error fetching properties:', error);
     res.status(500).json({
       success: false,
-      error: { code: 'FETCH_ERROR', message: 'Error al cargar las propiedades' }
+      error: { code: 'FETCH_ERROR', message: 'Error al cargar las propiedades' },
     });
   }
 };

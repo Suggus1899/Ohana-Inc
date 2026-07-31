@@ -46,6 +46,25 @@ jest.mock('../src/models/PropertyView', () => {
   (Model as any).init = jest.fn();
   return { __esModule: true, default: Model };
 });
+jest.mock('../src/models/User', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).init = jest.fn();
+  (Model as any).findAll = jest.fn();
+  (Model as any).findOne = jest.fn();
+  (Model as any).findByPk = jest.fn();
+  return { __esModule: true, default: Model };
+});
+jest.mock('../src/models/Service', () => {
+  const Model = jest.fn().mockImplementation(() => ({}));
+  (Model as any).init = jest.fn();
+  (Model as any).findAll = jest.fn();
+  return { __esModule: true, default: Model };
+});
+jest.mock('../src/services/geocoding.service', () => ({
+  geocodingService: {
+    getCoordinatesForLocation: jest.fn().mockResolvedValue(null),
+  },
+}));
 jest.mock('../src/config/database', () => ({
   sequelize: {
     transaction: jest.fn((cb: (t: any) => Promise<any>) => cb({})),

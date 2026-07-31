@@ -1,10 +1,13 @@
-import { Op, WhereOptions } from 'sequelize';
+import { Op, WhereOptions, Sequelize } from 'sequelize';
 import Property from '../models/Property';
+import User from '../models/User';
+import Service from '../models/Service';
 import Favorite from '../models/Favorite';
 import PropertyView from '../models/PropertyView';
 import { mediaProcessingService } from './media-processing.service';
 import { PropertyCreationAttributes, PropertyStatus } from '../types';
 import { notificationInAppService } from './notification-inapp.service';
+import { geocodingService } from './geocoding.service';
 import { sequelize } from '../config/database';
 
 export interface PropertyFilters {
@@ -25,6 +28,47 @@ export interface PropertyFilters {
   limit?: number;
 }
 
+export interface PropertySearchInput {
+  search?: string;
+  type?: string;
+  listingType?: string;
+  minPrice?: string | number;
+  maxPrice?: string | number;
+  bedrooms?: string | number;
+  bathrooms?: string | number;
+  furnished?: string | boolean;
+  location?: string;
+  city?: string;
+  status?: string;
+  isFeatured?: string;
+  moderatorId?: string | number;
+  features?: string | string[];
+  services?: string | string[];
+  page?: string | number;
+  limit?: string | number;
+  lat?: string | number;
+  lng?: string | number;
+  radius?: string | number;
+  includeUnavailable?: boolean;
+  userRole?: string;
+}
+
+export interface PropertySearchResult {
+  properties: any[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+  geocoding?: {
+    searchLocation: string;
+    coordinates: { lat: number; lng: number };
+    radiusKm: number;
+    foundProperties: number;
+  };
+}
+
 export interface CreatePropertyInput extends Omit<PropertyCreationAttributes, 'images' | 'mainImage' | 'status' | 'isVerified' | 'isFeatured' | 'views'> {
   imagePaths?: string[];
   videoPath?: string;
@@ -34,6 +78,239 @@ export interface CreatePropertyInput extends Omit<PropertyCreationAttributes, 'i
 }
 
 export class PropertyService {
+  /**
+   * Full property search with geocoding, haversine distance, in-memory
+   * feature filtering, student prioritization, and pagination.
+   *
+   * Extracted from property.controller.ts so the controller stays thin.
+   */
+  async searchProperties(input: PropertySearchInput): Promise<PropertySearchResult> {
+    const {
+      search, type, listingType, minPrice, maxPrice,
+      bedrooms, bathrooms, furnished, location, status,
+      isFeatured, moderatorId, features, services,
+      page = 1, limit = 12,
+      lat, lng, radius, includeUnavailable, userRole,
+    } = input;
+
+    const where: any = {};
+
+    // Base filters - only show approved by default
+    if (status) {
+      where.status = status;
+    } else if (!includeUnavailable) {
+      where.status = 'approved';
+    }
+
+    if (isFeatured !== undefined) where.isFeatured = isFeatured === 'true';
+    if (moderatorId) where.moderatorId = Number(moderatorId);
+
+    // Text search
+    if (search) {
+      where[Op.or] = [
+        { title: { [Op.iLike]: `%${search}%` } },
+        { location: { [Op.iLike]: `%${search}%` } },
+        { address: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+
+    // Property characteristics
+    if (type && type !== 'all') where.type = type;
+    if (listingType && listingType !== 'all') where.listingType = listingType;
+
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price[Op.gte] = Number(minPrice);
+      if (maxPrice) where.price[Op.lte] = Number(maxPrice);
+    }
+
+    if (bedrooms && bedrooms !== 'all') {
+      const bedroomsStr = String(bedrooms);
+      if (bedroomsStr === '4+') {
+        where.bedrooms = { [Op.gte]: 4 };
+      } else {
+        where.bedrooms = Number(bedrooms);
+      }
+    }
+    if (bathrooms && String(bathrooms) !== 'all') where.bathrooms = Number(bathrooms);
+    if (furnished !== undefined && String(furnished) !== 'all') where.furnished = furnished === 'true';
+    if (location) where.location = { [Op.iLike]: `%${location}%` };
+
+    // Geocoding: convert location text to coordinates
+    let geoLat: number | undefined;
+    let geoLng: number | undefined;
+    let geoRadius: number | undefined;
+    let searchLocation: string | undefined;
+
+    if (location && typeof location === 'string' && location.trim()) {
+      try {
+        const coords = await geocodingService.getCoordinatesForLocation(location.trim());
+        if (coords) {
+          geoLat = coords.lat;
+          geoLng = coords.lng;
+          geoRadius = radius ? Number(radius) : 10;
+          searchLocation = location;
+        }
+      } catch (error) {
+        console.log('Geocoding failed for:', location, error);
+      }
+    }
+
+    // Use explicit lat/lng if geocoding didn't produce coordinates
+    if (lat && lng && !geoLat && !geoLng) {
+      geoLat = Number(lat);
+      geoLng = Number(lng);
+      geoRadius = radius ? Number(radius) : 10;
+    }
+
+    // JSON features filter (SQL-level)
+    if (features) {
+      const featuresArray = Array.isArray(features) ? features : (features as string).split(',');
+      where.features = { [Op.contains]: featuresArray };
+    }
+
+    // Haversine distance calculation
+    const haversineLiteral = (latVal: number, lngVal: number) =>
+      Sequelize.literal(
+        `6371 * acos(cos(radians(${latVal})) * cos(radians(lat)) * cos(radians(lng) - radians(${lngVal})) + sin(radians(${latVal})) * sin(radians(lat)))`,
+      );
+
+    let attributes: any = undefined;
+    let order: any = undefined;
+
+    if (geoLat && geoLng && geoRadius) {
+      const distanceLiteral = haversineLiteral(geoLat, geoLng);
+      attributes = { include: [[distanceLiteral, 'distance']] };
+      order = [[distanceLiteral, 'ASC']];
+      if (!where[Op.and]) where[Op.and] = [];
+      where[Op.and].push(Sequelize.where(distanceLiteral, { [Op.lte]: geoRadius }));
+    } else if (lat && lng && radius) {
+      const latitude = Number(lat);
+      const longitude = Number(lng);
+      const radiusKm = Number(radius);
+      const distanceLiteral = haversineLiteral(latitude, longitude);
+      attributes = { include: [[distanceLiteral, 'distance']] };
+      order = [[distanceLiteral, 'ASC']];
+      if (!where[Op.and]) where[Op.and] = [];
+      where[Op.and].push(Sequelize.where(distanceLiteral, { [Op.lte]: radiusKm }));
+    } else {
+      order = [['isFeatured', 'DESC'], ['createdAt', 'DESC']];
+    }
+
+    // Includes: author + services
+    const include: any[] = [
+      {
+        model: User as any,
+        as: 'author',
+        attributes: ['id', 'name', 'profilePhotoUrl', 'isVerified'],
+      },
+    ];
+
+    if (services) {
+      const servicesArray = (Array.isArray(services) ? services : (services as string).split(',')).map(Number);
+      include.push({
+        model: Service as any,
+        as: 'services',
+        where: { id: { [Op.in]: servicesArray } },
+        through: { attributes: [] },
+        required: true,
+      });
+    } else {
+      include.push({
+        model: Service as any,
+        as: 'services',
+        through: { attributes: [] },
+        required: false,
+      });
+    }
+
+    const offset = (Number(page) - 1) * Number(limit);
+
+    const queryOptions: any = {
+      where,
+      include,
+      order: order || [['createdAt', 'DESC']],
+    };
+
+    // Distance attribute handling
+    if (geoLat && geoLng && geoRadius) {
+      queryOptions.attributes = { include: [[haversineLiteral(geoLat, geoLng), 'distance']] };
+    } else if (lat && lng && radius) {
+      queryOptions.attributes = { include: [[haversineLiteral(Number(lat), Number(lng)), 'distance']] };
+    } else {
+      queryOptions.attributes = { exclude: [] };
+    }
+
+    const allProperties = await (Property as any).findAll(queryOptions);
+
+    // In-memory feature filter (stricter than SQL Op.contains)
+    let filteredProperties: any[] = allProperties;
+    if (features) {
+      const featuresArray = (Array.isArray(features) ? features : String(features).split(',')).map((f) => String(f).trim());
+      filteredProperties = filteredProperties.filter((property: any) => {
+        const propertyFeatures = (property.features as string[]) || [];
+        return featuresArray.every((feature) => propertyFeatures.includes(feature));
+      });
+    }
+
+    // In-memory distance filter (fallback when SQL literal wasn't applied)
+    if (lat && lng && radius) {
+      const userLat = Number(lat);
+      const userLng = Number(lng);
+      const radiusKm = Number(radius);
+      const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      };
+      filteredProperties = filteredProperties.filter((property: any) => {
+        const distance = calculateDistance(userLat, userLng, property.lat, property.lng);
+        return distance <= radiusKm;
+      });
+    }
+
+    // Student prioritization: university residences first
+    if (userRole === 'estudiante') {
+      filteredProperties.sort((a: any, b: any) => {
+        const isUniversityA = /residencia|universidad|universitario/i.test(a.title + ' ' + a.description);
+        const isUniversityB = /residencia|universidad|universitario/i.test(b.title + ' ' + b.description);
+        if (isUniversityA && !isUniversityB) return -1;
+        if (!isUniversityA && isUniversityB) return 1;
+        return 0;
+      });
+    }
+
+    const totalCount = filteredProperties.length;
+    const paginatedProperties = filteredProperties.slice(offset, offset + Number(limit));
+
+    const result: PropertySearchResult = {
+      properties: paginatedProperties,
+      pagination: {
+        total: totalCount,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(totalCount / Number(limit)),
+      },
+    };
+
+    if (searchLocation && geoLat && geoLng) {
+      result.geocoding = {
+        searchLocation,
+        coordinates: { lat: geoLat, lng: geoLng },
+        radiusKm: geoRadius || 10,
+        foundProperties: totalCount,
+      };
+    }
+
+    return result;
+  }
+
   async createProperty(data: CreatePropertyInput): Promise<Property> {
     const { imagePaths = [], videoPath, ...rest } = data;
 
