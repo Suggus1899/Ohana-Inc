@@ -44,15 +44,12 @@ function getSessionId(): string {
 }
 
 import type {
-  UserRole,
-  AccountStatus,
   User,
   StudentUser,
   Property,
   PropertyReview,
   UserReview,
   Pagination,
-  PropertyFilters,
   ModerationStats,
   SupportTicket,
   UserReport,
