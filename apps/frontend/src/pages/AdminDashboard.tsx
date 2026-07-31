@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { adminSidebarItems } from "@/config/sidebarConfig";
 import { api } from "@/services/api";
+import { useModerationStats } from "@/hooks/useAdminStats";
 import { connectSocket, getSocket } from "@/services/socket";
 
 // Admin sections - CRUD completo en todas las secciones (lazy loaded)
@@ -30,44 +32,49 @@ const _PlaceholderSection = ({ title }: { title: string }) => (
 // Panel Administrador: CRUD completo en todo el sistema
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("home");
-  const [badges, setBadges] = useState<Record<string, number>>({});
+  const queryClient = useQueryClient();
 
+  // Moderation stats via TanStack Query (replaces manual useEffect + setInterval)
+  const { data: statsData } = useModerationStats();
+
+  // Announcement draft count (separate query for badge)
+  const { data: annData } = useQuery({
+    queryKey: ['announcements-draft-count'],
+    queryFn: async () => {
+      const res = await api.getAnnouncements({ status: 'draft', limit: 1 });
+      return res.data;
+    },
+    staleTime: 30 * 1000,
+  });
+
+  const badges: Record<string, number> = {
+    kyc: statsData?.pending?.verifications ?? 0,
+    support: statsData?.pending?.tickets ?? 0,
+    announcements: (annData as Record<string, unknown>)?.total as number ?? 0,
+  };
+
+  // Websocket: invalidate queries to trigger refetch on real-time events
   useEffect(() => {
-    const fetchBadges = async () => {
-      try {
-        const [statsRes, annRes] = await Promise.all([
-          api.getModerationStats(),
-          api.getAnnouncements({ status: 'draft', limit: 1 }),
-        ]);
-        setBadges({
-          kyc: statsRes.success && statsRes.data ? statsRes.data.pending.verifications : 0,
-          support: statsRes.success && statsRes.data ? statsRes.data.pending.tickets : 0,
-          announcements: annRes.success && annRes.data ? (annRes.data as Record<string, unknown>).total as number : 0,
-        });
-      } catch { /* silent */ }
-    };
-
-    fetchBadges();
-    const interval = setInterval(fetchBadges, 30000);
-
-    // Websocket: actualizar badges en tiempo real
     const socket = connectSocket();
-    socket.on('ticket_created', fetchBadges);
-    socket.on('ticket_updated', fetchBadges);
-    socket.on('announcement_updated', fetchBadges);
-    socket.on('badge_update', fetchBadges);
+    const invalidate = () => {
+      queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['announcements-draft-count'] });
+    };
+    socket.on('ticket_created', invalidate);
+    socket.on('ticket_updated', invalidate);
+    socket.on('announcement_updated', invalidate);
+    socket.on('badge_update', invalidate);
 
     return () => {
-      clearInterval(interval);
       const s = getSocket();
       if (s) {
-        s.off('ticket_created', fetchBadges);
-        s.off('ticket_updated', fetchBadges);
-        s.off('announcement_updated', fetchBadges);
-        s.off('badge_update', fetchBadges);
+        s.off('ticket_created', invalidate);
+        s.off('ticket_updated', invalidate);
+        s.off('announcement_updated', invalidate);
+        s.off('badge_update', invalidate);
       }
     };
-  }, []);
+  }, [queryClient]);
 
   const renderSection = () => {
     switch (activeSection) {
