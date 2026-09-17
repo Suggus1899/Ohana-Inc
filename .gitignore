@@ -54,3 +54,9 @@ postgres_data/
 .kiro/skills/
 skills-lock.json
 .omo/
+# Local environment files
+!.env.*.example
+!.env.sample
+!.env.*.sample
+!.env.template
+!.env.*.template
